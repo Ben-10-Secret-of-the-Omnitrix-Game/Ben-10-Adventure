@@ -10,10 +10,12 @@ class BaseEntity:
         Firstly, define class named by this rules:
             Your class name end with "Entity" (case sensetive)
         Next, inherit your class from BaseEntity whenever your entity is!
-    
+
     """
+
     def __init__(self):
         pass
+
 
 class Player(BaseEntity):
     """
@@ -28,7 +30,10 @@ class Player(BaseEntity):
 
 class NPC(BaseEntity):
     """
-    NPC -   all "zombie" like entities
+    NPC -   all "zombie" like entities. 
+    E.g. "players"(not exacly) that's attacking Player(main adventurer, see above). 
+    How to know is it NPC?
+        * Nonone control it with keyboard, mouse, any other stuff.
+        * has primitive actions, generally it's stupid AI or hardcoded actions.
     """
     pass
-
