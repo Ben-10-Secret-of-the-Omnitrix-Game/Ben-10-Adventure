@@ -17,7 +17,7 @@ python3 -m ben_ten_adventure
 
 _compiled.png - output image
 
-manifest.json - tells where image is stored in _compiled.png. [More details](https://github.com/Ben-10-Secret-of-the-Omnitrix-Game/Ben-10-Adventure/blob/main/scripts/combine_images_into_single.py#L74-L80)
+manifest.json - tells where images are stored in _compiled.png. [More details](https://github.com/Ben-10-Secret-of-the-Omnitrix-Game/Ben-10-Adventure/blob/main/scripts/combine_images_into_single.py#L74-L80)
 ### Unix
 ```
 cd Ben-10-Adventure
