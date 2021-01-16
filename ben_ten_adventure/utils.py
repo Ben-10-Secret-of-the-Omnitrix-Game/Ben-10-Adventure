@@ -1,10 +1,13 @@
-import os
+from os.path import join, exists
+from os import mkdir
+
 
 DEFAULT_RESOURCES_PATH = "Ben-10-Adventure/resources"
 
 
-def init_resouce_dirs():
-    os.mkdir("resources")
+def init_resource_dirs():
+    if not exists(join("resources")):
+        mkdir("resources")
 
 class RawData:
     pass

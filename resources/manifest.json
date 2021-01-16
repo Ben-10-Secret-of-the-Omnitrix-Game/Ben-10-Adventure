@@ -1,0 +1,30 @@
+[
+    {
+        "name": "floor",
+        "offset_x": 0,
+        "offset_y": 0,
+        "size_x": 103,
+        "size_y": 53
+    },
+    {
+        "name": "block",
+        "offset_x": 0,
+        "offset_y": 53,
+        "size_x": 103,
+        "size_y": 151
+    },
+    {
+        "name": "ben10_1",
+        "offset_x": 0,
+        "offset_y": 151,
+        "size_x": 70,
+        "size_y": 356
+    },
+    {
+        "name": "B10_VT4C_BN_04",
+        "offset_x": 70,
+        "offset_y": 151,
+        "size_x": 255,
+        "size_y": 333
+    }
+]
