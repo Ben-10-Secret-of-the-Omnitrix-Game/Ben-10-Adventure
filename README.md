@@ -11,7 +11,7 @@ python3 -m ben_ten_adventure
 ## Combine images into single aka pack
 > 1000 and 1000 is size for x and y respectively
 
-> *You may need to increase these size in case of error*
+> *You may need to increase the size in case of error*
 ### Unix
 ```
 cd Ben-10-Adventure
