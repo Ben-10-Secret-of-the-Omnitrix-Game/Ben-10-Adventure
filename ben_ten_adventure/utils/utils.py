@@ -1,3 +1,6 @@
+class RawData:
+    pass
+
 class Config:
     """
 

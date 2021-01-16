@@ -1,4 +1,10 @@
 
+class Adventure:
+    """
+    Base class for every adventure.
+    * Any adventure must inherit be inherited from it.
+    """
+    pass
 
 class AdventureManager:
     """
