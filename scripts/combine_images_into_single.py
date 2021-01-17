@@ -54,11 +54,12 @@ def load_images(root, files):
         if re.findall(includes, name[-1]):
             logging.debug(f"Loading from {root} file: {file}")
             image = Image.open(join(root, file)).convert("RGBA")
+            logging.info(name[0])
             images.append((name[0], image))
 
 
 if __name__ == "__main__":
-    coloredlogs.install()
+    coloredlogs.install(level='DEBUG')
     
     assert len(argv) >= 4, "Usage: python3 combine_images_into_single.py dir size(two numbers seperated by space) "
     
@@ -93,7 +94,7 @@ if __name__ == "__main__":
         logging.info(f"Pasting {name} into {uv.area}")
         out_image.paste(img, uv.area)
         manifest.append({
-                "name": name[0],
+                "name": name,
                 "offset_x": uv.area[0],
                 "offset_y": uv.area[1],
                 "size_x": uv.area[2] - uv.area[0],  # get correct size_x
