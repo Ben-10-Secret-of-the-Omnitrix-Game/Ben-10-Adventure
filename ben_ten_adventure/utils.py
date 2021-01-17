@@ -1,8 +1,10 @@
 import logging
 import json
+import pygame
 
 from os.path import join, exists
 from os import mkdir
+from pprint import pprint
 
 
 DEFAULT_RESOURCES_PATH = join("resources")
@@ -34,30 +36,46 @@ class Config:
         self.default = default
         self.data = []
         self.changed = False
-        
+
         self.load()
-        
 
     def save(self):
-        with open(join(DEFAULT_GAMEDATA_PATH, self.file_path), 'w', encoding='utf-8') as f:
+        with open(self.file_path, 'w', encoding='utf-8') as f:
             if self.file_type == self.JSON:
                 json.dump(self.data, f, ensure_ascii=False, indent=4)
-    
+
     def load(self):
         if not exists(self.file_path):
             self.save()
-        
+
         if self.file_type == self.JSON:
-            with open(join(DEFAULT_GAMEDATA_PATH, self.file_path), 'w', encoding='utf-8') as f:
+            with open(self.file_path, 'r', encoding='utf-8') as f:
                 self.data = json.load(f)
-        
+
         self.data = self.data if len(self.data) > 0 else self.default
-        # if in self.data == self.default (see above) in this case we need to save file. 
+        # if in self.data == self.default (see above) in this case we need to save file.
         self.save()
-                
+
 
 class GameAssets:
     def __init__(self):
-        pass
+        self.config = Config(join(DEFAULT_RESOURCES_PATH,
+                                 "manifest.json"), Config.JSON)
+        self._load_resources()
 
+    def _load_resources(self):
+        if len(self.config.data) < 1:
+            logging.error(
+                f"Tried to load {join(DEFAULT_GAMEDATA_PATH, 'manifest.json')} but it's empty.\
+                If you already have images, run scripts/combine_images_into_single.py")
+            return
+        image = pygame.image.load(join(DEFAULT_RESOURCES_PATH, "_compiled.png"))
+        # we don't need to convert, becuase scripts/combine_images_into_single.py already done it.
+        # TODO add check for alpha if someone made fake manifest.json
         
+        for image_data in self.config.data:
+            name, offset_x, offset_y, size_x, size_y = image_data.values()
+            cropped = image.subsurface((offset_x, offset_y, size_x, size_y))
+            self.__setattr__(name, cropped)
+
+        logging.info(f"Loaded {len(self.config.data)} images")
