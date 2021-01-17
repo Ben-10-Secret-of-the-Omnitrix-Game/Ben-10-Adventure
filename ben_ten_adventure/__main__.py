@@ -14,6 +14,6 @@ from .tests import utils_test
 
 if __name__ == '__main__':
     coloredlogs.install(level='DEBUG')
-    # game_engine.start()
+    game_engine.start()
     utils_test.run_tests()
     
