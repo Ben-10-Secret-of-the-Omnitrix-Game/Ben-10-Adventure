@@ -1,6 +1,7 @@
 import logging
 import coloredlogs
 import json
+import fnmatch
 
 from sys import argv
 from os import walk
@@ -44,11 +45,14 @@ class PackNode(object):
             return PackNode((self.area[0], self.area[1], self.area[0]+area.width, self.area[1]+area.height))
 
 images = []
+includes = ['*.png', '*.jpg']
 
 def load_images(root, files):
     global images
     for file in files:
-        images.append((file.split('.')[:-1], Image.open(join(root, file)).convert("RGBA")))
+        if fnmatch.fnmatch(file, includes[0]):
+            logger.debug(f"Loading from {root} file: {file}")
+            images.append((file.split('.')[:-1], Image.open(join(root, file)).convert("RGBA")))
 
 
 if __name__ == "__main__":
@@ -56,13 +60,13 @@ if __name__ == "__main__":
     coloredlogs.install(level='DEBUG', logger=logger)
     
     assert len(argv) >= 4, "Usage: python3 combine_images_into_single.py dir size(two numbers seperated by space) "
+    
     for root, dirs, files in walk(argv[1]):
         if 'manifest.json' in files:
             files.remove('manifest.json')
         if '_compiled.png' in files:
             files.remove('_compiled.png')
-            
-        logger.debug(f"Loading from {root} files: {files}")
+        
         load_images(root, files)  
     
     images = sorted([(data[1].size[0] * data[1].size[1], data[0], data[1]) for data in images])
@@ -91,8 +95,8 @@ if __name__ == "__main__":
                 "name": name[0],
                 "offset_x": uv.area[0],
                 "offset_y": uv.area[1],
-                "size_x": uv.area[2],
-                "size_y": uv.area[3]
+                "size_x": uv.area[2] - uv.area[0],  # get correct size_x
+                "size_y": uv.area[3] - uv.area[1]   # get correct size_y
                 })
         
     out_image.save(join(argv[1], "_compiled.png"))
