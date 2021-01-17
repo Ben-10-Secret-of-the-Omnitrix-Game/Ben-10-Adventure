@@ -1,6 +1,20 @@
 # Ben-10-Adventure
 
 
+## Requirements
+### Python pip
+```
+coloredlogs==15.0
+Pillow==8.1.0
+pygame==2.0.1
+```
+### Custom Packages !
+
+```
+git clone https://github.com/Ben-10-Secret-of-the-Omnitrix-Game/hotreload.git
+python3 setup.py install
+```
+
 ## Running / Developing / Contributing 
 This instructions for all pycharm, vscode and other IDEs'
 ```
