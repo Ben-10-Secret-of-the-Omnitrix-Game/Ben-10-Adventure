@@ -42,7 +42,6 @@ def start():
 def game_loop_handler():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.image.save(screen, 'hi_man.png')
             pygame.quit()
             sys.exit()
         
