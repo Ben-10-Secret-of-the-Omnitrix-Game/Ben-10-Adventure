@@ -45,21 +45,20 @@ class PackNode(object):
             return PackNode((self.area[0], self.area[1], self.area[0]+area.width, self.area[1]+area.height))
 
 images = []
-includes = '.*.png|.*.jpg'
+includes = '(png)|(jpg)'
 
 def load_images(root, files):
-    global images
+    # global images
     for file in files:
         name = file.split('.')
-        if re.match(includes, name[-1]):
-            logger.debug(f"Loading from {root} file: {file}")
+        if re.findall(includes, name[-1]):
+            logging.debug(f"Loading from {root} file: {file}")
             image = Image.open(join(root, file)).convert("RGBA")
-            images.append((name[-1], image))
+            images.append((name[0], image))
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger(__name__)
-    coloredlogs.install(level='DEBUG', logger=logger)
+    coloredlogs.install()
     
     assert len(argv) >= 4, "Usage: python3 combine_images_into_single.py dir size(two numbers seperated by space) "
     
@@ -91,7 +90,7 @@ if __name__ == "__main__":
         uv = tree.insert(img.size)
         if uv is None: 
             raise ValueError('Pack size too small.')
-        logger.info(f"Pasting {name} into {uv.area}")
+        logging.info(f"Pasting {name} into {uv.area}")
         out_image.paste(img, uv.area)
         manifest.append({
                 "name": name[0],
