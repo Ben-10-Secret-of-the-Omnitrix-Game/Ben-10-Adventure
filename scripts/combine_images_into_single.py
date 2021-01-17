@@ -1,7 +1,7 @@
 import logging
 import coloredlogs
 import json
-import fnmatch
+import re
 
 from sys import argv
 from os import walk
@@ -45,14 +45,16 @@ class PackNode(object):
             return PackNode((self.area[0], self.area[1], self.area[0]+area.width, self.area[1]+area.height))
 
 images = []
-includes = ['*.png', '*.jpg']
+includes = '.*.png|.*.jpg'
 
 def load_images(root, files):
     global images
     for file in files:
-        if fnmatch.fnmatch(file, includes[0]):
+        name = file.split('.')
+        if re.match(includes, name[-1]):
             logger.debug(f"Loading from {root} file: {file}")
-            images.append((file.split('.')[:-1], Image.open(join(root, file)).convert("RGBA")))
+            image = Image.open(join(root, file)).convert("RGBA")
+            images.append((name[-1], image))
 
 
 if __name__ == "__main__":
