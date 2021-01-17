@@ -8,7 +8,7 @@ coloredlogs==15.0
 Pillow==8.1.0
 pygame==2.0.1
 ```
-### Custom Packages !
+### [Dev only] Custom Packages !
 
 ```
 git clone https://github.com/Ben-10-Secret-of-the-Omnitrix-Game/hotreload.git
