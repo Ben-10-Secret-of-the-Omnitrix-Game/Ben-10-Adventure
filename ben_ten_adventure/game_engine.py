@@ -16,7 +16,7 @@ def init():
     pygame.init()
     pygame.font.init()
     
-    screen = pygame.display.set_mode((500, 500))
+    screen = pygame.display.set_mode((500, 500), flags=pygame.RESIZABLE)
     
 def start():
     global ga, clock, fps
@@ -51,8 +51,9 @@ def game_loop_handler():
     # screen.blit(ga.play_button_64, (200, 160, 64, 64))
     # screen.blit(ga.ben10_1, (150, 150, 70, 205))
     screen.fill(pygame.Color(255, 255, 255, 255))
-    screen.blit(ga.omnitrix_secret_button, (100, 100, 176, 37))
-    screen.blit(ga.omnitrix_secret_btn_simple, (100, 150, 176, 37))
+    new_button = pygame.transform.scale2x(ga.omnitrix_secret_button)
+    screen.blit(new_button, (100, 100, 176, 37))
+    screen.blit(pygame.transform.scale2x(ga.omnitrix_secret_btn_simple), (100, 200, 176, 37))
     pygame.display.flip()
     
 
