@@ -46,8 +46,13 @@ def game_loop_handler():
             sys.exit()
         
     clock.tick(fps)
-    screen.blit(ga.background, (0, 0, 500, 500))
-    screen.blit(ga.play_button, (0, 0, 32, 32))
-    screen.blit(ga.play_button_64, (200, 160, 64, 64))
-    screen.blit(ga.ben10_1, (150, 150, 70, 205))
+    # screen.blit(ga.background, (0, 0, 500, 500))
+    # screen.blit(ga.play_button, (0, 0, 32, 32))
+    # screen.blit(ga.play_button_64, (200, 160, 64, 64))
+    # screen.blit(ga.ben10_1, (150, 150, 70, 205))
+    screen.fill(pygame.Color(255, 255, 255, 255))
+    screen.blit(ga.omnitrix_secret_button, (100, 100, 176, 37))
+    screen.blit(ga.omnitrix_secret_btn_simple, (100, 150, 176, 37))
     pygame.display.flip()
+    
+

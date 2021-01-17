@@ -21,6 +21,13 @@
         "size_y": 53
     },
     {
+        "name": "omnitrix_secret_button",
+        "offset_x": 167,
+        "offset_y": 32,
+        "size_x": 176,
+        "size_y": 37
+    },
+    {
         "name": "block",
         "offset_x": 0,
         "offset_y": 96,
@@ -33,6 +40,13 @@
         "offset_y": 194,
         "size_x": 70,
         "size_y": 205
+    },
+    {
+        "name": "omnitrix_secret_btn_simple",
+        "offset_x": 103,
+        "offset_y": 96,
+        "size_x": 300,
+        "size_y": 65
     },
     {
         "name": "B10_VT4C_BN_04",

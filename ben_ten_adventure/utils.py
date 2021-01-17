@@ -75,6 +75,7 @@ class GameAssets:
         
         for image_data in self.config.data:
             name, offset_x, offset_y, size_x, size_y = image_data.values()
+            logging.info(f"Loading {name} with size {size_x}, {size_y}")
             cropped = image.subsurface((offset_x, offset_y, size_x, size_y))
             self.__setattr__(name, cropped)
 
