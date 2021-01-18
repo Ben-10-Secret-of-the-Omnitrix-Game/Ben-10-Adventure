@@ -1,5 +1,6 @@
+import pygame
 
-class BaseEntity:
+class BaseEntity(pygame.sprite.Sprite):
     """
     What is Entity?
     Entity is everything that implies life creature or in simple words everything that's alive
@@ -7,12 +8,41 @@ class BaseEntity:
     It's a base class of Entity
 
     I need my own entity, what should I do?
-        Firstly, define class named by this rules:
+        1. define class named by this rules:
             Your class name end with "Entity" (case sensetive)
-        Next, inherit your class from BaseEntity whenever your entity is!
+        2. inherit your class from BaseEntity whenever your entity is!
+        3. Extend functionality 
 
     """
-
+    def __init__(self, x, y, skin, speed=1):
+        # pygame.sprite.Sprite.__init__(self)
+        self.super().__init__(self)
+        """
+        x and y - entity current position
+        skin - image of entity. Instance of pygame.Surface
+        """
+        self.x = x
+        self.y = y
+        self.skin = skin
+        self._direction_map = {
+            (0, 0, 0, 0): {'dx': 0, 'dy': 0},
+            (1, 0, 0, 0): {'dx': 0, 'dy': 1},
+            (0, 1, 0, 0): {'dx': 0, 'dy': -1},
+            (0, 0, 1, 0): {'dx': 1, 'dy': 0},
+            (0, 0, 0, 1): {'dx': -1, 'dy': 0},
+            (1, 0, 1, 0): {'dx': 1, 'dy': 1},
+            (1, 0, 0, 1): {'dx': -1, 'dy': 1},
+            (0, 1, 1, 0): {'dx': 1, 'dy': -1},
+            (0, 0, 1, 1): {'dx': -1, 'dy': -1},
+        }
+        self.speed = speed
+    
+    def _move(self, keys_states, speed=None):
+        if speed is None:
+            speed = self.speed
+        direction = self._direction_map[keys_states]
+        self.x = self.x + (direction['dx'] * speed)
+        self.y = self.y + (direction['dy'] * speed)
 
 
 class Player(BaseEntity):
@@ -23,7 +53,8 @@ class Player(BaseEntity):
         There are a lot of Players surronding you and bumbling around.
 
     """
-    pass
+    def __init__(self):
+        pass
 
 
 class NPC(BaseEntity):
