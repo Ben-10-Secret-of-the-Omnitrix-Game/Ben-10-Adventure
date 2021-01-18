@@ -1,7 +1,21 @@
 [
     {
-        "name": "play_button",
+        "name": "ex_pipe",
         "offset_x": 0,
+        "offset_y": 0,
+        "size_x": 32,
+        "size_y": 32
+    },
+    {
+        "name": "play_button",
+        "offset_x": 32,
+        "offset_y": 0,
+        "size_x": 32,
+        "size_y": 32
+    },
+    {
+        "name": "wall_1",
+        "offset_x": 64,
         "offset_y": 0,
         "size_x": 32,
         "size_y": 32
@@ -28,37 +42,142 @@
         "size_y": 37
     },
     {
-        "name": "block",
+        "name": "wall_2",
         "offset_x": 0,
         "offset_y": 96,
+        "size_x": 96,
+        "size_y": 96
+    },
+    {
+        "name": "wall_3",
+        "offset_x": 96,
+        "offset_y": 96,
+        "size_x": 96,
+        "size_y": 96
+    },
+    {
+        "name": "wall_4_272",
+        "offset_x": 192,
+        "offset_y": 96,
+        "size_x": 96,
+        "size_y": 96
+    },
+    {
+        "name": "wall_4_48",
+        "offset_x": 288,
+        "offset_y": 96,
+        "size_x": 96,
+        "size_y": 96
+    },
+    {
+        "name": "wall_4_48_pixel_ratio",
+        "offset_x": 384,
+        "offset_y": 96,
+        "size_x": 96,
+        "size_y": 96
+    },
+    {
+        "name": "block",
+        "offset_x": 0,
+        "offset_y": 192,
         "size_x": 103,
         "size_y": 98
     },
     {
         "name": "ben10_1",
         "offset_x": 0,
-        "offset_y": 194,
+        "offset_y": 290,
         "size_x": 70,
         "size_y": 205
     },
     {
         "name": "omnitrix_secret_btn_simple",
-        "offset_x": 103,
+        "offset_x": 480,
         "offset_y": 96,
         "size_x": 300,
         "size_y": 65
     },
     {
-        "name": "B10_VT4C_BN_04",
+        "name": "concrete368a",
         "offset_x": 70,
-        "offset_y": 194,
+        "offset_y": 290,
+        "size_x": 256,
+        "size_y": 128
+    },
+    {
+        "name": "dirt",
+        "offset_x": 326,
+        "offset_y": 290,
+        "size_x": 256,
+        "size_y": 128
+    },
+    {
+        "name": "rock",
+        "offset_x": 582,
+        "offset_y": 290,
+        "size_x": 256,
+        "size_y": 128
+    },
+    {
+        "name": "snow",
+        "offset_x": 838,
+        "offset_y": 290,
+        "size_x": 256,
+        "size_y": 128
+    },
+    {
+        "name": "B10_VT4C_BN_04",
+        "offset_x": 0,
+        "offset_y": 495,
         "size_x": 185,
         "size_y": 182
     },
     {
+        "name": "brickpavers2",
+        "offset_x": 0,
+        "offset_y": 677,
+        "size_x": 512,
+        "size_y": 256
+    },
+    {
+        "name": "cretebrick970",
+        "offset_x": 512,
+        "offset_y": 677,
+        "size_x": 512,
+        "size_y": 256
+    },
+    {
+        "name": "dirtsand2",
+        "offset_x": 1024,
+        "offset_y": 677,
+        "size_x": 512,
+        "size_y": 256
+    },
+    {
+        "name": "stone",
+        "offset_x": 0,
+        "offset_y": 933,
+        "size_x": 512,
+        "size_y": 256
+    },
+    {
+        "name": "tilable-IMG_0044-grey",
+        "offset_x": 512,
+        "offset_y": 933,
+        "size_x": 512,
+        "size_y": 256
+    },
+    {
+        "name": "tileable-S7002876-grey",
+        "offset_x": 1024,
+        "offset_y": 933,
+        "size_x": 512,
+        "size_y": 256
+    },
+    {
         "name": "background",
         "offset_x": 0,
-        "offset_y": 399,
+        "offset_y": 1189,
         "size_x": 500,
         "size_y": 500
     }

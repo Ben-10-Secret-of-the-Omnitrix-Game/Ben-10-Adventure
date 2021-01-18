@@ -22,9 +22,11 @@ if __name__ == '__main__':
     script = Loader(join("ben_ten_adventure", "game_engine.py"), "ben_ten_adventure.game_engine", 1)
     
     game_engine.init()
+    # game_engine.start()
     script.start()
     
     while True:
+        # game_engine.game_loop_handler()
         if script.has_changed():
             pygame.time.wait(500)
         script.game_loop_handler()
