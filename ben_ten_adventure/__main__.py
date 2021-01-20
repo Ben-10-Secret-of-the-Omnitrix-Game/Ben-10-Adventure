@@ -8,13 +8,14 @@ if __name__ == '__main__':
 """
 import logging
 import coloredlogs
+
 import pygame
 
 from hotreload import Loader
 from os.path import join
 
-from .tests import utils_test
-from . import game_engine
+from ben_ten_adventure.tests import utils_test
+from ben_ten_adventure import game_engine
 
 
 if __name__ == '__main__':

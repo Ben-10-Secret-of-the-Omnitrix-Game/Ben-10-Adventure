@@ -1,4 +1,4 @@
-from ..utils import GameAssets, init_resource_dirs
+from ben_ten_adventure.utils import GameAssets, init_resource_dirs
 import logging
 
 
