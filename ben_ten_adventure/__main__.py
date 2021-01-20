@@ -11,11 +11,11 @@ import coloredlogs
 
 import pygame
 
-from hotreload import Loader
+from hotreload.reloader import Loader
 from os.path import join
 
-from ben_ten_adventure.tests import utils_test
-from ben_ten_adventure import game_engine
+from .tests import utils_test
+from . import game_engine
 
 
 if __name__ == '__main__':

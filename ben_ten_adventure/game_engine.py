@@ -7,9 +7,9 @@ import logging
 import pygame
 import sys
 
-from ben_ten_adventure.utils import GameAssets, init_resource_dirs
-from ben_ten_adventure.isometric_graphics import Tile
-from hotreload import Loader
+from .utils import GameAssets, init_resource_dirs
+from .isometric_graphics import Tile
+from hotreload.reloader import Loader
 from os.path import join
 
 def draw_main_ui():
