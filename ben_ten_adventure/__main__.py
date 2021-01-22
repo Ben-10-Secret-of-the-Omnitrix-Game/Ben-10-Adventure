@@ -17,8 +17,7 @@ from os.path import join
 from .tests import utils_test
 from . import game_engine
 
-
-if __name__ == '__main__':
+def main():
     coloredlogs.install(level='DEBUG')
     script = Loader(join("ben_ten_adventure", "game_engine.py"), "ben_ten_adventure.game_engine", 1)
     
@@ -36,3 +35,6 @@ if __name__ == '__main__':
     # Make sure to comment game_engine.init() and script.start() and the rest related to game_engine and script.
     # utils_test.run_tests()
     
+
+if __name__ == '__main__':
+    main()
