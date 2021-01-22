@@ -56,5 +56,8 @@ docs/_build/
 # PyBuilder
 target/
 
+# intellij 
+.idea/
+
 # custom packages
 hotreload/
