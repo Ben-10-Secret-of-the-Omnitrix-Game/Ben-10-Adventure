@@ -8,8 +8,8 @@ import pygame
 import sys
 
 from .utils import GameAssets, init_resource_dirs
-from .isometric_graphics import Tile
-from hotreload.reloader import Loader
+from .graphics import Tile
+from hotreload import Loader
 from os.path import join
 
 def draw_main_ui():
@@ -29,7 +29,7 @@ def init():
     
 def start():
     global ga, clock, fps, script
-    script = Loader(join("ben_ten_adventure", "isometric_graphics.py"), "ben_ten_adventure.isometric_graphics", 1)
+    script = Loader(join("ben_ten_adventure", "graphics.py"), "ben_ten_adventure.graphics", 1)
     # .utils.py
     init_resource_dirs()
     ga = GameAssets()
@@ -51,7 +51,6 @@ def game_loop_handler():
             border_offset = screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
         elif event.type == pygame.MOUSEMOTION:
             mouse_x_y = pygame.mouse.get_pos()
-            # print(mouse_x_y)
 
     clock.tick(fps)
     if script.has_changed():
@@ -60,7 +59,6 @@ def game_loop_handler():
         for col in range(0, MAP_HEIGHT):
             tile = script.Tile(row, col, border_offset=border_offset, image=ga.snow, tile_size=TILE_SIZE)
             tile.render_isometric_tile(screen)
-            # print(tile.iso_x, tile.iso_y)
     # 
     # TODO replace with update
     pygame.display.flip()

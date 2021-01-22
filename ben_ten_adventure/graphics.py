@@ -49,7 +49,6 @@ class Tile(BasicIsometric):
         # offset = self.tile_size[0] // 32
         self.iso_x, self.iso_y = self.cartesian_to_isometric(
         cart_x, cart_y)
-        # if cart_x <= 2 and cart_y <= 2:
         # logging.info(f"24 Original ({self.x}, {self.y}); Decart ({cart_x}, {cart_y}); Isometric ({self.iso_x}, {self.iso_y}); Tile Size: {self.tile_size}")
         # logging.info(f"Original ({self.x}, {self.y}); Decart ({cart_x}, {cart_y}); Isometric ({self.iso_x}, {self.iso_y}); Padded ({cart_x + self.border_offset}, {cart_y - self.border_offset / 2})")
         screen.blit(self.texture, (self.iso_x + 500, self.iso_y + 100))

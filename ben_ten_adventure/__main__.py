@@ -11,7 +11,7 @@ import coloredlogs
 
 import pygame
 
-from hotreload.reloader import Loader
+from hotreload import Loader
 from os.path import join
 
 from .tests import utils_test
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     script = Loader(join("ben_ten_adventure", "game_engine.py"), "ben_ten_adventure.game_engine", 1)
     
     game_engine.init()
-    # game_engine.start()
+    # game_engine.start() and script.start() is the same
     script.start()
     
     while True:
@@ -32,5 +32,7 @@ if __name__ == '__main__':
             pygame.time.wait(500)
         script.game_loop_handler()
 
+    # run it if you need to check functionality fast and it doesn't depends on pygame initialization.
+    # Make sure to comment game_engine.init() and script.start() and the rest related to game_engine and script.
     # utils_test.run_tests()
     
