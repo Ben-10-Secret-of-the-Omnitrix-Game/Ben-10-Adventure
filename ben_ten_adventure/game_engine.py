@@ -8,36 +8,34 @@ import pygame
 import sys
 
 from .utils import GameAssets, init_resource_dirs
-from .graphics import Tile
-from hotreload import Loader
+from . import graphics
+
+from hotreload.reloader import Loader
 
 from os.path import join
 from os import environ
 
-import ctypes
+# import ctypes
 
-environ['SDL_VIDEO_CENTERED'] = '1'
-user32 = ctypes.windll.user32
-screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+# environ['SDL_VIDEO_CENTERED'] = '1'
+# user32 = ctypes.windll.user32
+# screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
-if screensize[0] > 1920:
-    win_size = (1920, 1080)
-elif screensize[0] > 1280:
-    win_size = (1280, 720)
-else:
-    win_size = (720, 480)
+# if screensize[0] > 1920:
+#     win_size = (1920, 1080)
+# elif screensize[0] > 1280:
+#     win_size = (1280, 720)
+# else:
+#     win_size = (720, 480)
 
-
-def draw_main_ui():
-    pass
-
+DEBUG = False
 
 def init():
     global screen, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, border_offset
     pygame.init()
     pygame.font.init()
 
-    screen = pygame.display.set_mode((win_size), flags=pygame.RESIZABLE)
+    screen = pygame.display.set_mode((1280, 720), flags=pygame.RESIZABLE)
     MAP_WIDTH = 5
     MAP_HEIGHT = 5
     TILE_SIZE = (32, 32)
@@ -47,7 +45,10 @@ def init():
 
 def start():
     global ga, clock, fps, script
-    script = Loader(join("ben_ten_adventure", "graphics.py"), "ben_ten_adventure.graphics", 1)
+    if DEBUG:
+        script = Loader(join("ben_ten_adventure", "graphics.py"), "ben_ten_adventure.graphics", 1)
+    else:
+        script = graphics
     # .utils.py
     init_resource_dirs()
     ga = GameAssets()
@@ -71,8 +72,9 @@ def game_loop_handler():
             mouse_x_y = pygame.mouse.get_pos()
 
     clock.tick(fps)
-    if script.has_changed():
-        pygame.time.wait(500)
+    if DEBUG:
+        if script.has_changed():
+            pygame.time.wait(500)
     for row in range(0, MAP_WIDTH):
         for col in range(0, MAP_HEIGHT):
             tile = script.Tile(row, col, border_offset=border_offset, image=ga.snow, tile_size=TILE_SIZE)
