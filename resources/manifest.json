@@ -91,8 +91,29 @@
         "size_y": 98
     },
     {
-        "name": "ben10_1",
+        "name": "ben10_4",
         "offset_x": 0,
+        "offset_y": 338,
+        "size_x": 69,
+        "size_y": 205
+    },
+    {
+        "name": "ben10_1",
+        "offset_x": 69,
+        "offset_y": 338,
+        "size_x": 70,
+        "size_y": 205
+    },
+    {
+        "name": "ben10_2",
+        "offset_x": 139,
+        "offset_y": 338,
+        "size_x": 70,
+        "size_y": 205
+    },
+    {
+        "name": "ben10_3",
+        "offset_x": 209,
         "offset_y": 338,
         "size_x": 70,
         "size_y": 205
@@ -106,28 +127,28 @@
     },
     {
         "name": "concrete368a",
-        "offset_x": 70,
+        "offset_x": 279,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "dirt",
-        "offset_x": 326,
+        "offset_x": 535,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "rock",
-        "offset_x": 582,
+        "offset_x": 791,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "snow",
-        "offset_x": 838,
+        "offset_x": 1047,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128

@@ -11,7 +11,7 @@ import coloredlogs
 
 import pygame
 
-from hotreload import Loader
+from hotreload.reloader import Loader
 from os.path import join
 
 from .tests import utils_test

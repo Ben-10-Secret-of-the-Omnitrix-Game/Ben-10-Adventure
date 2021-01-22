@@ -9,24 +9,12 @@ import sys
 
 from .utils import GameAssets, init_resource_dirs
 from .graphics import Tile
-from hotreload import Loader
+from .entity import Player
+from hotreload.reloader import Loader
 
 from os.path import join
-from os import environ
 
-import ctypes
-
-environ['SDL_VIDEO_CENTERED'] = '1'
-user32 = ctypes.windll.user32
-screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
-
-if screensize[0] > 1920:
-    win_size = (1920, 1080)
-elif screensize[0] > 1280:
-    win_size = (1280, 720)
-else:
-    win_size = (720, 480)
-
+win_size = (1280, 720)
 
 def draw_main_ui():
     pass
@@ -46,7 +34,7 @@ def init():
 
 
 def start():
-    global ga, clock, fps, script
+    global ga, clock, fps, script, ben
     script = Loader(join("ben_ten_adventure", "graphics.py"), "ben_ten_adventure.graphics", 1)
     # .utils.py
     init_resource_dirs()
@@ -54,11 +42,17 @@ def start():
     clock = pygame.time.Clock()
     fps = 30
 
+    ben_images = [ga.ben10_1, ga.ben10_2, ga.ben10_3, ga.ben10_4]
+    ben = Player('Ben', ben_images, 10, 10, 10)
+
+
 
 def game_loop_handler():
     global border_offset
     screen.fill((0, 0, 0, 0))
+    moving = False
     for event in pygame.event.get():
+        btns_pressed = tuple(list(pygame.key.get_pressed())[79:83])
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -69,6 +63,9 @@ def game_loop_handler():
             border_offset = screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
         elif event.type == pygame.MOUSEMOTION:
             mouse_x_y = pygame.mouse.get_pos()
+        elif event.type == pygame.KEYDOWN:
+            ben._move(btns_pressed)
+            print(btns_pressed)
 
     clock.tick(fps)
     if script.has_changed():
@@ -77,7 +74,7 @@ def game_loop_handler():
         for col in range(0, MAP_HEIGHT):
             tile = script.Tile(row, col, border_offset=border_offset, image=ga.snow, tile_size=TILE_SIZE)
             tile.render_isometric_tile(screen)
-    # 
+    ben.render_isometric_player(screen)
     # TODO replace with update
     pygame.display.flip()
     # Carefull! border_offset need to convert to isometrix coordinates first! 
