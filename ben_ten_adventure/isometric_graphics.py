@@ -13,8 +13,18 @@ Certainly will be here
 import logging
 import pygame
 
+class BasicIsometric:
+    
+    def cartesian_to_isometric(self, cart_x, cart_y):
+        isometric_x = (cart_x - cart_y)
+        isometric_y = (cart_x + cart_y) / 2 
+        return isometric_x, isometric_y
+    
+    def isometric_to_cartesian(self, iso_x, iso_y):
+        pass
 
-class Tile:
+
+class Tile(BasicIsometric):
 
     def __init__(self, x, y, border_offset, image=None, tile_size=(48, 48)):
         """
@@ -26,7 +36,7 @@ class Tile:
         self.y = y
         self.texture = image
         self.border_offset = border_offset
-        self.tile_size = tile_size
+        self.tile_size = (256 / 2, 128)
         
         self.iso_x = x
         self.iso_y = y
@@ -36,10 +46,13 @@ class Tile:
         # TODO make self.tile_size Named Tuple for better code reading
         cart_x = self.x * self.tile_size[0]
         cart_y = self.y * self.tile_size[1]
+        # offset = self.tile_size[0] // 32
         self.iso_x, self.iso_y = self.cartesian_to_isometric(
-        cart_x + self.border_offset / 2, cart_y - self.border_offset / 4)
+        cart_x, cart_y)
+        # if cart_x <= 2 and cart_y <= 2:
+        # logging.info(f"24 Original ({self.x}, {self.y}); Decart ({cart_x}, {cart_y}); Isometric ({self.iso_x}, {self.iso_y}); Tile Size: {self.tile_size}")
         # logging.info(f"Original ({self.x}, {self.y}); Decart ({cart_x}, {cart_y}); Isometric ({self.iso_x}, {self.iso_y}); Padded ({cart_x + self.border_offset}, {cart_y - self.border_offset / 2})")
-        screen.blit(self.texture, (self.iso_x, self.iso_y))
+        screen.blit(self.texture, (self.iso_x + 500, self.iso_y + 100))
 
     
     def get_cell_center(self, x, y):
@@ -50,8 +63,5 @@ class Tile:
         cntr_y = cart_y + self.tile_size[1] // 2
         return self.cartesian_to_isometric(cart_x, cntr_y)
     
-    def cartesian_to_isometric(self, cart_x, cart_y):
-        isometric_x = (cart_x - cart_y)
-        isometric_y = (cart_x + cart_y) / 2
-        return isometric_x, isometric_y
+    
 

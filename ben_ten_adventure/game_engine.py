@@ -20,10 +20,10 @@ def init():
     pygame.init()
     pygame.font.init()
     
-    screen = pygame.display.set_mode((1920, 1080), flags=pygame.RESIZABLE)
+    screen = pygame.display.set_mode((1280, 720), flags=pygame.RESIZABLE)
     MAP_WIDTH = 5
     MAP_HEIGHT = 5
-    TILE_SIZE = (48, 48)
+    TILE_SIZE = (32, 32)
     # TODO replace with more approximate offset
     border_offset = screen.get_width() / 2 + TILE_SIZE[0] * MAP_WIDTH
     
@@ -39,6 +39,7 @@ def start():
 
 def game_loop_handler():
     global border_offset
+    screen.fill((0, 0, 0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -48,16 +49,19 @@ def game_loop_handler():
             screen.blit(pygame.transform.scale(screen, screen.get_size()), (0, 0))
             pygame.display.update()
             border_offset = screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
-    
+        elif event.type == pygame.MOUSEMOTION:
+            mouse_x_y = pygame.mouse.get_pos()
+            # print(mouse_x_y)
+
     clock.tick(fps)
-    screen.fill((0, 0, 0, 0))
     if script.has_changed():
         pygame.time.wait(500)
     for row in range(0, MAP_WIDTH):
         for col in range(0, MAP_HEIGHT):
-            tile = script.Tile(row, col, border_offset=border_offset, image=ga.wall_4_272, tile_size=TILE_SIZE)
+            tile = script.Tile(row, col, border_offset=border_offset, image=ga.snow, tile_size=TILE_SIZE)
             tile.render_isometric_tile(screen)
-    
+            # print(tile.iso_x, tile.iso_y)
+    # 
     # TODO replace with update
     pygame.display.flip()
     # Carefull! border_offset need to convert to isometrix coordinates first! 
