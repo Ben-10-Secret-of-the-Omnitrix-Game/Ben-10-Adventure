@@ -36,7 +36,7 @@ class Tile(BasicIsometric):
         self.y = y
         self.texture = image
         self.border_offset = border_offset
-        self.tile_size = (256 / 2, 128)
+        self.tile_size = (64, 64)
         
         self.iso_x = x
         self.iso_y = y

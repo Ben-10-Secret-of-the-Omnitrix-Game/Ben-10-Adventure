@@ -42,8 +42,8 @@ def start():
     clock = pygame.time.Clock()
     fps = 30
 
-    ben_images = [ga.ben10_1, ga.ben10_2, ga.ben10_3, ga.ben10_4]
-    ben = Player('Ben', ben_images, 10, 10, 10)
+    ben_images = [ga.ben10_1_128_128, ga.ben10_2_128_128, ga.ben10_3_128_128, ga.ben10_4_128_128]
+    ben = Player('Ben', ben_images, x=10, y=10, speed=15)
 
 
 
@@ -65,14 +65,13 @@ def game_loop_handler():
             mouse_x_y = pygame.mouse.get_pos()
         elif event.type == pygame.KEYDOWN:
             ben._move(btns_pressed)
-            print(btns_pressed)
 
     clock.tick(fps)
     if script.has_changed():
         pygame.time.wait(500)
     for row in range(0, MAP_WIDTH):
         for col in range(0, MAP_HEIGHT):
-            tile = script.Tile(row, col, border_offset=border_offset, image=ga.snow, tile_size=TILE_SIZE)
+            tile = script.Tile(row, col, border_offset=border_offset, image=ga.wall_5_marine, tile_size=TILE_SIZE)
             tile.render_isometric_tile(screen)
     ben.render_isometric_player(screen)
     # TODO replace with update

@@ -15,7 +15,7 @@ class BaseEntity(pygame.sprite.Sprite):
         3. Extend functionality 
 
     """
-    def __init__(self, x, y, skin, speed=1):
+    def __init__(self, x, y, skin, speed=3):
         # pygame.sprite.Sprite.__init__(self)
         super().__init__()
         """
