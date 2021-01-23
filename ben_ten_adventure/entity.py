@@ -81,10 +81,9 @@ class Player(BaseEntity):
         self.x = x
         self.y = y
         self.width, self.height = self.texture.get_size()
-        self.render = RenderPlayer(self)
+        self._render = RenderPlayer(self)
         self.hp = hp
         self.is_killed = False
-        self.screen = None
 
     def move(self, keys_states, speed=None):
         if not self.is_killed:
@@ -100,14 +99,15 @@ class Player(BaseEntity):
             except KeyError:
                 pass
 
-    def render(self):
-        self.render.render_isometric_player()
+    def render(self, screen=None):
+        self._render.render_isometric_player(screen)
 
     def is_attacked(self):
-        self.render.is_attacked()
+        self._render.is_attacked()
+        
+    def get_rect(self):
+        return self.texture.get_rect()
 
-    def set_screen(self, screen):
-        self.render.screen = screen
 
 
 class NPC(BaseEntity):
@@ -129,15 +129,15 @@ class NPC(BaseEntity):
         self.x = x
         self.y = y
         self.width, self.height = self.texture.get_size()
-        self.render = RenderNPC(self)
+        self._render = RenderNPC(self)
         self.hp = hp
         self.attack_pause = 40
 
         """if there is no weapon, NPC will try to kill player without it"""
         self.damage = 20
 
-    def render(self, screen):
-        self.render.render_isometric_npc(screen)
+    def render(self, screen=None):
+        self._render.render_isometric_npc(screen)
 
     def update(self):
         self.x += self.speed
@@ -179,3 +179,5 @@ class NPC(BaseEntity):
                     player.is_killed = True
                 self.attack_pause = 0
                 
+    def get_rect(self):
+        return self.texture.get_rect()
