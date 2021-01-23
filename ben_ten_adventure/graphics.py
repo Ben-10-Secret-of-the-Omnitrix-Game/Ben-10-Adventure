@@ -17,7 +17,7 @@ class BasicIsometric:
     
     def cartesian_to_isometric(self, cart_x, cart_y):
         isometric_x = (cart_x - cart_y)
-        isometric_y = (cart_x + cart_y) / 2 
+        isometric_y = (cart_x + cart_y) / 2
         return isometric_x, isometric_y
     
     def isometric_to_cartesian(self, iso_x, iso_y):
@@ -63,4 +63,12 @@ class Tile(BasicIsometric):
         return self.cartesian_to_isometric(cart_x, cntr_y)
     
     
+class RenderPlayer:
+    def __init__(self, player):
+        self.player = player
+    def player_place(self, x, y):
+        return x, y - self.player.height + 20
 
+    def render_isometric_player(self, screen):
+        screen.blit(self.player.texture,
+                    self.player_place(*self.player.cartesian_to_isometric(self.player.x, self.player.y)))

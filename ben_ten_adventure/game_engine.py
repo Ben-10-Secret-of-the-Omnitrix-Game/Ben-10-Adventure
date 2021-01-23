@@ -8,7 +8,6 @@ import pygame
 import sys
 
 from .utils import GameAssets, init_resource_dirs
-from .graphics import Tile
 from .entity import Player
 from .ui import ButtonSprite
 
@@ -93,7 +92,7 @@ def handle_event():
         elif event.type == pygame.MOUSEMOTION:
             mouse_x_y = pygame.mouse.get_pos()
         elif event.type == pygame.KEYDOWN:
-            ben._move(btns_pressed)
+            ben.move(btns_pressed)
 
 def game_loop_handler():
     global border_offset

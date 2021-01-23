@@ -1,4 +1,5 @@
 import pygame
+from .graphics import RenderPlayer
 
 
 class BaseEntity(pygame.sprite.Sprite):
@@ -77,13 +78,9 @@ class Player(BaseEntity):
         self.x = x
         self.y = y
         self.width, self.height = self.texture.get_size()
+        self.render = RenderPlayer(self)
 
-    def player_place(self, pos):
-        x = pos[0]
-        y = pos[1]
-        return x, y - self.height + 20
-
-    def _move(self, keys_states, speed=None):
+    def move(self, keys_states, speed=None):
         if speed is None:
             speed = self.speed
         try:
@@ -96,7 +93,7 @@ class Player(BaseEntity):
             pass
 
     def render_isometric_player(self, screen):
-        screen.blit(self.texture, self.player_place(self.cartesian_to_isometric(self.x, self.y)))
+        self.render.render_isometric_player(screen)
 
 class NPC(BaseEntity):
     """
