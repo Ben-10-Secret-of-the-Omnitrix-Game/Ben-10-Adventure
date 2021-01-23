@@ -65,7 +65,7 @@ def init():
 
 
 def start():
-    global ga, clock, fps, script, ben, alien_v
+    global screen, ga, clock, fps, script, ben, alien_v
     script = Loader(join("ben_ten_adventure", "graphics.py"), "ben_ten_adventure.graphics", 1)
     # .utils.py
     init_resource_dirs()
@@ -77,12 +77,14 @@ def start():
     # draw_main_ui()
 
     alien_v_images = [ga.Alien_V_128_128, ga.Alien_V_128_128, ga.Alien_V_128_128, ga.Alien_V_128_128]
-    alien_v = NPC('', alien_v_images, 20, 20, speed=1)
+    alien_v = NPC('', alien_v_images, 200, 200, speed=1)
     big_gun = BaseWeapon(100, 50)
     alien_v.set_weapon(big_gun)
     
     ben_images = [ga.ben10_1_128_128, ga.ben10_2_128_128, ga.ben10_3_128_128, ga.ben10_4_128_128]
     ben = Player('Ben', ben_images, x=10, y=10, speed=15)
+    ben.set_screen(screen)
+
 
 def handle_event():
     for event in pygame.event.get():
@@ -113,7 +115,7 @@ def game_loop_handler():
         for col in range(0, MAP_HEIGHT):
             tile = script.Tile(row, col, border_offset=border_offset, image=ga.wall_5_marine, tile_size=TILE_SIZE)
             tile.render_isometric_tile(screen)
-    ben.render_isometric_player(screen)
+    ben.render_isometric_player()
     alien_v.go_to(ben)
     alien_v.attack(ben)
     pygame.time.wait(50)

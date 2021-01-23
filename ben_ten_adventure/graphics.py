@@ -12,6 +12,7 @@ Certainly will be here
 """
 import logging
 import pygame
+from random import choice
 
 class BasicIsometric:
     
@@ -57,14 +58,35 @@ class Tile(BasicIsometric):
 class RenderPlayer:
     def __init__(self, player):
         self.player = player
+        self.screen = None
 
     def player_place(self, x, y):
         return x, y - self.player.height + 20
 
-    def render_isometric_player(self, screen):
+    def render_isometric_player(self):
+        font = pygame.font.Font(None, 40)
         if not self.player.is_killed:
-            screen.blit(self.player.texture,
+            self.screen.blit(self.player.texture,
                         self.player_place(*self.player.cartesian_to_isometric(self.player.x, self.player.y)))
+            text = font.render('Health: ' + str(self.player.hp), True, (100, 255, 100))
+        else:
+            text = font.render('Wasted', True, (255, 100, 100))
+        self.screen.blit(text, (650, 20))
+
+    def is_attacked(self):
+        duration = 0
+        changes = [-3, -2, -1, 0, 1, 2, 3]
+        x = self.player.x
+        y = self.player.y
+        while duration != 5:
+            self.player.x += choice(changes)
+            self.player.y += choice(changes)
+            self.render_isometric_player()
+            pygame.display.flip()
+            pygame.time.wait(10)
+            duration += 1
+        self.player.x = x
+        self.player.y = y
 
 
 class RenderNPC:

@@ -82,6 +82,7 @@ class Player(BaseEntity):
         self.render = RenderPlayer(self)
         self.hp = hp
         self.is_killed = False
+        self.screen = None
 
     def move(self, keys_states, speed=None):
         if not self.is_killed:
@@ -97,8 +98,15 @@ class Player(BaseEntity):
             except KeyError:
                 pass
 
-    def render_isometric_player(self, screen):
-        self.render.render_isometric_player(screen)
+    def render_isometric_player(self):
+        self.render.render_isometric_player()
+
+    def is_attacked(self):
+        self.render.is_attacked()
+
+    def set_screen(self, screen):
+        self.screen = screen
+        self.render.screen = screen
 
 
 class NPC(BaseEntity):
@@ -122,7 +130,7 @@ class NPC(BaseEntity):
         self.width, self.height = self.texture.get_size()
         self.render = RenderNPC(self)
         self.hp = hp
-        self.attack_pause = 20
+        self.attack_pause = 40
 
         """if there is no weapon, NPC will try to kill player without it"""
         self.damage = 20
@@ -138,7 +146,7 @@ class NPC(BaseEntity):
         self.weapon = weapon
 
     def go_to(self, player):
-        if self.attack_pause < 20:
+        if self.attack_pause < 40:
             self.attack_pause += 1
         if self.speed > abs(self.x - player.x):
             self.x += self.x - player.x
@@ -162,10 +170,10 @@ class NPC(BaseEntity):
         else:
             damage = self.weapon.damage
             radius = self.weapon.radius
-        if self.attack_pause == 20 and player.hp > 0:
+        if self.attack_pause == 40 and player.hp > 0:
             if ((self.x - player.x) ** 2 + (self.y - player.y) ** 2) ** 0.5 <= radius:
                 player.hp -= damage
+                player.is_attacked()
                 if player.hp <= 0:
                     player.is_killed = True
-                print(player.hp)
                 self.attack_pause = 0
