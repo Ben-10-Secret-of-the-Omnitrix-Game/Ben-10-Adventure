@@ -75,7 +75,8 @@ def start():
 
     # draw ui
     # draw_main_ui()
-
+    screen.fill((0, 0, 0, 0))
+    
     alien_v_images = [ga.Alien_V_128_128, ga.Alien_V_128_128, ga.Alien_V_128_128, ga.Alien_V_128_128]
     alien_v = NPC('', alien_v_images, 200, 200, speed=1)
     big_gun = BaseWeapon(100, 50)
@@ -96,7 +97,7 @@ def handle_event():
             # screen.fill((0, 0, 0))
             screen.blit(pygame.transform.scale(screen, screen.get_size()), (0, 0))
             pygame.display.update()
-            border_offset = screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
+            # border_offset = screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
         elif event.type == pygame.MOUSEMOTION:
             mouse_x_y = pygame.mouse.get_pos()
         elif event.type == pygame.KEYDOWN:
@@ -104,9 +105,9 @@ def handle_event():
 
 def game_loop_handler():
     global border_offset, ben, alien_v
-    screen.fill((0, 0, 0, 0))
 
     handle_event()
+    
     clock.tick(fps)
     
     if script.has_changed():
@@ -115,11 +116,11 @@ def game_loop_handler():
         for col in range(0, MAP_HEIGHT):
             tile = script.Tile(row, col, border_offset=border_offset, image=ga.wall_5_marine, tile_size=TILE_SIZE)
             tile.render_isometric_tile(screen)
-    ben.render_isometric_player()
+    ben.render()
     alien_v.go_to(ben)
     alien_v.attack(ben)
     pygame.time.wait(50)
-    alien_v.render_isometric_npc(screen)
+    alien_v.render(screen)
     # TODO replace with update
     pygame.display.flip()
     # Carefull! border_offset need to convert to isometrix coordinates first! 

@@ -56,6 +56,8 @@ class BaseEntity(pygame.sprite.Sprite):
         isometric_y = (cart_x + cart_y) / 2
         return isometric_x, isometric_y
 
+    def render(self):
+        pass
 
 class Player(BaseEntity):
     """
@@ -98,14 +100,13 @@ class Player(BaseEntity):
             except KeyError:
                 pass
 
-    def render_isometric_player(self):
+    def render(self):
         self.render.render_isometric_player()
 
     def is_attacked(self):
         self.render.is_attacked()
 
     def set_screen(self, screen):
-        self.screen = screen
         self.render.screen = screen
 
 
@@ -135,7 +136,7 @@ class NPC(BaseEntity):
         """if there is no weapon, NPC will try to kill player without it"""
         self.damage = 20
 
-    def render_isometric_npc(self, screen):
+    def render(self, screen):
         self.render.render_isometric_npc(screen)
 
     def update(self):
@@ -177,3 +178,4 @@ class NPC(BaseEntity):
                 if player.hp <= 0:
                     player.is_killed = True
                 self.attack_pause = 0
+                
