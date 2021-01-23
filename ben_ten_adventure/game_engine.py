@@ -8,8 +8,9 @@ import pygame
 import sys
 
 from .utils import GameAssets, init_resource_dirs
-from .entity import Player
+from .entity import Player, NPC
 from .ui import ButtonSprite
+from.weapon import BaseWeapon
 
 from hotreload.reloader import Loader
 
@@ -40,13 +41,13 @@ def vertical(size, startcolor, endcolor):
                       )
     return pygame.transform.scale(bigSurf, size)
 
-def draw_main_ui():
-    screen.blit(vertical(win_size, (255, 213, 65, 255), (49, 62, 76, 255)), (0, 0))
-    start_adventure_button = ButtonSprite(400, 400, [ga.start_adventure_button_x2])
-    options_button = ButtonSprite(440, 470, [ga.options_button_x2])
-    start_adventure_button.draw(screen)
-    options_button.draw(screen)
-    
+# def draw_main_ui():
+#     screen.blit(vertical(win_size, (255, 213, 65, 255), (49, 62, 76, 255)), (0, 0))
+#     start_adventure_button = ButtonSprite(400, 400, [ga.start_adventure_button_x2])
+#     options_button = ButtonSprite(440, 470, [ga.options_button_x2])
+#     start_adventure_button.draw(screen)
+#     options_button.draw(screen)
+#
 
 
 def init():
@@ -64,7 +65,7 @@ def init():
 
 
 def start():
-    global ga, clock, fps, script, ben
+    global ga, clock, fps, script, ben, alien_v
     script = Loader(join("ben_ten_adventure", "graphics.py"), "ben_ten_adventure.graphics", 1)
     # .utils.py
     init_resource_dirs()
@@ -73,7 +74,12 @@ def start():
     fps = 30
 
     # draw ui
-    draw_main_ui()
+    # draw_main_ui()
+
+    alien_v_images = [ga.Alien_V_128_128, ga.Alien_V_128_128, ga.Alien_V_128_128, ga.Alien_V_128_128]
+    alien_v = NPC('', alien_v_images, 20, 20, speed=1)
+    big_gun = BaseWeapon(100, 50)
+    alien_v.set_weapon(big_gun)
     
     ben_images = [ga.ben10_1_128_128, ga.ben10_2_128_128, ga.ben10_3_128_128, ga.ben10_4_128_128]
     ben = Player('Ben', ben_images, x=10, y=10, speed=15)
@@ -95,19 +101,23 @@ def handle_event():
             ben.move(btns_pressed)
 
 def game_loop_handler():
-    global border_offset
-    # screen.fill((0, 0, 0, 0))
-    moving = False
+    global border_offset, ben, alien_v
+    screen.fill((0, 0, 0, 0))
+
     handle_event()
     clock.tick(fps)
     
     if script.has_changed():
         pygame.time.wait(500)
-    # for row in range(0, MAP_WIDTH):
-    #     for col in range(0, MAP_HEIGHT):
-    #         tile = script.Tile(row, col, border_offset=border_offset, image=ga.wall_5_marine, tile_size=TILE_SIZE)
-    #         tile.render_isometric_tile(screen)
-    # ben.render_isometric_player(screen)
+    for row in range(0, MAP_WIDTH):
+        for col in range(0, MAP_HEIGHT):
+            tile = script.Tile(row, col, border_offset=border_offset, image=ga.wall_5_marine, tile_size=TILE_SIZE)
+            tile.render_isometric_tile(screen)
+    ben.render_isometric_player(screen)
+    alien_v.go_to(ben)
+    alien_v.attack(ben)
+    pygame.time.wait(50)
+    alien_v.render_isometric_npc(screen)
     # TODO replace with update
     pygame.display.flip()
     # Carefull! border_offset need to convert to isometrix coordinates first! 

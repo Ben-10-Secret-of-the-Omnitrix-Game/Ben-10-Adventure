@@ -52,23 +52,28 @@ class Tile(BasicIsometric):
         # logging.info(f"24 Original ({self.x}, {self.y}); Decart ({cart_x}, {cart_y}); Isometric ({self.iso_x}, {self.iso_y}); Tile Size: {self.tile_size}")
         # logging.info(f"Original ({self.x}, {self.y}); Decart ({cart_x}, {cart_y}); Isometric ({self.iso_x}, {self.iso_y}); Padded ({cart_x + self.border_offset}, {cart_y - self.border_offset / 2})")
         screen.blit(self.texture, (self.iso_x + 500, self.iso_y + 100))
-
-    
-    def get_cell_center(self, x, y):
-        # TODO add documentation. Simplify code, increase readability !!!
-        cart_x = (x + 1) * self.tile_size[0] + self.border_offset
-        cart_y = (y - 2) * self.tile_size[1] + self.border_offset
-        cntr_x = cart_x + self.tile_size[0] // 2
-        cntr_y = cart_y + self.tile_size[1] // 2
-        return self.cartesian_to_isometric(cart_x, cntr_y)
     
     
 class RenderPlayer:
     def __init__(self, player):
         self.player = player
+
     def player_place(self, x, y):
         return x, y - self.player.height + 20
 
     def render_isometric_player(self, screen):
-        screen.blit(self.player.texture,
-                    self.player_place(*self.player.cartesian_to_isometric(self.player.x, self.player.y)))
+        if not self.player.is_killed:
+            screen.blit(self.player.texture,
+                        self.player_place(*self.player.cartesian_to_isometric(self.player.x, self.player.y)))
+
+
+class RenderNPC:
+    def __init__(self, npc):
+        self.npc = npc
+
+    def npc_place(self, x, y):
+        return x, y - self.npc.height + 20
+
+    def render_isometric_npc(self, screen):
+        screen.blit(self.npc.texture,
+                    self.npc_place(*self.npc.cartesian_to_isometric(self.npc.x, self.npc.y)))

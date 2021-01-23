@@ -1,5 +1,6 @@
 import pygame
-from .graphics import RenderPlayer
+from .graphics import RenderPlayer, RenderNPC
+from .weapon import BaseWeapon
 
 
 class BaseEntity(pygame.sprite.Sprite):
@@ -65,7 +66,7 @@ class Player(BaseEntity):
 
     """
 
-    def __init__(self, name, image=None, x=0, y=0, speed=1):
+    def __init__(self, name, image=None, hp=200, x=0, y=0, speed=1):
         super().__init__(x, y, '', speed)
         """
         x, y - coords
@@ -79,21 +80,26 @@ class Player(BaseEntity):
         self.y = y
         self.width, self.height = self.texture.get_size()
         self.render = RenderPlayer(self)
+        self.hp = hp
+        self.is_killed = False
 
     def move(self, keys_states, speed=None):
-        if speed is None:
-            speed = self.speed
-        try:
-            direction = self._direction_map[keys_states]
-            self.x = self.x + (direction[0]['dx'] * speed)
-            self.y = self.y + (direction[0]['dy'] * speed)
-            self.rotation = direction[1] - 1
-            self.texture = self.image[self.rotation]
-        except KeyError:
-            pass
+        if not self.is_killed:
+            if speed is None:
+                speed = self.speed
+            try:
+                direction = self._direction_map[keys_states]
+                self.x = self.x + (direction[0]['dx'] * speed)
+                self.y = self.y + (direction[0]['dy'] * speed)
+                self.rotation = direction[1] - 1
+                if not self.is_killed:
+                    self.texture = self.image[self.rotation]
+            except KeyError:
+                pass
 
     def render_isometric_player(self, screen):
         self.render.render_isometric_player(screen)
+
 
 class NPC(BaseEntity):
     """
@@ -103,4 +109,63 @@ class NPC(BaseEntity):
         * Nonone control it with keyboard, mouse, any other stuff.
         * has primitive actions, generally it's stupid AI or hardcoded actions.
     """
-    pass
+
+    def __init__(self, skin, image=None, hp=100, x=0, y=0, speed=1):
+        super().__init__(x, y, '', speed)
+        self.weapon = None
+        self.skin = skin
+        self.image = image
+        if image:
+            self.texture = image[self.rotation]
+        self.x = x
+        self.y = y
+        self.width, self.height = self.texture.get_size()
+        self.render = RenderNPC(self)
+        self.hp = hp
+        self.attack_pause = 20
+
+        """if there is no weapon, NPC will try to kill player without it"""
+        self.damage = 20
+
+    def render_isometric_npc(self, screen):
+        self.render.render_isometric_npc(screen)
+
+    def update(self):
+        self.x += self.speed
+        self.y += self.speed
+
+    def set_weapon(self, weapon):
+        self.weapon = weapon
+
+    def go_to(self, player):
+        if self.attack_pause < 20:
+            self.attack_pause += 1
+        if self.speed > abs(self.x - player.x):
+            self.x += self.x - player.x
+        elif self.x != player.x:
+            if self.x > player.x:
+                self.x -= self.speed
+            else:
+                self.x += self.speed
+        if self.speed > abs(self.y - player.y):
+            self.y += self.y - player.y
+        elif self.y != player.y:
+            if self.y > player.y:
+                self.y -= self.speed
+            else:
+                self.y += self.speed
+
+    def attack(self, player):
+        if self.weapon == None:
+            damage = self.damage
+            radius = 1
+        else:
+            damage = self.weapon.damage
+            radius = self.weapon.radius
+        if self.attack_pause == 20 and player.hp > 0:
+            if ((self.x - player.x) ** 2 + (self.y - player.y) ** 2) ** 0.5 <= radius:
+                player.hp -= damage
+                if player.hp <= 0:
+                    player.is_killed = True
+                print(player.hp)
+                self.attack_pause = 0
