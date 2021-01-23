@@ -10,14 +10,44 @@ import sys
 from .utils import GameAssets, init_resource_dirs
 from .graphics import Tile
 from .entity import Player
+from .ui import ButtonSprite
+
 from hotreload.reloader import Loader
 
 from os.path import join
 
 win_size = (1280, 720)
 
+def vertical(size, startcolor, endcolor):
+    """
+    Draws a vertical linear gradient filling the entire surface. Returns a
+    surface filled with the gradient (numeric is only 2-3 times faster).
+    """
+    height = size[1]
+    bigSurf = pygame.Surface((1,height)).convert_alpha()
+    dd = 1.0/height
+    sr, sg, sb, sa = startcolor
+    er, eg, eb, ea = endcolor
+    rm = (er-sr)*dd
+    gm = (eg-sg)*dd
+    bm = (eb-sb)*dd
+    am = (ea-sa)*dd
+    for y in range(height):
+        bigSurf.set_at((0,y),
+                        (int(sr + rm*y),
+                         int(sg + gm*y),
+                         int(sb + bm*y),
+                         int(sa + am*y))
+                      )
+    return pygame.transform.scale(bigSurf, size)
+
 def draw_main_ui():
-    pass
+    screen.blit(vertical(win_size, (255, 213, 65, 255), (49, 62, 76, 255)), (0, 0))
+    start_adventure_button = ButtonSprite(400, 400, [ga.start_adventure_button_x2])
+    options_button = ButtonSprite(440, 470, [ga.options_button_x2])
+    start_adventure_button.draw(screen)
+    options_button.draw(screen)
+    
 
 
 def init():
@@ -31,6 +61,7 @@ def init():
     TILE_SIZE = (32, 32)
     # TODO replace with more approximate offset
     border_offset = screen.get_width() / 2 + TILE_SIZE[0] * MAP_WIDTH
+    
 
 
 def start():
@@ -42,22 +73,20 @@ def start():
     clock = pygame.time.Clock()
     fps = 30
 
+    # draw ui
+    draw_main_ui()
+    
     ben_images = [ga.ben10_1_128_128, ga.ben10_2_128_128, ga.ben10_3_128_128, ga.ben10_4_128_128]
     ben = Player('Ben', ben_images, x=10, y=10, speed=15)
 
-
-
-def game_loop_handler():
-    global border_offset
-    screen.fill((0, 0, 0, 0))
-    moving = False
+def handle_event():
     for event in pygame.event.get():
         btns_pressed = tuple(list(pygame.key.get_pressed())[79:83])
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
         elif event.type == pygame.VIDEOEXPOSE:  # handles window minimising/maximising
-            screen.fill((0, 0, 0))
+            # screen.fill((0, 0, 0))
             screen.blit(pygame.transform.scale(screen, screen.get_size()), (0, 0))
             pygame.display.update()
             border_offset = screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
@@ -66,15 +95,29 @@ def game_loop_handler():
         elif event.type == pygame.KEYDOWN:
             ben._move(btns_pressed)
 
+def game_loop_handler():
+    global border_offset
+    # screen.fill((0, 0, 0, 0))
+    moving = False
+    handle_event()
     clock.tick(fps)
+    
     if script.has_changed():
         pygame.time.wait(500)
-    for row in range(0, MAP_WIDTH):
-        for col in range(0, MAP_HEIGHT):
-            tile = script.Tile(row, col, border_offset=border_offset, image=ga.wall_5_marine, tile_size=TILE_SIZE)
-            tile.render_isometric_tile(screen)
-    ben.render_isometric_player(screen)
+    # for row in range(0, MAP_WIDTH):
+    #     for col in range(0, MAP_HEIGHT):
+    #         tile = script.Tile(row, col, border_offset=border_offset, image=ga.wall_5_marine, tile_size=TILE_SIZE)
+    #         tile.render_isometric_tile(screen)
+    # ben.render_isometric_player(screen)
     # TODO replace with update
     pygame.display.flip()
     # Carefull! border_offset need to convert to isometrix coordinates first! 
     # pygame.display.update((border_offset, border_offset / 2, border_offset, border_offset / 2))
+
+class Activity:
+    """
+    Has states:
+    PLAYING -   means we need to render player, tiles ...
+    UI      -   means we need to render only ui elementes. Currenly user is in "user interface"
+    """
+    pass

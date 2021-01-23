@@ -21,11 +21,25 @@
         "size_y": 32
     },
     {
+        "name": "options_button",
+        "offset_x": 96,
+        "offset_y": 0,
+        "size_x": 69,
+        "size_y": 25
+    },
+    {
         "name": "wall_4_48_272",
         "offset_x": 0,
         "offset_y": 32,
         "size_x": 48,
         "size_y": 48
+    },
+    {
+        "name": "start_adventure_button",
+        "offset_x": 165,
+        "offset_y": 0,
+        "size_x": 133,
+        "size_y": 22
     },
     {
         "name": "play_button_64",
@@ -47,6 +61,13 @@
         "offset_y": 32,
         "size_x": 176,
         "size_y": 37
+    },
+    {
+        "name": "options_button_x2",
+        "offset_x": 167,
+        "offset_y": 80,
+        "size_x": 170,
+        "size_y": 45
     },
     {
         "name": "wall_2",
@@ -89,6 +110,13 @@
         "offset_y": 240,
         "size_x": 103,
         "size_y": 98
+    },
+    {
+        "name": "start_adventure_button_x2",
+        "offset_x": 480,
+        "offset_y": 144,
+        "size_x": 272,
+        "size_y": 50
     },
     {
         "name": "ben10_4",
@@ -155,8 +183,8 @@
     },
     {
         "name": "omnitrix_secret_btn_simple",
-        "offset_x": 480,
-        "offset_y": 144,
+        "offset_x": 103,
+        "offset_y": 240,
         "size_x": 300,
         "size_y": 65
     },
