@@ -27,7 +27,6 @@ class ButtonAnimation(Animation):
     def update(self, state):
         if not self._update(state):
             return False
-        
         return self.images[self.state]
     
     def toggle(self):

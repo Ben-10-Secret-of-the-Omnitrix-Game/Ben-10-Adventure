@@ -56,8 +56,15 @@
         "size_y": 53
     },
     {
-        "name": "omnitrix_secret_button",
+        "name": "options_button_pressed",
         "offset_x": 48,
+        "offset_y": 32,
+        "size_x": 160,
+        "size_y": 40
+    },
+    {
+        "name": "omnitrix_secret_button",
+        "offset_x": 208,
         "offset_y": 32,
         "size_x": 176,
         "size_y": 37
@@ -112,6 +119,13 @@
         "size_y": 98
     },
     {
+        "name": "start_adventure_button_pressed",
+        "offset_x": 337,
+        "offset_y": 80,
+        "size_x": 264,
+        "size_y": 43
+    },
+    {
         "name": "start_adventure_button_x2",
         "offset_x": 480,
         "offset_y": 144,
@@ -140,51 +154,44 @@
         "size_y": 205
     },
     {
-        "name": "Alien_V_128_128",
+        "name": "ben10_1",
         "offset_x": 209,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_1",
+        "name": "ben10_1_128_128",
         "offset_x": 337,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_1_128_128",
+        "name": "ben10_2_128_128",
         "offset_x": 465,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_2_128_128",
+        "name": "ben10_3_128_128",
         "offset_x": 593,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_3_128_128",
+        "name": "ben10_4_128_128",
         "offset_x": 721,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_4_128_128",
+        "name": "wall_5_marine",
         "offset_x": 849,
         "offset_y": 338,
-        "size_x": 128,
-        "size_y": 128
-    },
-    {
-        "name": "wall_5_marine",
-        "offset_x": 0,
-        "offset_y": 543,
         "size_x": 128,
         "size_y": 128
     },
@@ -197,107 +204,100 @@
     },
     {
         "name": "concrete368a",
-        "offset_x": 128,
-        "offset_y": 543,
+        "offset_x": 977,
+        "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "dirt",
-        "offset_x": 384,
-        "offset_y": 543,
+        "offset_x": 1233,
+        "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "rock",
-        "offset_x": 640,
-        "offset_y": 543,
+        "offset_x": 1489,
+        "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "snow",
-        "offset_x": 0,
-        "offset_y": 671,
+        "offset_x": 1745,
+        "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "wall_5_256_128",
-        "offset_x": 256,
-        "offset_y": 671,
+        "offset_x": 2001,
+        "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "B10_VT4C_BN_04",
         "offset_x": 0,
-        "offset_y": 799,
+        "offset_y": 543,
         "size_x": 185,
         "size_y": 182
     },
     {
         "name": "brickpavers2",
         "offset_x": 0,
-        "offset_y": 981,
+        "offset_y": 725,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "cretebrick970",
-        "offset_x": 0,
-        "offset_y": 1237,
+        "offset_x": 512,
+        "offset_y": 725,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "dirtsand2",
-        "offset_x": 0,
-        "offset_y": 1493,
+        "offset_x": 1024,
+        "offset_y": 725,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "stone",
-        "offset_x": 0,
-        "offset_y": 1749,
+        "offset_x": 1536,
+        "offset_y": 725,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "tilable-IMG_0044-grey",
-        "offset_x": 0,
-        "offset_y": 2005,
+        "offset_x": 2048,
+        "offset_y": 725,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "tileable-S7002876-grey",
         "offset_x": 0,
-        "offset_y": 2261,
+        "offset_y": 981,
         "size_x": 512,
         "size_y": 256
     },
     {
-        "name": "Sprite-0004",
-        "offset_x": 0,
-        "offset_y": 2517,
-        "size_x": 400,
-        "size_y": 400
-    },
-    {
-        "name": "Alien_V",
-        "offset_x": 0,
-        "offset_y": 2917,
-        "size_x": 448,
-        "size_y": 557
-    },
-    {
         "name": "background",
-        "offset_x": 448,
-        "offset_y": 2917,
+        "offset_x": 0,
+        "offset_y": 1237,
         "size_x": 500,
         "size_y": 500
+    },
+    {
+        "name": "main_screen",
+        "offset_x": 500,
+        "offset_y": 1237,
+        "size_x": 640,
+        "size_y": 480
     }
 ]

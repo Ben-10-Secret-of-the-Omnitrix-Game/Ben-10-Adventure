@@ -13,10 +13,18 @@ class ButtonSprite(pygame.sprite.Sprite):
         
     
     def animate(self, state):
-        return self.animation.update(state)
+        self.animation.update(state)
+        return self
     
     def draw(self, screen):
+        # rect = self.animation.current().get_rect()
+        # rect.x = self.rect.x
+        # rect.y = self.rect.y
+        # screen.fill((0, 0, 0, 0), rect)
         screen.blit(self.animation.current(), self.rect)
+        
+    def check_click(self, position):
+        return self.rect.collidepoint(position)
     
     
             

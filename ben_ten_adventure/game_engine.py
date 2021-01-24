@@ -4,19 +4,26 @@ Contains pygame.init() and related stuff
 """
 
 from os.path import join
+
+from pygame.mixer import pause
+from pygame.transform import scale
 from hotreload.reloader import Loader
+
 import logging
 import pygame
 import sys
+import pygame_gui
 
 from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
 from .entity import Player, NPC
 from .ui import ButtonSprite
 from .weapon import BaseWeapon
+from .animation import ButtonAnimation
 
 
-win_size = (1280, 720)
 
+HD = (1280, 720)
+FULL_HD = (1920, 1080)
 
 def vertical(size, startcolor, endcolor):
     """
@@ -39,33 +46,56 @@ def vertical(size, startcolor, endcolor):
                         int(sb + bm*y),
                         int(sa + am*y))
                        )
-    return pygame.transform.scale(bigSurf, size)
+    return scale(bigSurf, size)
 
-def draw_main_ui():
-    screen.blit(vertical(win_size, (255, 213, 65, 255), (49, 62, 76, 255)), (0, 0))
-    start_adventure_button = ButtonSprite(400, 400, [ga.start_adventure_button_x2])
-    options_button = ButtonSprite(440, 470, [ga.options_button_x2])
-    start_adventure_button.draw(screen)
-    options_button.draw(screen)
+def draw_main_screen():
+    # background_gradient = vertical(win_size, (118, 174, 62, 255), (9, 48, 21, 255))
+
+    if RESOLUTION <= HD:
+        sab = pygame_gui.elements.UIButton(pygame.Rect(500, 360, 272, 50), '', manager=manager)
+        sab.drawable_shape.states['normal'].surface.blit(ga.start_adventure_button_x2, (0, 0))
+        sab.drawable_shape.active_state.has_fresh_surface = True
+        
+        ob = pygame_gui.elements.UIButton(pygame.Rect(540, 410, *ga.options_button_x2.get_rect()[2:]), '', manager=manager)
+        ob.drawable_shape.states['normal'].surface.blit(ga.options_button_x2, (0, 0))
+        ob.drawable_shape.active_state.has_fresh_surface = True
+    elif RESOLUTION >= FULL_HD:
+        sab_size = ga.start_adventure_button_x2.get_rect()[2:]
+        sab_new = scale(ga.start_adventure_button_x2, (sab_size[0] * 2, sab_size[1] * 2))
+        sab = pygame_gui.elements.UIButton(pygame.Rect(350, 300, *sab_new.get_rect()[2:]), '', manager=manager)
+        sab.drawable_shape.states['normal'].surface.blit(sab_new, (0, 0))
+        sab.drawable_shape.active_state.has_fresh_surface = True
+        
+        ob_size = ga.options_button_x2.get_rect()[2:]
+        ob_new = scale(ga.options_button_x2, (ob_size[0] * 2, ob_size[1] * 2))
+        ob = pygame_gui.elements.UIButton(pygame.Rect(450, 400, *ob_new.get_rect()[2:]), '', manager=manager)
+        ob.drawable_shape.states['normal'].surface.blit(ob_new, (0, 0))
+        ob.drawable_shape.active_state.has_fresh_surface = True
 
 
 
 def init():
-    global screen, DEBUG, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, border_offset, game_config
+    global screen, DEBUG, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, ACTION, border_offset, game_config, RESOLUTION
     
     # game config for initialization
     game_config = Config(join(DEFAULT_GAMEDATA_PATH, 'game_data.json'), Config.JSON,
                              {
                                  'debug': True,
-                                 'resolution': (1280, 720),
+                                 'resolution': HD,
                                  'tile_size': 128,
                                  'map_size': (10, 10),
                              })
+    
+    if game_config.data['resolution'] == HD:
+        game_config.data['resolution'] = FULL_HD
+        game_config.save()
+        game_config.load()
     # few global constants
     DEBUG = game_config.data['debug']
-    RESOLUTION = game_config.data['resolution']
+    RESOLUTION = tuple(game_config.data['resolution'])
     TILE_SIZE = game_config.data['tile_size']
     MAP_WIDTH, MAP_HEIGHT = game_config.data['map_size']
+    ACTION = Activity.MAIN_SCREEN
 
     # pygame
     pygame.init()
@@ -76,12 +106,10 @@ def init():
     x_pad = TILE_SIZE    # prevent from float values
     y_pad = MAP_HEIGHT * TILE_SIZE # prevent from float values
     border_offset = (500, 100)
-    print(x_pad, y_pad)
-    print(border_offset)
 
 
 def start():
-    global screen, ga, clock, fps, script, ben, alien_v
+    global screen, ga, clock, fps, script, ben, alien_v, manager
     
     if DEBUG:
         script = Loader(join("ben_ten_adventure", "graphics.py"),
@@ -95,12 +123,12 @@ def start():
     clock = pygame.time.Clock()
     fps = 30
 
-    # draw ui
-    # draw_main_ui()
+    # ui init
+    manager = pygame_gui.UIManager(RESOLUTION)
     
 
-    alien_v_images = [ga.Alien_V_128_128, ga.Alien_V_128_128,
-                      ga.Alien_V_128_128, ga.Alien_V_128_128]
+    alien_v_images = [ga.ben10_1_128_128, ga.ben10_2_128_128,
+                  ga.ben10_3_128_128, ga.ben10_4_128_128]
     alien_v = NPC('', alien_v_images, x=border_offset[0], y=border_offset[1], speed=1)
     big_gun = BaseWeapon(100, 50)
     alien_v.set_weapon(big_gun)
@@ -109,24 +137,31 @@ def start():
                   ga.ben10_3_128_128, ga.ben10_4_128_128]
     ben = Player('Ben', ben_images, x=border_offset[0] + 150, y=border_offset[1] + 150, speed=15)
     
+    
 
 
 def handle_event():
+    global manager
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
         elif event.type == pygame.VIDEOEXPOSE:  # handles window minimising/maximising
             # screen.fill((0, 0, 0))
-            screen.blit(pygame.transform.scale(
+            screen.blit(scale(
                 screen, screen.get_size()), (0, 0))
-            pygame.display.update()
+            pygame.display.update()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
             # border_offset = screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
         elif event.type == pygame.MOUSEMOTION:
             mouse_x_y = pygame.mouse.get_pos()
         elif event.type == pygame.KEYDOWN:
             btns_pressed = tuple(pygame.key.get_pressed())[79:83]
             ben.move(btns_pressed)
+        elif event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                print("Clicked")
+        manager.process_events(event)
+        
 
 
 def render_map():
@@ -138,32 +173,41 @@ def render_map():
 
             
 def game_loop_handler():
-    global border_offset, ben, alien_v
-
+    time_delta = clock.tick(fps) / 1000.0
     handle_event()
-
-    clock.tick(fps)
     
-    screen.fill((0, 0, 0))
+    screen.fill((0, 0, 0, 0)) 
+
+
+    manager.update(time_delta)
+
+    if ACTION == Activity.MAIN_SCREEN:
+        draw_main_screen()
+        screen.blit(scale(ga.main_screen, screen.get_size()), (0, 0))
+        manager.draw_ui(screen)
+        pygame.display.update()
+        return
+    elif ACTION == Activity.PAUSE:
+        manager.draw_ui(screen)
+        pygame.display.update()
+        return
+    elif ACTION == Activity.PLAYING:
+        manager.draw_ui(screen)
+        pass
+        
     
     render_map()
-
+    
     if DEBUG:
         if script.has_changed():
             pygame.time.wait(500)
-
     
     ben.render(screen)
     alien_v.render(screen)
     alien_v.go_to(ben)
     alien_v.attack(ben)
     
-    
-    
-    # TODO replace with update
-    pygame.display.flip()
-    # Carefull! border_offset need to convert to isometrix coordinates first!
-    # pygame.display.update((border_offset, border_offset / 2, border_offset, border_offset / 2))
+    pygame.display.update()
 
 
 class Activity:
@@ -172,4 +216,6 @@ class Activity:
     PLAYING -   means we need to render player, tiles ...
     UI      -   means we need to render only ui elementes. Currenly user is in "user interface"
     """
-    pass
+    MAIN_SCREEN = 0
+    PLAYING = 1
+    PAUSE = 2

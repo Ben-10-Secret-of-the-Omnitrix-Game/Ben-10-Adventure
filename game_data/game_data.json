@@ -1,8 +1,8 @@
 {
     "debug": true,
     "resolution": [
-        1280,
-        720
+        1920,
+        1080
     ],
     "tile_size": 128,
     "map_size": [
