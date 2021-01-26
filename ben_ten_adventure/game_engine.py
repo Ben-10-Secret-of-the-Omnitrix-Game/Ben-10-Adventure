@@ -4,7 +4,7 @@ Contains pygame.init() and related stuff
 """
 
 from os.path import join
-
+from random import randint
 from pygame.mixer import pause
 from pygame.transform import scale
 from hotreload.reloader import Loader
@@ -109,7 +109,7 @@ def init():
 
 
 def start():
-    global screen, ga, clock, fps, script, ben, alien_v, manager
+    global screen, ga, clock, fps, script, ben, npc1, npc2, manager, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, npcs
     
     if DEBUG:
         script = Loader(join("ben_ten_adventure", "graphics.py"),
@@ -127,18 +127,18 @@ def start():
     manager = pygame_gui.UIManager(RESOLUTION)
     
 
-    alien_v_images = [ga.ben10_1_128_128, ga.ben10_2_128_128,
+    npc_images = [ga.ben10_1_128_128, ga.ben10_2_128_128,
                   ga.ben10_3_128_128, ga.ben10_4_128_128]
-    alien_v = NPC('', alien_v_images, x=border_offset[0], y=border_offset[1], speed=1)
+    npcs = [NPC('', npc_images,
+                x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
+                y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
+                speed=randint(1, 3)) for _ in range(15)]
     big_gun = BaseWeapon(100, 50)
-    alien_v.set_weapon(big_gun)
 
     ben_images = [ga.ben10_1_128_128, ga.ben10_2_128_128,
                   ga.ben10_3_128_128, ga.ben10_4_128_128]
-    ben = Player('Ben', ben_images, x=border_offset[0] + 150, y=border_offset[1] + 150, speed=15)
+    ben = Player('Ben', ben_images, x=250, y=250, speed=15)
     
-    
-
 
 def handle_event():
     global manager
@@ -181,19 +181,19 @@ def game_loop_handler():
 
     manager.update(time_delta)
 
-    if ACTION == Activity.MAIN_SCREEN:
-        draw_main_screen()
-        screen.blit(scale(ga.main_screen, screen.get_size()), (0, 0))
-        manager.draw_ui(screen)
-        pygame.display.update()
-        return
-    elif ACTION == Activity.PAUSE:
-        manager.draw_ui(screen)
-        pygame.display.update()
-        return
-    elif ACTION == Activity.PLAYING:
-        manager.draw_ui(screen)
-        pass
+    # if ACTION == Activity.MAIN_SCREEN:
+    #     draw_main_screen()
+    #     screen.blit(scale(ga.main_screen, screen.get_size()), (0, 0))
+    #     manager.draw_ui(screen)
+    #     pygame.display.update()
+    #     return
+    # elif ACTION == Activity.PAUSE:
+    #     manager.draw_ui(screen)
+    #     pygame.display.update()
+    #     return
+    # elif ACTION == Activity.PLAYING:
+    #     manager.draw_ui(screen)
+    #     pass
         
     
     render_map()
@@ -203,9 +203,10 @@ def game_loop_handler():
             pygame.time.wait(500)
     
     ben.render(screen)
-    alien_v.render(screen)
-    alien_v.go_to(ben)
-    alien_v.attack(ben)
+    for npc in npcs:
+        npc.render(screen)
+        npc.random_move()
+        npc.attack(ben)
     
     pygame.display.update()
 

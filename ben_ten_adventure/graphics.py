@@ -60,7 +60,7 @@ class RenderPlayer:
     def player_place(self, x, y):
         return x, y - self.player.height + 20
 
-    def render_isometric_player(self, screen=None):
+    def render_isometric_player(self, screen=None, border_offset=[500, 100]):
         if screen is None:
             screen = self.screen
         else:
@@ -70,7 +70,7 @@ class RenderPlayer:
         if not self.player.is_killed:
             iso_x, iso_y = self.player.cartesian_to_isometric(self.player.x, self.player.y)
             screen.blit(self.player.texture,
-                        self.player_place(iso_x, iso_y))
+                        self.player_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
             text = font.render('Health: ' + str(self.player.hp), True, (100, 255, 100))
             
         else:
@@ -99,7 +99,7 @@ class RenderNPC:
     def npc_place(self, x, y):
         return x, y - self.npc.height + 20
 
-    def render_isometric_npc(self, screen):
+    def render_isometric_npc(self, screen, border_offset=[500, 100]):
         if screen is None:
             screen = self.screen
         else:
@@ -107,5 +107,5 @@ class RenderNPC:
         
         iso_x, iso_y = self.npc.cartesian_to_isometric(self.npc.x, self.npc.y)
         screen.blit(self.npc.texture,
-                    self.npc_place(iso_x, iso_y))
+                    self.npc_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
         
