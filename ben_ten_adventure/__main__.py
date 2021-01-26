@@ -28,7 +28,7 @@ def main():
     while True:
         # game_engine.game_loop_handler()
         if script.has_changed():
-            pygame.time.wait(500)
+            pygame.time.wait(100)
         script.game_loop_handler()
 
     # run it if you need to check functionality fast and it doesn't depends on pygame initialization.

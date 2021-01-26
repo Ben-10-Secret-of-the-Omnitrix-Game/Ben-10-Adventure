@@ -117,7 +117,7 @@ class NPC(BaseEntity):
     NPC -   all "zombie" like entities. 
     E.g. "players"(not exactly) that's attacking Player(main adventurer, see above).
     How to know is it NPC?
-        * Nonone control it with keyboard, mouse, any other stuff.
+        * no one control it with keyboard, mouse, any other stuff.
         * has primitive actions, generally it's stupid AI or hardcoded actions.
     """
 

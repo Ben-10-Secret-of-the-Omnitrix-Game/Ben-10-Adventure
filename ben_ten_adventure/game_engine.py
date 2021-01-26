@@ -14,63 +14,11 @@ import pygame
 import sys
 import pygame_gui
 
-from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
+from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs, load_additional_resources, Movie
 from .entity import Player, NPC
-from .ui import ButtonSprite
+from .ui import HD, FULL_HD, draw_main_screen
 from .weapon import BaseWeapon
 from .animation import ButtonAnimation
-
-
-
-HD = (1280, 720)
-FULL_HD = (1920, 1080)
-
-def vertical(size, startcolor, endcolor):
-    """
-    Draws a vertical linear gradient filling the entire surface. Returns a
-    surface filled with the gradient (numeric is only 2-3 times faster).
-    """
-    height = size[1]
-    bigSurf = pygame.Surface((1, height)).convert_alpha()
-    dd = 1.0/height
-    sr, sg, sb, sa = startcolor
-    er, eg, eb, ea = endcolor
-    rm = (er-sr)*dd
-    gm = (eg-sg)*dd
-    bm = (eb-sb)*dd
-    am = (ea-sa)*dd
-    for y in range(height):
-        bigSurf.set_at((0, y),
-                       (int(sr + rm*y),
-                        int(sg + gm*y),
-                        int(sb + bm*y),
-                        int(sa + am*y))
-                       )
-    return scale(bigSurf, size)
-
-def draw_main_screen():
-    # background_gradient = vertical(win_size, (118, 174, 62, 255), (9, 48, 21, 255))
-
-    if RESOLUTION <= HD:
-        sab = pygame_gui.elements.UIButton(pygame.Rect(500, 360, 272, 50), '', manager=manager)
-        sab.drawable_shape.states['normal'].surface.blit(ga.start_adventure_button_x2, (0, 0))
-        sab.drawable_shape.active_state.has_fresh_surface = True
-        
-        ob = pygame_gui.elements.UIButton(pygame.Rect(540, 410, *ga.options_button_x2.get_rect()[2:]), '', manager=manager)
-        ob.drawable_shape.states['normal'].surface.blit(ga.options_button_x2, (0, 0))
-        ob.drawable_shape.active_state.has_fresh_surface = True
-    elif RESOLUTION >= FULL_HD:
-        sab_size = ga.start_adventure_button_x2.get_rect()[2:]
-        sab_new = scale(ga.start_adventure_button_x2, (sab_size[0] * 2, sab_size[1] * 2))
-        sab = pygame_gui.elements.UIButton(pygame.Rect(350, 300, *sab_new.get_rect()[2:]), '', manager=manager)
-        sab.drawable_shape.states['normal'].surface.blit(sab_new, (0, 0))
-        sab.drawable_shape.active_state.has_fresh_surface = True
-        
-        ob_size = ga.options_button_x2.get_rect()[2:]
-        ob_new = scale(ga.options_button_x2, (ob_size[0] * 2, ob_size[1] * 2))
-        ob = pygame_gui.elements.UIButton(pygame.Rect(450, 400, *ob_new.get_rect()[2:]), '', manager=manager)
-        ob.drawable_shape.states['normal'].surface.blit(ob_new, (0, 0))
-        ob.drawable_shape.active_state.has_fresh_surface = True
 
 
 
@@ -84,6 +32,7 @@ def init():
                                  'resolution': HD,
                                  'tile_size': 128,
                                  'map_size': (10, 10),
+                                 'videos': ('Ben10_TEST_movie.mp4')
                              })
     
     if game_config.data['resolution'] == HD:
@@ -95,6 +44,8 @@ def init():
     RESOLUTION = tuple(game_config.data['resolution'])
     TILE_SIZE = game_config.data['tile_size']
     MAP_WIDTH, MAP_HEIGHT = game_config.data['map_size']
+    VIDEOS = game_config.data['videos']
+    
     ACTION = Activity.MAIN_SCREEN
 
     # pygame
@@ -116,6 +67,8 @@ def start():
                         "ben_ten_adventure.graphics", 1)
     
     # .utils.py
+    load_additional_resources()
+    
     init_resource_dirs()
     ga = GameAssets()
     
@@ -181,19 +134,19 @@ def game_loop_handler():
 
     manager.update(time_delta)
 
-    # if ACTION == Activity.MAIN_SCREEN:
-    #     draw_main_screen()
-    #     screen.blit(scale(ga.main_screen, screen.get_size()), (0, 0))
-    #     manager.draw_ui(screen)
-    #     pygame.display.update()
-    #     return
-    # elif ACTION == Activity.PAUSE:
-    #     manager.draw_ui(screen)
-    #     pygame.display.update()
-    #     return
-    # elif ACTION == Activity.PLAYING:
-    #     manager.draw_ui(screen)
-    #     pass
+    if ACTION == Activity.MAIN_SCREEN:
+        draw_main_screen()
+        screen.blit(scale(ga.main_screen, screen.get_size()), (0, 0))
+        manager.draw_ui(screen)
+        pygame.display.update()
+        return
+    elif ACTION == Activity.PAUSE:
+        manager.draw_ui(screen)
+        pygame.display.update()
+        return
+    elif ACTION == Activity.PLAYING:
+        manager.draw_ui(screen)
+        pass
         
     
     render_map()
