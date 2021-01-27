@@ -2,14 +2,14 @@ import logging
 import json
 
 import pygame
-import pyglet
+import cv2
+import numpy
 
 
 from os.path import join, exists
 from os import mkdir
 from pprint import pprint
 
-from .game_engine import RESOLUTION, VIDEOS
 
 
 DEFAULT_RESOURCES_PATH = join("resources")
@@ -23,77 +23,28 @@ def init_resource_dirs():
         mkdir(DEFAULT_GAMEDATA_PATH)
 
 
-loaded_videos = {}
 
 
-def load_additional_resources():
-    for file_name in VIDEOS:
-        loaded_videos[file_name] = pyglet.media.load(
-            join(DEFAULT_RESOURCES_PATH, file_name))
-
-
-key = pyglet.window.key
-
-
-class Movie(pyglet.window.Window):
-    def __init__(self, file_name):
-        super().__init__(*RESOLUTION, fullscreen=False)
-        self.x, self.y = 0, 0
-
-        self.player = pyglet.media.Player()
-        assert loaded_videos != {}, \
-        "Make sure game_engine.VIDEOS is not emptry and you ran load_additional_resources firstly"
-        self.player.queue(loaded_videos[file_name])
-        self.sprites = {'video': None}
-
-        self.alive = 1
-
-    def on_draw(self):
-        self.render()
-
-    def on_close(self):
-        self.alive = 0
-
-    def on_mouse_motion(self, x, y, dx, dy):
-        pass
-
-    def on_mouse_release(self, x, y, button, modifiers):
-        pass
-
-    def on_mouse_press(self, x, y, button, modifiers):
-        pass
-
-    def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
-        pass
-
-    def on_key_release(self, symbol, modifiers):
-        pass
-
-    def on_key_press(self, symbol, modifiers):
-        if symbol == 65307:  # [ESC]
-            self.alive = 0
-        elif symbol == key.LCTRL:
-            self.player.play()
-
-    def render(self):
-        self.clear()
-
-        if self.player.playing:
-            if self.sprites['video'] is None:
-                texture = self.player.get_texture()
-                if texture:
-                    self.sprites['video'] = pyglet.sprite.Sprite(texture)
-            else:
-                self.sprites['video'].draw()
-
-        self.flip()
-
-    def run(self):
-        while self.alive == 1:
-            self.render()
-            event = self.dispatch_events()
-
-
+class Movie:
+    def __init__(self, file_path):
+        self.video = cv2.VideoCapture(file_path)
+        
+    def tick(self, screen):
+        retval, frame = self.video.read()
+        if not retval:
+            return False
+        # Rotate it, because for some reason it otherwise appears flipped.
+        frame = numpy.rot90(frame)
+        # The video uses BGR colors and PyGame needs RGB
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Create a PyGame surface
+        surf = pygame.surfarray.make_surface(frame)
+        # Show the PyGame surface!
+        screen.blit(surf, (0, 0))
+        pygame.display.update((100, 100, 200, 200))
+        return True
+        
+    
 class RawData:
     pass
 

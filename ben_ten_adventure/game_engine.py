@@ -14,12 +14,17 @@ import pygame
 import sys
 import pygame_gui
 
-from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs, load_additional_resources, Movie
+from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
 from .entity import Player, NPC
-from .ui import HD, FULL_HD, draw_main_screen
+from .adventure_manager import SecretOfTheOmnitrix
+# from .ui import HD, FULL_HD, draw_main_screen
 from .weapon import BaseWeapon
 from .animation import ButtonAnimation
 
+from pprint import pprint
+
+HD = (1280, 720)
+FULL_HD = (1920, 1080)
 
 
 def init():
@@ -44,14 +49,15 @@ def init():
     RESOLUTION = tuple(game_config.data['resolution'])
     TILE_SIZE = game_config.data['tile_size']
     MAP_WIDTH, MAP_HEIGHT = game_config.data['map_size']
-    VIDEOS = game_config.data['videos']
+    # VIDEOS = game_config.data['videos']
     
     ACTION = Activity.MAIN_SCREEN
 
     # pygame
     pygame.init()
     pygame.font.init()
-    screen = pygame.display.set_mode(RESOLUTION, flags=pygame.RESIZABLE)
+    flags = pygame.NOFRAME | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.RESIZABLE
+    screen = pygame.display.set_mode(RESOLUTION, flags=flags)
     
     # Centralize map
     x_pad = TILE_SIZE    # prevent from float values
@@ -60,14 +66,13 @@ def init():
 
 
 def start():
-    global screen, ga, clock, fps, script, ben, npc1, npc2, manager, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, npcs
+    global screen, ga, clock, fps, script, ben, adventure, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, npcs
     
     if DEBUG:
         script = Loader(join("ben_ten_adventure", "graphics.py"),
                         "ben_ten_adventure.graphics", 1)
     
     # .utils.py
-    load_additional_resources()
     
     init_resource_dirs()
     ga = GameAssets()
@@ -75,9 +80,12 @@ def start():
     # world ticking
     clock = pygame.time.Clock()
     fps = 30
-
+    
     # ui init
-    manager = pygame_gui.UIManager(RESOLUTION)
+    # ...
+    
+    # Adventure
+    adventure = SecretOfTheOmnitrix(screen, ga)
     
 
     npc_images = [ga.ben10_1_128_128, ga.ben10_2_128_128,
@@ -94,7 +102,6 @@ def start():
     
 
 def handle_event():
-    global manager
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -113,7 +120,6 @@ def handle_event():
         elif event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 print("Clicked")
-        manager.process_events(event)
         
 
 
@@ -126,40 +132,39 @@ def render_map():
 
             
 def game_loop_handler():
-    time_delta = clock.tick(fps) / 1000.0
     handle_event()
-    
     screen.fill((0, 0, 0, 0)) 
 
 
-    manager.update(time_delta)
-
-    if ACTION == Activity.MAIN_SCREEN:
-        draw_main_screen()
-        screen.blit(scale(ga.main_screen, screen.get_size()), (0, 0))
-        manager.draw_ui(screen)
-        pygame.display.update()
-        return
-    elif ACTION == Activity.PAUSE:
-        manager.draw_ui(screen)
-        pygame.display.update()
-        return
-    elif ACTION == Activity.PLAYING:
-        manager.draw_ui(screen)
-        pass
+    # if ACTION == Activity.MAIN_SCREEN:
+    #     draw_main_screen()
+    #     screen.blit(scale(ga.main_screen, screen.get_size()), (0, 0))
+    #     manager.draw_ui(screen)
+    #     pygame.display.update()
+    #     return
+    # elif ACTION == Activity.PAUSE:
+    #     manager.draw_ui(screen)
+    #     pygame.display.update()
+    #     return
+    # elif ACTION == Activity.PLAYING:
+    #     manager.draw_ui(screen)
+    #     pass
         
     
-    render_map()
+    # render_map()
     
     if DEBUG:
         if script.has_changed():
             pygame.time.wait(500)
     
-    ben.render(screen)
-    for npc in npcs:
-        npc.render(screen)
-        npc.random_move()
-        npc.attack(ben)
+    adventure.play_current()
+    
+    # ben.render(screen)
+    # for npc in npcs:
+    #     npc.render(screen)
+    #     npc.random_move()
+    #     npc.attack(ben)
+    
     
     pygame.display.update()
 
