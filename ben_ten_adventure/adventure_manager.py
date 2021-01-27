@@ -78,7 +78,8 @@ class SecretOfTheOmnitrix(AdventureScene):
         ben_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
                   self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
-        kwargs['myaxx'] = NPC('Myaxx', image=[self.ga.Myaxx_ov_render], hp=250, x=600, y=500, speed=5)
+        kwargs['myaxx'] = NPC('Myaxx', image=[self.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
+        kwargs['vilgax'] = NPC('Vilgax', image=[self.ga.Alien_V_128_128], hp=250, x=600, y=500, speed=5)
         kwargs['camera'] = Camera()
         return kwargs
         
@@ -93,18 +94,32 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs['player'].render(self.screen)
         kwargs['myaxx'].render(self.screen)
         
+        kwargs['vilgax'].render(self.screen)
+        kwargs['vilgax'].go_to(kwargs['player'])
+        kwargs['vilgax'].attack(kwargs['player'])
+        
+        if kwargs['player'].is_killed:
+            self.play_data.update({"win": False})
+            return self.END
+        
         if kwargs['player'].is_near(kwargs['myaxx']):
+            self.play_data.update({'win': True})
             return self.END
         
     
     def init_scene_3(self):
+        # kwargs
         pass
     
     def play_scene_3(self, kwargs):
         """
         Flying to Azmuth's planet
         """
-        self.handle_event(kwargs)
+        # self.handle_event(kwargs)
+        if kwargs['win']:
+            self.screen.blit(self.ga.win, (0, 0))
+        else:
+            self.screen.blit(self.ga.game_over, (0, 0))
     
     def init_scene_4(self):
         pass
@@ -135,7 +150,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             if self._index + 1 < len(self.stages):
                 self._index += 1 
                 initialization_function = self.init_funcs[self._index]
-                self.play_data = initialization_function()
+                self.play_data.update(initialization_function())
             else:
                 # finish adventure
                 print("Finish")

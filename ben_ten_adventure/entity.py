@@ -119,6 +119,7 @@ class Player(BaseEntity):
         
     def get_rect(self):
         return self.texture.get_rect()
+    
 
 
 class NPC(BaseEntity):
