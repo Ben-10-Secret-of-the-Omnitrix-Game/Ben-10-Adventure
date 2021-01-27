@@ -32,7 +32,7 @@ class Movie:
         self.video = cv2.VideoCapture(file_path)
         self.start_audio = False
         mixer.init()
-        mixer.music.load(join(DEFAULT_RESOURCES_PATH, "videos", "ben_10_test2.mp3"))
+        mixer.music.load("C:\\Users\\Иван\\PycharmProjects\\Ben-10-Adventure\\resources\\videos\\ben_10_test2.mp3")
         
     def tick(self, screen):
         if not self.start_audio:
@@ -52,7 +52,7 @@ class Movie:
         # Show the PyGame surface!
         screen.blit(surf, (0, 0))
         pygame.display.update((100, 100, 200, 200))
-        pygame.time.Clock().tick(120)
+        pygame.time.Clock().tick(200)
         return True
 
         

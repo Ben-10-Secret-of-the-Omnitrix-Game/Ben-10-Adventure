@@ -17,7 +17,7 @@ import pygame_gui
 
 from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
 from .entity import Player, NPC
-from .adventure_manager import SecretOfTheOmnitrix
+from .manager import SecretOfTheOmnitrix
 # from .ui import HD, FULL_HD, draw_main_screen
 from .weapon import BaseWeapon
 from .animation import ButtonAnimation
@@ -26,7 +26,6 @@ from pprint import pprint
 
 HD = (1280, 720)
 FULL_HD = (1920, 1080)
-
 
 def init():
     global screen, DEBUG, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, ACTION, border_offset, game_config, RESOLUTION
@@ -94,14 +93,13 @@ def start():
     npcs = [NPC('', npc_images,
                 x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
                 y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
-                speed=randint(1, 3)) for _ in range(15)]
+                speed=randint(1, 3)) for _ in range(2)]
     big_gun = BaseWeapon(100, 50)
 
     ben_images = [ga.ben10_1_128_128, ga.ben10_2_128_128,
                   ga.ben10_3_128_128, ga.ben10_4_128_128]
     ben = Player('Ben', ben_images, x=250, y=250, speed=15)
     
-
 
 def render_map():
     for row in range(0, MAP_WIDTH):
