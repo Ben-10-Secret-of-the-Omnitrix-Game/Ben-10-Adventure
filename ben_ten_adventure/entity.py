@@ -100,6 +100,7 @@ class Player(BaseEntity):
                     self.texture = self.image[self.rotation]
             except KeyError:
                 pass
+        print('pl', self.cartesian_to_isometric(self.x, self.y))
 
     def render(self, screen=None, border_offset=[500, 100]):
         self._render.render_isometric_player(screen, border_offset)
@@ -125,7 +126,6 @@ class NPC(BaseEntity):
         self.weapon = None
         self.skin = skin
         self.image = image
-        self.texture = None
         if image:
             self.texture = image[self.rotation]
         self.x = x
@@ -205,6 +205,7 @@ class NPC(BaseEntity):
 
         if (self.x, self.y) == (self.dest_x, self.dest_y):
             self.dest_complete = True
+            print(1)
         else:
             if self.speed > abs(self.x - self.dest_x):
                 self.x = self.dest_x

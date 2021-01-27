@@ -1,5 +1,4 @@
 import pygame
-from random import randint
 import cv2
 import numpy
 import pytmx
@@ -12,8 +11,6 @@ from .entity import Player, NPC
 
 from os.path import join, split
 from pygame.transform import scale
-
-MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
 
 
 class AdventureScene:
@@ -82,14 +79,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_1.tmx"))
         ben_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
                   self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
-        npc_images = [self.ga.ben10_1_128_128,self. ga.ben10_2_128_128,
-                      self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
-        npcs = [NPC('', npc_images,
-                    x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
-                    y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
-                    speed=randint(1, 3)) for _ in range(5)]
         kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
-        kwargs['npcs'] = npcs
         kwargs['camera'] = Camera()
         return kwargs
         
@@ -101,10 +91,6 @@ class SecretOfTheOmnitrix(AdventureScene):
         self.handle_event(kwargs)
         
         self.render_map(kwargs)
-        for npc in kwargs['npcs']:
-            npc.render(self.screen)
-            npc.go_to(kwargs['player'])
-            npc.attack(kwargs['player'])
         kwargs['player'].render(self.screen)
         # kwargs['camera'].update(kwargs['player'])
         
