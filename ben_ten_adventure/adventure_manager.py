@@ -79,7 +79,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                 for x, y, image in layer.tiles():
                     file_name = split(image[0])[-1]
                     asset_name = file_name.split('.')[0]
-                    tile = Tile(x, y, (500, 100), image=getattr(self.ga, asset_name), tile_size=128)
+                    tile = Tile(x, y, (600, 100), image=getattr(self.ga, asset_name), tile_size=128)
                     tile.render_isometric_tile(self.screen)
     
     def play_scene_2(self, kwargs):
