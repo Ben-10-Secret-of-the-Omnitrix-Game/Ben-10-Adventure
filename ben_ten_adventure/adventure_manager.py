@@ -43,7 +43,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_scene_3,
             self.play_scene_4,
             self.play_scene_5]
-        self._index = 1
+        self._index = 0
         self.init_funcs = [
             self.init_scene_1,
             self.init_scene_2,
@@ -66,6 +66,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         if not kwargs['intro'].tick(self.screen):
             print("Video ended")
+            return self.END
         print("Running")
 
         

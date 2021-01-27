@@ -117,10 +117,6 @@ def handle_event():
         elif event.type == pygame.KEYDOWN:
             btns_pressed = tuple(pygame.key.get_pressed())[79:83]
             ben.move(btns_pressed)
-        elif event.type == pygame.USEREVENT:
-            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                print("Clicked")
-        
 
 
 def render_map():
