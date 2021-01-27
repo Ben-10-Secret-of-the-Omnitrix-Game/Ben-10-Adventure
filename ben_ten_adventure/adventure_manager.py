@@ -92,7 +92,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         
         self.render_map(kwargs)
         kwargs['player'].render(self.screen)
-        kwargs['camera'].update(kwargs['player'])
+        # kwargs['camera'].update(kwargs['player'])
         
     
     def init_scene_3(self):

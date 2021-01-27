@@ -80,7 +80,7 @@ def start():
     
     # world ticking
     clock = pygame.time.Clock()
-    fps = 30
+    fps = 120
     
     # ui init
     # ...

@@ -32,7 +32,7 @@ class Movie:
         self.video = cv2.VideoCapture(file_path)
         self.start_audio = False
         mixer.init()
-        mixer.music.load("C:\\Users\\Иван\\PycharmProjects\\Ben-10-Adventure\\resources\\videos\\ben_10_test2.mp3")
+        mixer.music.load(join(DEFAULT_RESOURCES_PATH, "videos", "ben_10_test2.mp3"))
         
     def tick(self, screen):
         if not self.start_audio:
