@@ -2,6 +2,7 @@ import logging
 import json
 
 import pygame
+from pygame import mixer
 import cv2
 import numpy
 
@@ -26,10 +27,18 @@ def init_resource_dirs():
 
 
 class Movie:
+
     def __init__(self, file_path):
         self.video = cv2.VideoCapture(file_path)
+        self.start_audio = False
+        mixer.init()
+        mixer.music.load("C:\\Users\\Иван\\PycharmProjects\\Ben-10-Adventure\\resources\\videos\\ben_10_test2.mp3")
         
     def tick(self, screen):
+        if not self.start_audio:
+            mixer.music.set_volume(0.01)
+            mixer.music.play()
+            self.start_audio = True
         retval, frame = self.video.read()
         if not retval:
             return False
@@ -43,7 +52,9 @@ class Movie:
         # Show the PyGame surface!
         screen.blit(surf, (0, 0))
         pygame.display.update((100, 100, 200, 200))
+        pygame.time.Clock().tick(120)
         return True
+
         
 class Camera:
     def __init__(self):
