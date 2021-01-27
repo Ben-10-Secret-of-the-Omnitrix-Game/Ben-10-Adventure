@@ -34,7 +34,8 @@ class Movie:
         if not retval:
             return False
         # Rotate it, because for some reason it otherwise appears flipped.
-        frame = numpy.rot90(frame)
+        # frame = numpy.rot90(frame)
+        frame = numpy.rot90(numpy.fliplr(frame))
         # The video uses BGR colors and PyGame needs RGB
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         # Create a PyGame surface
