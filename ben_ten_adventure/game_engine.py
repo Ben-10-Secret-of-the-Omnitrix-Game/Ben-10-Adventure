@@ -5,6 +5,7 @@ Contains pygame.init() and related stuff
 
 from os.path import join
 from random import randint
+from pygame import event
 from pygame.mixer import pause
 from pygame.transform import scale
 from hotreload.reloader import Loader
@@ -101,23 +102,6 @@ def start():
     ben = Player('Ben', ben_images, x=250, y=250, speed=15)
     
 
-def handle_event():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        elif event.type == pygame.VIDEOEXPOSE:  # handles window minimising/maximising
-            # screen.fill((0, 0, 0))
-            screen.blit(scale(
-                screen, screen.get_size()), (0, 0))
-            pygame.display.update()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-            # border_offset = screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
-        elif event.type == pygame.MOUSEMOTION:
-            mouse_x_y = pygame.mouse.get_pos()
-        elif event.type == pygame.KEYDOWN:
-            btns_pressed = tuple(pygame.key.get_pressed())[79:83]
-            ben.move(btns_pressed)
-
 
 def render_map():
     for row in range(0, MAP_WIDTH):
@@ -128,9 +112,9 @@ def render_map():
 
             
 def game_loop_handler():
-    handle_event()
     screen.fill((0, 0, 0, 0)) 
 
+    clock.tick(fps)
 
     # if ACTION == Activity.MAIN_SCREEN:
     #     draw_main_screen()
