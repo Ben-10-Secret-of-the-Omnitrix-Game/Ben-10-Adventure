@@ -46,7 +46,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_scene_3,
             self.play_scene_4,
             self.play_scene_5]
-        self._index = 0
+        self._index = 1
         self.init_funcs = [
             self.init_scene_1,
             self.init_scene_2,
@@ -69,9 +69,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         self.handle_event(kwargs)
         if not kwargs['intro'].tick(self.screen):
-            print("Video ended")
             return self.END
-        print("Running")
 
         
     def init_scene_2(self):
@@ -80,6 +78,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         ben_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
                   self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
+        kwargs['myaxx'] = NPC('Myaxx', image=[self.ga.Myaxx_ov_render], hp=250, x=600, y=500, speed=5)
         kwargs['camera'] = Camera()
         return kwargs
         
@@ -92,7 +91,10 @@ class SecretOfTheOmnitrix(AdventureScene):
         
         self.render_map(kwargs)
         kwargs['player'].render(self.screen)
-        # kwargs['camera'].update(kwargs['player'])
+        kwargs['myaxx'].render(self.screen)
+        
+        if kwargs['player'].is_near(kwargs['myaxx']):
+            return self.END
         
     
     def init_scene_3(self):
@@ -139,14 +141,16 @@ class SecretOfTheOmnitrix(AdventureScene):
                 print("Finish")
     
     def render_map(self, kwargs):
+        # TODO add camera offset X and Y in kwargs
             for layer in kwargs['map'].layers:
                 for x, y, image in layer.tiles():
                     file_name = split(image[0])[-1]
                     asset_name = file_name.split('.')[0]
+                    # TODO subtract camera offset from x and y
                     tile = Tile(x, y, (600, 100), image=getattr(self.ga, asset_name), tile_size=128)
                     tile.render_isometric_tile(self.screen)
                     
-    def handle_event(self, kwargs):
+    def handle_event(self, kwargs, custom_callback=None):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -163,3 +167,6 @@ class SecretOfTheOmnitrix(AdventureScene):
                 btns_pressed = tuple(pygame.key.get_pressed())[79:83]
                 if 'player' in kwargs:
                     kwargs['player'].move(btns_pressed)
+                    if 'myaxx' in kwargs:
+                        print(kwargs['player'].is_near(kwargs['myaxx']))
+                    

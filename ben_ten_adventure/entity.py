@@ -1,5 +1,8 @@
 import pygame
+import logging
+
 from random import randint
+
 from .graphics import RenderPlayer, RenderNPC
 from .weapon import BaseWeapon
 
@@ -59,6 +62,11 @@ class BaseEntity(pygame.sprite.Sprite):
 
     def render(self):
         pass
+    
+    def is_near(self, entity):
+        print("Entity x, y", self.x, self.y)
+        print("Entity x, y", entity.x, entity.y)
+        return (abs(self.x - entity.x) * 2 < 40) and (abs(self.y - entity.y) * 2 < 40)
 
 
 class Player(BaseEntity):
@@ -100,7 +108,8 @@ class Player(BaseEntity):
                     self.texture = self.image[self.rotation]
             except KeyError:
                 pass
-        print('pl', self.cartesian_to_isometric(self.x, self.y))
+        x, y = self.cartesian_to_isometric(self.x, self.y)
+        logging.info(f'point {x}, {y}')
 
     def render(self, screen=None, border_offset=[500, 100]):
         self._render.render_isometric_player(screen, border_offset)
@@ -205,7 +214,6 @@ class NPC(BaseEntity):
 
         if (self.x, self.y) == (self.dest_x, self.dest_y):
             self.dest_complete = True
-            print(1)
         else:
             if self.speed > abs(self.x - self.dest_x):
                 self.x = self.dest_x
