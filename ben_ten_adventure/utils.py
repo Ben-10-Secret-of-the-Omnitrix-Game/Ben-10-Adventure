@@ -52,7 +52,7 @@ class Movie:
         # Show the PyGame surface!
         screen.blit(surf, (0, 0))
         pygame.display.update((100, 100, 200, 200))
-        pygame.time.Clock().tick(120)
+        pygame.time.Clock().tick(200)
         return True
 
         

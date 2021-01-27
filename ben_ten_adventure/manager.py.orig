@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 import cv2
 import numpy
 import pytmx
@@ -9,9 +10,11 @@ from .scene import Scene
 from .graphics import Tile
 from .entity import Player, NPC
 
+
 from os.path import join, split
 from pygame.transform import scale
 
+MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
 
 class AdventureScene:
     PLAYING = 0
@@ -46,7 +49,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_scene_3,
             self.play_scene_4,
             self.play_scene_5]
-        self._index = 1
+        self._index = 0
         self.init_funcs = [
             self.init_scene_1,
             self.init_scene_2,
@@ -69,17 +72,29 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         self.handle_event(kwargs)
         if not kwargs['intro'].tick(self.screen):
+            print("Video ended")
             return self.END
+        print("Running")
 
         
     def init_scene_2(self):
         kwargs = {}
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_1.tmx"))
+
+        npc_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
+                      self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
+        kwargs['npcs'] = [NPC('', npc_images,
+                    x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
+                    y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
+                    speed=randint(1, 3)) for _ in range(5)]
         ben_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
                   self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
+<<<<<<< HEAD:ben_ten_adventure/adventure_manager.py
         kwargs['myaxx'] = NPC('Myaxx', image=[self.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
         kwargs['vilgax'] = NPC('Vilgax', image=[self.ga.Alien_V_128_128], hp=250, x=600, y=500, speed=5)
+=======
+>>>>>>> 87df2ba2769c1b920328ea98c85f2964acb2a75e:ben_ten_adventure/manager.py
         kwargs['camera'] = Camera()
         return kwargs
         
@@ -89,9 +104,9 @@ class SecretOfTheOmnitrix(AdventureScene):
         Fight between Ben 10 and prisoners. Save Myaxx
         """
         self.handle_event(kwargs)
-        
         self.render_map(kwargs)
         kwargs['player'].render(self.screen)
+<<<<<<< HEAD:ben_ten_adventure/adventure_manager.py
         kwargs['myaxx'].render(self.screen)
         
         kwargs['vilgax'].render(self.screen)
@@ -105,6 +120,13 @@ class SecretOfTheOmnitrix(AdventureScene):
         if kwargs['player'].is_near(kwargs['myaxx']):
             self.play_data.update({'win': True})
             return self.END
+=======
+        for npc in kwargs['npcs']:
+            npc.render(self.screen)
+            npc.go_to(kwargs['player'])
+            npc.attack(kwargs['player'])
+        # kwargs['camera'].update(kwargs['player'])
+>>>>>>> 87df2ba2769c1b920328ea98c85f2964acb2a75e:ben_ten_adventure/manager.py
         
     
     def init_scene_3(self):
@@ -156,16 +178,14 @@ class SecretOfTheOmnitrix(AdventureScene):
                 print("Finish")
     
     def render_map(self, kwargs):
-        # TODO add camera offset X and Y in kwargs
             for layer in kwargs['map'].layers:
                 for x, y, image in layer.tiles():
                     file_name = split(image[0])[-1]
                     asset_name = file_name.split('.')[0]
-                    # TODO subtract camera offset from x and y
                     tile = Tile(x, y, (600, 100), image=getattr(self.ga, asset_name), tile_size=128)
                     tile.render_isometric_tile(self.screen)
                     
-    def handle_event(self, kwargs, custom_callback=None):
+    def handle_event(self, kwargs):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -182,6 +202,3 @@ class SecretOfTheOmnitrix(AdventureScene):
                 btns_pressed = tuple(pygame.key.get_pressed())[79:83]
                 if 'player' in kwargs:
                     kwargs['player'].move(btns_pressed)
-                    if 'myaxx' in kwargs:
-                        print(kwargs['player'].is_near(kwargs['myaxx']))
-                    
