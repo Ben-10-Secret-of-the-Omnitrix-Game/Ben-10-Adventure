@@ -67,7 +67,7 @@ class RenderPlayer:
             self.screen = screen
             
         font = pygame.font.Font(None, 40)
-        if not self.player.is_killed:
+        if not self.player.is_killed and screen:
             iso_x, iso_y = self.player.cartesian_to_isometric(self.player.x, self.player.y)
             screen.blit(self.player.texture,
                         self.player_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
@@ -75,7 +75,8 @@ class RenderPlayer:
             
         else:
             text = font.render('Wasted', True, (255, 100, 100))
-        screen.blit(text, (650, 20))
+        if screen:
+            screen.blit(text, (1200, 200))
 
     def is_attacked(self):
         duration = 0
@@ -90,6 +91,7 @@ class RenderPlayer:
         self.player.x = x
         self.player.y = y
         self.screen = None
+
 
 class RenderNPC:
     def __init__(self, npc):
@@ -108,4 +110,16 @@ class RenderNPC:
         iso_x, iso_y = self.npc.cartesian_to_isometric(self.npc.x, self.npc.y)
         screen.blit(self.npc.texture,
                     self.npc_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
-        
+
+
+class RenderEntities:
+    """To render all entities right, we've got to compare everything
+        That's why we put all entities together for rendering"""
+    def __init__(self, entities_list):
+        self.entities = entities_list
+
+    def render(self, screen=None, border_offset=[500, 100]):
+        self.entities = sorted(self.entities, key=lambda x: x.x + x.y)
+        for ent in self.entities:
+            ent.render(screen, border_offset)
+        pass

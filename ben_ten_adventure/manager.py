@@ -6,7 +6,7 @@ import sys
 
 from .utils import Movie, DEFAULT_RESOURCES_PATH, Camera
 from .scene import Scene
-from .graphics import Tile
+from .graphics import Tile, RenderEntities
 from .entity import Player, NPC
 
 
@@ -83,15 +83,15 @@ class SecretOfTheOmnitrix(AdventureScene):
 
         npc_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
                       self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
-        kwargs['npcs'] = [NPC('', npc_images,
+        kwargs['npcs'] = [NPC(str(i + 1), npc_images,
                     x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
                     y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
-                    speed=randint(1, 3)) for _ in range(5)]
+                    speed=randint(1, 3)) for i in range(7)]
         ben_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
                   self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
         kwargs['myaxx'] = NPC('Myaxx', image=[self.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
-        kwargs['vilgax'] = NPC('Vilgax', image=[self.ga.Alien_V_128_128], hp=250, x=600, y=500, speed=5)
+        kwargs['vilgax'] = NPC('Vilgax', image=[self.ga.Alien_V_128_128], hp=250, x=700, y=600, speed=5)
 
         kwargs['camera'] = Camera()
         return kwargs
@@ -103,10 +103,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         self.handle_event(kwargs)
         self.render_map(kwargs)
-        kwargs['player'].render(self.screen)
-        kwargs['myaxx'].render(self.screen)
-        
-        kwargs['vilgax'].render(self.screen)
+        ALL_ENTITIES.render(self.screen)
         kwargs['vilgax'].go_to(kwargs['player'])
         kwargs['vilgax'].attack(kwargs['player'])
         
@@ -118,9 +115,9 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_data.update({'win': True})
             return self.END
         for npc in kwargs['npcs']:
-            npc.render(self.screen)
             npc.go_to(kwargs['player'])
             npc.attack(kwargs['player'])
+            # npc.random_move()
         # kwargs['camera'].update(kwargs['player'])
         
     
@@ -134,9 +131,9 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         # self.handle_event(kwargs)
         if kwargs['win']:
-            self.screen.blit(self.ga.win, (0, 0))
+            self.screen.blit(self.ga.win, (500, 100))
         else:
-            self.screen.blit(self.ga.game_over, (0, 0))
+            self.screen.blit(self.ga.game_over, (500, 100))
     
     def init_scene_4(self):
         pass
@@ -197,3 +194,39 @@ class SecretOfTheOmnitrix(AdventureScene):
                 btns_pressed = tuple(pygame.key.get_pressed())[79:83]
                 if 'player' in kwargs:
                     kwargs['player'].move(btns_pressed)
+
+
+class EntityManager:
+    """This class is created for searching for collisions
+        All entities must be added to an object of EntityManager class"""
+    def __init__(self):
+        self.entity_list = []
+        self.id_list = []
+        self.collision_radius = 30
+        self._render = RenderEntities(self.entity_list)
+
+    def add_entity(self, entity):
+        if self.can_add(entity):
+            self.entity_list.append(entity)
+            self.id_list.append(entity.id)
+
+    def get_list(self):
+        return self.entity_list
+
+    def can_add(self, entity):
+        if entity.id in self.id_list:
+            return False
+        return True
+
+    def is_collision(self, entity):
+        for ent in self.entity_list:
+            if ent.id != entity.id:
+                if ((ent.x - entity.x) ** 2 + (ent.y - entity.y) ** 2) ** 0.5 < self.collision_radius:
+                    return True
+        return False
+
+    def render(self, screen=None, border_offset=[500, 100]):
+        self._render.render(screen, border_offset)
+
+
+ALL_ENTITIES = EntityManager()

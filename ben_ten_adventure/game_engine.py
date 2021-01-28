@@ -86,20 +86,6 @@ def start():
     
     # Adventure
     adventure = SecretOfTheOmnitrix(screen, ga)
-    
-
-    npc_images = [ga.ben10_1_128_128, ga.ben10_2_128_128,
-                  ga.ben10_3_128_128, ga.ben10_4_128_128]
-    npcs = [NPC('', npc_images,
-                x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
-                y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
-                speed=randint(1, 3)) for _ in range(2)]
-    big_gun = BaseWeapon(100, 50)
-
-    ben_images = [ga.ben10_1_128_128, ga.ben10_2_128_128,
-                  ga.ben10_3_128_128, ga.ben10_4_128_128]
-    ben = Player('Ben', ben_images, x=250, y=250, speed=15)
-    
 
 def render_map():
     for row in range(0, MAP_WIDTH):

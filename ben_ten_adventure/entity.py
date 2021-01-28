@@ -15,10 +15,12 @@ class BaseEntity(pygame.sprite.Sprite):
         1. define class named by this rules:
             Your class name end with "Entity" (case sensetive)
         2. inherit your class from BaseEntity whenever your entity is!
-        3. Extend functionality 
+        3. Extend functionality
+
+    id is unique - for PLayer it's name
 
     """
-    def __init__(self, x, y, skin, speed=3):
+    def __init__(self, x, y, id, speed=3):
         # pygame.sprite.Sprite.__init__(self)
         super().__init__()
         """
@@ -27,7 +29,7 @@ class BaseEntity(pygame.sprite.Sprite):
         """
         self.x = x
         self.y = y
-        self.skin = skin
+        self.id = id
         self.rotation = 0
         self._direction_map = {
             (1, 0, 0, 0): [{'dx': 0, 'dy': -1}, 2],
@@ -40,7 +42,16 @@ class BaseEntity(pygame.sprite.Sprite):
             (1, 0, 0, 1): [{'dx': -1, 'dy': -1}, 3]
         }
         self.speed = speed
-    
+
+        from .manager import ALL_ENTITIES
+        ALL_ENTITIES.add_entity(self)
+
+    def __str__(self):
+        return f'{self.__class__.__name__} {self.id}'
+
+    def __repr__(self):
+        return self.__str__()
+
     def _move(self, keys_states, speed=None):
         if speed is None:
             speed = self.speed
@@ -61,7 +72,7 @@ class BaseEntity(pygame.sprite.Sprite):
         pass
     
     def is_near(self, entity):
-        return (abs(self.x - entity.x) * 2 < 50) and (abs(self.y - entity.y) * 2 < 50)
+        return (abs(self.x - entity.x) * 2 < 60) and (abs(self.y - entity.y) * 2 < 60)
 
 
 class Player(BaseEntity):
@@ -74,7 +85,7 @@ class Player(BaseEntity):
     """
 
     def __init__(self, name, image=None, hp=200, x=0, y=0, speed=1):
-        super().__init__(x, y, '', speed)
+        super().__init__(x, y, name, speed)
         """
         x, y - coords
         image is a list of Tiles
@@ -82,7 +93,7 @@ class Player(BaseEntity):
         self.image = image
         if image:
             self.texture = image[self.rotation]
-        self.name = name
+        self.id = name
         self.x = x
         self.y = y
         self.width, self.height = self.texture.get_size()
@@ -91,6 +102,7 @@ class Player(BaseEntity):
         self.is_killed = False
 
     def move(self, keys_states, speed=None):
+        from .manager import ALL_ENTITIES
         if not self.is_killed:
             if speed is None:
                 speed = self.speed
@@ -98,23 +110,26 @@ class Player(BaseEntity):
                 direction = self._direction_map[keys_states]
                 self.x = self.x + (direction[0]['dx'] * speed)
                 self.y = self.y + (direction[0]['dy'] * speed)
+                if ALL_ENTITIES.is_collision(self):
+                    self.x = self.x - (direction[0]['dx'] * speed)
+                    self.y = self.y - (direction[0]['dy'] * speed)
                 self.rotation = direction[1] - 1
                 if not self.is_killed:
                     self.texture = self.image[self.rotation]
             except KeyError:
                 pass
-        print('pl', self.cartesian_to_isometric(self.x, self.y))
 
     def render(self, screen=None, border_offset=[500, 100]):
         self._render.render_isometric_player(screen, border_offset)
 
     def is_attacked(self):
+        if self.hp <= 0:
+            self.is_killed = True
         self._render.is_attacked()
         
     def get_rect(self):
         return self.texture.get_rect()
     
-
 
 class NPC(BaseEntity):
     """
@@ -123,12 +138,15 @@ class NPC(BaseEntity):
     How to know is it NPC?
         * no one control it with keyboard, mouse, any other stuff.
         * has primitive actions, generally it's stupid AI or hardcoded actions.
+
+    id is made for comparing different NPCs and preventing their collision
+    id is unique, usually it's a Number(1, 3, 10, NPC2) or a Name (f.e. Vilgax)
     """
 
-    def __init__(self, skin, image=None, hp=100, x=0, y=0, speed=1):
-        super().__init__(x, y, '', speed)
+    def __init__(self, id, image=None, hp=100, x=0, y=0, speed=1):
+        super().__init__(x, y, id, speed)
         self.weapon = None
-        self.skin = skin
+        self.id = id
         self.image = image
         if image:
             self.texture = image[self.rotation]
@@ -157,27 +175,61 @@ class NPC(BaseEntity):
         self.weapon = weapon
 
     def go_to(self, player):
+        from .manager import ALL_ENTITIES
+
+        rot_x, rot_y = 0, 0
+
         if self.attack_pause < 40:
             self.attack_pause += 1
+
         if self.speed > abs(self.x - player.x):
-            self.x += self.x - player.x
+            self.x = player.x
         elif self.x != player.x:
             if self.x > player.x:
                 self.x -= self.speed
+                rot_x = -1
             else:
                 self.x += self.speed
+                rot_x = 1
         if self.speed > abs(self.y - player.y):
-            self.y += self.y - player.y
+            self.y = player.y
         elif self.y != player.y:
             if self.y > player.y:
                 self.y -= self.speed
+                rot_y = -1
             else:
                 self.y += self.speed
+                rot_y = 1
+        if ALL_ENTITIES.is_collision(self):
+            self.x -= self.speed * rot_x
+            self.y -= self.speed * rot_y
+        else:
+            """changing texture rotation"""
+
+            if rot_x == rot_y == 1:
+                self.rotation = 0
+            elif rot_x == rot_y == -1:
+                self.rotation = 2
+            elif rot_x == 1 and rot_y == -1:
+                self.rotation = 1
+            elif rot_x == -1 and rot_y == 1:
+                self.rotation = 3
+            elif rot_x == -1 and rot_y == 0:
+                self.rotation = 2
+            elif rot_x == 1 and rot_y == 0:
+                self.rotation = 0
+            elif rot_y == 1 and rot_x == 0:
+                self.rotation = 3
+            else:
+                self.rotation = 1
+
+            if self.image and len(self.image) >= self.rotation + 1:
+                self.texture = self.image[self.rotation]
 
     def attack(self, player):
         if self.weapon == None:
             damage = self.damage
-            radius = 10
+            radius = 40
         else:
             damage = self.weapon.damage
             radius = self.weapon.radius
@@ -185,8 +237,6 @@ class NPC(BaseEntity):
             if ((self.x - player.x) ** 2 + (self.y - player.y) ** 2) ** 0.5 <= radius:
                 player.hp -= damage
                 player.is_attacked()
-                if player.hp <= 0:
-                    player.is_killed = True
                 self.attack_pause = 0
                 
     def get_rect(self):
@@ -199,6 +249,8 @@ class NPC(BaseEntity):
         if self.attack_pause < 40:
             self.attack_pause += 1
 
+        from .manager import ALL_ENTITIES
+
         rot_x = 0
         rot_y = 0
 
@@ -209,7 +261,6 @@ class NPC(BaseEntity):
 
         if (self.x, self.y) == (self.dest_x, self.dest_y):
             self.dest_complete = True
-            print(1)
         else:
             if self.speed > abs(self.x - self.dest_x):
                 self.x = self.dest_x
@@ -229,24 +280,31 @@ class NPC(BaseEntity):
                 else:
                     self.y += self.speed
                     rot_y = 1
+        if ALL_ENTITIES.is_collision(self):
+            self.x -= self.speed * rot_x
+            self.y -= self.speed * rot_y
 
-        """changing texture rotate"""
-
-        if rot_x == rot_y == 1:
-            self.rotation = 0
-        elif rot_x == rot_y == -1:
-            self.rotation = 2
-        elif rot_x == 1 and rot_y == -1:
-            self.rotation = 1
-        elif rot_x == -1 and rot_y == 1:
-            self.rotation = 3
-        elif rot_x == -1 and rot_y == 0:
-            self.rotation = 2
-        elif rot_x == 1 and rot_y == 0:
-            self.rotation = 0
-        elif rot_y == 1 and rot_x == 0:
-            self.rotation = 3
+            self.dest_x = randint(0, map_width * tile_size // 2)
+            self.dest_y = randint(0, map_height * tile_size // 2)
         else:
-            self.rotation = 1
+            """changing texture rotation"""
 
-        self.texture = self.image[self.rotation]
+            if rot_x == rot_y == 1:
+                self.rotation = 0
+            elif rot_x == rot_y == -1:
+                self.rotation = 2
+            elif rot_x == 1 and rot_y == -1:
+                self.rotation = 1
+            elif rot_x == -1 and rot_y == 1:
+                self.rotation = 3
+            elif rot_x == -1 and rot_y == 0:
+                self.rotation = 2
+            elif rot_x == 1 and rot_y == 0:
+                self.rotation = 0
+            elif rot_y == 1 and rot_x == 0:
+                self.rotation = 3
+            else:
+                self.rotation = 1
+
+            if self.image and len(self.image) >= self.rotation + 1:
+                self.texture = self.image[self.rotation]
