@@ -8,6 +8,7 @@ here will be different classes for weapons
 
 
 class BaseWeapon:
-    def __init__(self, damage, radius):
+    def __init__(self, damage, radius, attack_pause=40):
         self.damage = damage
         self.radius = radius
+        self.attack_pause = attack_pause

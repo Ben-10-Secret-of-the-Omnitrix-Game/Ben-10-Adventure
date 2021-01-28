@@ -100,36 +100,71 @@ class Player(BaseEntity):
         self.width, self.height = self.texture.get_size()
         self._render = RenderPlayer(self)
         self.hp = hp
-        self.is_killed = False
+
+        self.friends = [self.id]
+        self.friends_ids = []
+
+        self.weapon = None
+        self.damage = 20
+        self.attack_pause = 10
+        self.current_tick = self.attack_pause
 
     def move(self, keys_states, speed=None):
         from .manager import ALL_ENTITIES
-        if not self.is_killed:
-            if speed is None:
-                speed = self.speed
-            try:
-                direction = self._direction_map[keys_states]
-                self.x = self.x + (direction[0]['dx'] * speed)
-                self.y = self.y + (direction[0]['dy'] * speed)
-                if ALL_ENTITIES.is_collision(self):
-                    self.x = self.x - (direction[0]['dx'] * speed)
-                    self.y = self.y - (direction[0]['dy'] * speed)
-                self.rotation = direction[1] - 1
-                if not self.is_killed:
-                    self.texture = self.image[self.rotation]
-            except KeyError:
-                pass
+        if speed is None:
+            speed = self.speed
+        try:
+            direction = self._direction_map[keys_states]
+            self.x = self.x + (direction[0]['dx'] * speed)
+            self.y = self.y + (direction[0]['dy'] * speed)
+            if ALL_ENTITIES.is_collision(self):
+                self.x = self.x - (direction[0]['dx'] * speed)
+                self.y = self.y - (direction[0]['dy'] * speed)
+            self.rotation = direction[1] - 1
+            self.texture = self.image[self.rotation]
+        except KeyError:
+            pass
 
     def render(self, screen=None, border_offset=[500, 100]):
+        if self.current_tick < self.attack_pause:
+            self.current_tick += 1
         self._render.render_isometric_player(screen, border_offset)
 
     def is_attacked(self):
-        if self.hp <= 0:
-            self.is_killed = True
         self._render.is_attacked()
-        
+        if self.hp <= 0:
+            from .manager import ALL_ENTITIES
+            ALL_ENTITIES.remove(self)
+
     def get_rect(self):
         return self.texture.get_rect()
+
+    def set_friends(self, *args):
+        for friend in args:
+            self.friends.append(friend)
+            self.friends_ids.append(friend.id)
+
+    def set_weapon(self, weapon):
+        self.weapon = weapon
+
+    def attack(self):
+        from .manager import ALL_ENTITIES
+
+        if self.weapon is None:
+            damage = self.damage
+            radius = 40
+        else:
+            damage = self.weapon.damage
+            radius = self.weapon.radius
+        if self.current_tick == self.attack_pause:
+            for npc in ALL_ENTITIES.get_list():
+                if npc.id not in self.friends:
+                    if ((self.x - npc.x) ** 2 + (self.y - npc.y) ** 2) ** 0.5 <= radius and npc.hp > 0:
+                        npc.hp -= damage
+                        npc.is_attacked()
+                        self.current_tick = 0
+                        break
+
     
 
 class NPC(BaseEntity):
@@ -157,6 +192,7 @@ class NPC(BaseEntity):
         self._render = RenderNPC(self)
         self.hp = hp
         self.attack_pause = 40
+        self.current_tick = self.attack_pause
 
         """if there is no weapon, NPC will try to kill player without it"""
         self.damage = 20
@@ -166,6 +202,8 @@ class NPC(BaseEntity):
         self.dest_y = 0
 
     def render(self, screen=None, border_offset=[500, 100]):
+        if self.current_tick < self.attack_pause:
+            self.current_tick += 1
         self._render.render_isometric_npc(screen, border_offset)
 
     def update(self):
@@ -179,9 +217,6 @@ class NPC(BaseEntity):
         from .manager import ALL_ENTITIES
 
         rot_x, rot_y = 0, 0
-
-        if self.attack_pause < 40:
-            self.attack_pause += 1
 
         if self.speed > abs(self.x - player.x):
             self.x = player.x
@@ -227,6 +262,13 @@ class NPC(BaseEntity):
             if self.image and len(self.image) >= self.rotation + 1:
                 self.texture = self.image[self.rotation]
 
+    def is_attacked(self):
+        self._render.is_attacked()
+        if self.hp <= 0:
+            from .manager import ALL_ENTITIES
+            ALL_ENTITIES.remove(self)
+            print(ALL_ENTITIES.get_list())
+
     def attack(self, player):
         if self.weapon == None:
             damage = self.damage
@@ -234,11 +276,11 @@ class NPC(BaseEntity):
         else:
             damage = self.weapon.damage
             radius = self.weapon.radius
-        if self.attack_pause == 40 and player.hp > 0:
+        if self.current_tick == self.attack_pause and player.hp > 0:
             if ((self.x - player.x) ** 2 + (self.y - player.y) ** 2) ** 0.5 <= radius:
                 player.hp -= damage
                 player.is_attacked()
-                self.attack_pause = 0
+                self.current_tick = 0
                 
     def get_rect(self):
         return self.texture.get_rect()
@@ -246,9 +288,6 @@ class NPC(BaseEntity):
     def random_move(self, tile_size=128, map_width=10, map_height=10, border_offset=[500, 100]):
         """randomly calculating a point on the map
             and going to it"""
-
-        if self.attack_pause < 40:
-            self.attack_pause += 1
 
         from .manager import ALL_ENTITIES
 

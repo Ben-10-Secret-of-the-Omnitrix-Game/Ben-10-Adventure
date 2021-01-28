@@ -86,12 +86,13 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs['npcs'] = [NPC(str(i + 1), npc_images,
                     x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
                     y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
-                    speed=randint(1, 3)) for i in range(7)]
+                    speed=randint(1, 3)) for i in range(5)]
         ben_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
                   self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
         kwargs['myaxx'] = NPC('Myaxx', image=[self.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
         kwargs['vilgax'] = NPC('Vilgax', image=[self.ga.Alien_V_128_128], hp=250, x=700, y=600, speed=5)
+        kwargs['player'].set_friends(kwargs['myaxx'])
 
         kwargs['camera'] = Camera()
         return kwargs
@@ -101,13 +102,14 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         Fight between Ben 10 and prisoners. Save Myaxx
         """
-        self.handle_event(kwargs)
+
         self.render_map(kwargs)
+        self.handle_event(kwargs)
         ALL_ENTITIES.render(self.screen)
         kwargs['vilgax'].go_to(kwargs['player'])
         kwargs['vilgax'].attack(kwargs['player'])
         
-        if kwargs['player'].is_killed:
+        if kwargs['player'].id not in ALL_ENTITIES.get_id_list():
             self.play_data.update({"win": False})
             return self.END
         
@@ -198,6 +200,9 @@ class SecretOfTheOmnitrix(AdventureScene):
                 if 'player' in kwargs:
                     kwargs['player'].move(btns_pressed)
 
+                if event.key == pygame.K_SPACE:
+                    kwargs['player'].attack()
+
 
 class EntityManager:
     """This class is created for searching for collisions
@@ -206,7 +211,7 @@ class EntityManager:
         self.entity_list = []
         self.id_list = []
         self.collision_radius = 30
-        self._render = RenderEntities(self.entity_list)
+        self._render = RenderEntities()
 
     def add_entity(self, entity):
         if self.can_add(entity):
@@ -215,6 +220,16 @@ class EntityManager:
 
     def get_list(self):
         return self.entity_list
+
+    def get_id_list(self):
+        return self.id_list
+
+    def remove(self, entity):
+        self.id_list.remove(entity.id)
+        for i in range(len(self.entity_list)):
+            if self.entity_list[i].id == entity.id:
+                self.entity_list.pop(i)
+                break
 
     def can_add(self, entity):
         if entity.id in self.id_list:
@@ -229,7 +244,7 @@ class EntityManager:
         return False
 
     def render(self, screen=None, border_offset=[500, 100]):
-        self._render.render(screen, border_offset)
+        self._render.render(self.entity_list, screen, border_offset)
 
 
 ALL_ENTITIES = EntityManager()

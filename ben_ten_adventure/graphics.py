@@ -67,15 +67,11 @@ class RenderPlayer:
             self.screen = screen
             
         font = pygame.font.Font(None, 40)
-        if not self.player.is_killed and screen:
+        if screen:
             iso_x, iso_y = self.player.cartesian_to_isometric(self.player.x, self.player.y)
             screen.blit(self.player.texture,
                         self.player_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
             text = font.render('Health: ' + str(self.player.hp), True, (100, 255, 100))
-            
-        else:
-            text = font.render('Wasted', True, (255, 100, 100))
-        if screen:
             screen.blit(text, (1200, 200))
 
     def is_attacked(self):
@@ -96,30 +92,42 @@ class RenderPlayer:
 class RenderNPC:
     def __init__(self, npc):
         self.npc = npc
-        
+        self.screen = None
 
     def npc_place(self, x, y):
         return x, y - self.npc.height + 20
 
-    def render_isometric_npc(self, screen, border_offset=[500, 100]):
+    def render_isometric_npc(self, screen=None, border_offset=[500, 100]):
         if screen is None:
             screen = self.screen
         else:
-            self.screen = screen    
-        
-        iso_x, iso_y = self.npc.cartesian_to_isometric(self.npc.x, self.npc.y)
-        screen.blit(self.npc.texture,
-                    self.npc_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
+            self.screen = screen
+
+        if screen:
+            iso_x, iso_y = self.npc.cartesian_to_isometric(self.npc.x, self.npc.y)
+            screen.blit(self.npc.texture,
+                        self.npc_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
+
+    def is_attacked(self):
+        duration = 0
+        changes = [-3, -2, -1, 0, 1, 2, 3]
+        x = self.npc.x
+        y = self.npc.y
+        while duration != 5:
+            self.npc.x += choice(changes)
+            self.npc.y += choice(changes)
+            self.render_isometric_npc()
+            duration += 1
+        self.npc.x = x
+        self.npc.y = y
+        self.screen = None
 
 
 class RenderEntities:
     """To render all entities right, we've got to compare everything
         That's why we put all entities together for rendering"""
-    def __init__(self, entities_list):
-        self.entities = entities_list
 
-    def render(self, screen=None, border_offset=[500, 100]):
-        self.entities = sorted(self.entities, key=lambda x: x.x + x.y)
-        for ent in self.entities:
+    def render(self, entities, screen=None, border_offset=[500, 100]):
+        entities = sorted(entities, key=lambda x: x.x + x.y)
+        for ent in entities:
             ent.render(screen, border_offset)
-        pass
