@@ -72,7 +72,8 @@ class BaseEntity(pygame.sprite.Sprite):
         pass
     
     def is_near(self, entity):
-        return (abs(self.x - entity.x) * 2 < 60) and (abs(self.y - entity.y) * 2 < 60)
+        radius = 50
+        return ((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2) ** 0.5 < radius
 
 
 class Player(BaseEntity):

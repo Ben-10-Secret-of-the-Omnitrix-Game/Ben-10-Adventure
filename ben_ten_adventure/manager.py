@@ -134,6 +134,9 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.screen.blit(self.ga.win, (500, 100))
         else:
             self.screen.blit(self.ga.game_over, (500, 100))
+        pygame.display.flip()
+        pygame.time.wait(3000)
+        sys.exit()
     
     def init_scene_4(self):
         pass
