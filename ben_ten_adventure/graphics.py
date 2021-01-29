@@ -14,13 +14,14 @@ import logging
 import pygame
 from random import choice
 
+
 class BasicIsometric:
-    
+
     def cartesian_to_isometric(self, cart_x, cart_y):
         isometric_x = (cart_x - cart_y)
         isometric_y = (cart_x + cart_y) / 2
         return isometric_x, isometric_y
-    
+
     def isometric_to_cartesian(self, iso_x, iso_y):
         pass
 
@@ -38,7 +39,7 @@ class Tile(BasicIsometric):
         self.texture = image
         self.border_offset = border_offset
         self.tile_size = tile_size
-        
+
         self.iso_x = x
         self.iso_y = y
 
@@ -48,10 +49,10 @@ class Tile(BasicIsometric):
         cart_x = self.x * self.tile_size / 2
         cart_y = self.y * self.tile_size / 2
         self.iso_x, self.iso_y = self.cartesian_to_isometric(
-        cart_x, cart_y)
+            cart_x, cart_y)
         screen.blit(self.texture, (self.iso_x + self.border_offset[0], self.iso_y + self.border_offset[1]))
-    
-    
+
+
 class RenderPlayer:
     def __init__(self, player):
         self.player = player
@@ -65,7 +66,7 @@ class RenderPlayer:
             screen = self.screen
         else:
             self.screen = screen
-            
+
         font = pygame.font.Font(None, 40)
         if screen:
             iso_x, iso_y = self.player.cartesian_to_isometric(self.player.x, self.player.y)

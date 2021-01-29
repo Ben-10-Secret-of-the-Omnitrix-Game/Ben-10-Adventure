@@ -6,12 +6,9 @@ from pygame import mixer
 import cv2
 import numpy
 
-
 from os.path import join, exists
 from os import mkdir
 from pprint import pprint
-
-
 
 DEFAULT_RESOURCES_PATH = join("resources")
 DEFAULT_GAMEDATA_PATH = join("game_data")
@@ -24,8 +21,6 @@ def init_resource_dirs():
         mkdir(DEFAULT_GAMEDATA_PATH)
 
 
-
-
 class Movie:
 
     def __init__(self, file_path):
@@ -33,7 +28,7 @@ class Movie:
         self.start_audio = False
         mixer.init()
         mixer.music.load(join(DEFAULT_RESOURCES_PATH, "videos", "ben_10_test2.mp3"))
-        
+
     def tick(self, screen):
         if not self.start_audio:
             mixer.music.set_volume(0.01)
@@ -55,20 +50,21 @@ class Movie:
         pygame.time.Clock().tick(180)
         return True
 
-        
+
 class Camera:
     def __init__(self):
         self.dx = 0
         self.dy = 0
-        
+
     def apply(self, obj):
         obj.rect.x += self.dx
         obj.rect.y += self.dy
-    
+
     def update(self, target):
         self.dx = -(target.rect.x + target.rect.w // 2 - target.rect.width // 2)
         self.dy = -(target.rect.y + target.rect.h // 2 - target.rect.height // 2)
-    
+
+
 class RawData:
     pass
 

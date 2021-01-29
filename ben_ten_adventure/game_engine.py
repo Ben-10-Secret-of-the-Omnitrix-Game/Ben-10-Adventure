@@ -27,19 +27,20 @@ from pprint import pprint
 HD = (1280, 720)
 FULL_HD = (1920, 1080)
 
+
 def init():
     global screen, DEBUG, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, ACTION, border_offset, game_config, RESOLUTION
-    
+
     # game config for initialization
     game_config = Config(join(DEFAULT_GAMEDATA_PATH, 'game_data.json'), Config.JSON,
-                             {
-                                 'debug': True,
-                                 'resolution': HD,
-                                 'tile_size': 128,
-                                 'map_size': (10, 10),
-                                 'videos': ('Ben10_TEST_movie.mp4')
-                             })
-    
+                         {
+                             'debug': True,
+                             'resolution': HD,
+                             'tile_size': 128,
+                             'map_size': (10, 10),
+                             'videos': ('Ben10_TEST_movie.mp4')
+                         })
+
     if game_config.data['resolution'] == HD:
         game_config.data['resolution'] = FULL_HD
         game_config.save()
@@ -50,7 +51,7 @@ def init():
     TILE_SIZE = game_config.data['tile_size']
     MAP_WIDTH, MAP_HEIGHT = game_config.data['map_size']
     # VIDEOS = game_config.data['videos']
-    
+
     ACTION = Activity.MAIN_SCREEN
 
     # pygame
@@ -58,34 +59,35 @@ def init():
     pygame.font.init()
     flags = pygame.NOFRAME | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.RESIZABLE
     screen = pygame.display.set_mode(RESOLUTION, flags=flags)
-    
+
     # Centralize map
-    x_pad = TILE_SIZE    # prevent from float values
-    y_pad = MAP_HEIGHT * TILE_SIZE # prevent from float values
+    x_pad = TILE_SIZE  # prevent from float values
+    y_pad = MAP_HEIGHT * TILE_SIZE  # prevent from float values
     border_offset = (500, 100)
 
 
 def start():
     global screen, ga, clock, fps, script, ben, adventure, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, npcs
-    
+
     if DEBUG:
         script = Loader(join("ben_ten_adventure", "graphics.py"),
                         "ben_ten_adventure.graphics", 1)
-    
+
     # .utils.py
-    
+
     init_resource_dirs()
     ga = GameAssets()
-    
+
     # world ticking
     clock = pygame.time.Clock()
     fps = 120
-    
+
     # ui init
     # ...
-    
+
     # Adventure
     adventure = SecretOfTheOmnitrix(screen, ga)
+
 
 def render_map():
     for row in range(0, MAP_WIDTH):
@@ -94,9 +96,9 @@ def render_map():
                                image=ga.wall_5_marine, tile_size=TILE_SIZE)
             tile.render_isometric_tile(screen)
 
-            
+
 def game_loop_handler():
-    screen.fill((0, 0, 0, 0)) 
+    screen.fill((0, 0, 0, 0))
 
     clock.tick(fps)
 
@@ -113,23 +115,21 @@ def game_loop_handler():
     # elif ACTION == Activity.PLAYING:
     #     manager.draw_ui(screen)
     #     pass
-        
-    
+
     # render_map()
-    
+
     if DEBUG:
         if script.has_changed():
             pygame.time.wait(500)
-    
+
     adventure.play_current()
-    
+
     # ben.render(screen)
     # for npc in npcs:
     #     npc.render(screen)
     #     npc.random_move()
     #     npc.attack(ben)
-    
-    
+
     pygame.display.update()
 
 

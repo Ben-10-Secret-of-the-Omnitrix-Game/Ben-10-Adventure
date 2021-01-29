@@ -20,6 +20,7 @@ class BaseEntity(pygame.sprite.Sprite):
     id is unique - for PLayer it's name
 
     """
+
     def __init__(self, x, y, id, speed=3):
         # pygame.sprite.Sprite.__init__(self)
         super().__init__()
@@ -70,7 +71,7 @@ class BaseEntity(pygame.sprite.Sprite):
 
     def render(self):
         pass
-    
+
     def is_near(self, entity):
         radius = 50
         return ((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2) ** 0.5 < radius
@@ -165,7 +166,6 @@ class Player(BaseEntity):
                         self.current_tick = 0
                         break
 
-    
 
 class NPC(BaseEntity):
     """
@@ -177,6 +177,7 @@ class NPC(BaseEntity):
 
     id is made for comparing different NPCs and preventing their collision
     id is unique, usually it's a Number(1, 3, 10, NPC2) or a Name (f.e. Vilgax)
+    so be careful by creating an NPC, because NPC with the same id won't be created
     """
 
     def __init__(self, id, image=None, hp=100, x=0, y=0, speed=1):
@@ -281,7 +282,7 @@ class NPC(BaseEntity):
                 player.hp -= damage
                 player.is_attacked()
                 self.current_tick = 0
-                
+
     def get_rect(self):
         return self.texture.get_rect()
 
