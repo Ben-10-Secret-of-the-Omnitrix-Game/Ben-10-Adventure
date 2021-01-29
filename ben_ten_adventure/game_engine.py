@@ -17,7 +17,7 @@ import pygame_gui
 
 from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
 from .entity import Player, NPC
-from .manager import SecretOfTheOmnitrix, Game, TaskManager
+from .manager import EntityManager, SecretOfTheOmnitrix, Game, TaskManager
 # from .ui import HD, FULL_HD, draw_main_screen
 from .weapon import BaseWeapon
 from .animation import ButtonAnimation
@@ -103,6 +103,7 @@ def start():
     game.MAP_WIDTH = MAP_WIDTH
     game.MAP_HEIGHT = MAP_HEIGHT
     game.ACTION = ACTION
+    game.entity_manager = EntityManager()
     
     # Adventure
     adventure = SecretOfTheOmnitrix(game)

@@ -22,6 +22,51 @@ MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
 PAUSE_GAME = False
 
 
+class EntityManager:
+    """This class was created for searching for collisions
+        All entities must be added to an object of EntityManager class
+        The object of this class is single, it helps to manipulate Entities easily"""
+
+    def __init__(self):
+        self.entity_list = []
+        self.id_list = []
+        self.collision_radius = 30
+        self._render = RenderEntities()
+
+    def add_entity(self, entity):
+        if self.can_add(entity):
+            self.entity_list.append(entity)
+            self.id_list.append(entity.id)
+
+    def get_list(self):
+        return self.entity_list
+
+    def get_id_list(self):
+        return self.id_list
+
+    def remove(self, entity):
+        self.id_list.remove(entity.id)
+        for i in range(len(self.entity_list)):
+            if self.entity_list[i].id == entity.id:
+                self.entity_list.pop(i)
+                break
+
+    def can_add(self, entity):
+        if entity.id in self.id_list:
+            return False
+        return True
+
+    def is_collision(self, entity):
+        for ent in self.entity_list:
+            if ent.id != entity.id:
+                if ((ent.x - entity.x) ** 2 + (ent.y - entity.y) ** 2) ** 0.5 < self.collision_radius:
+                    return True
+        return False
+
+    def render(self, screen=None, border_offset=[500, 100]):
+        self._render.render(self.entity_list, screen, border_offset)
+
+
 class AdventureScene:
     PLAYING = 0
     END = 1
@@ -127,11 +172,11 @@ class SecretOfTheOmnitrix(AdventureScene):
 
         self.render_map(kwargs)
         self.handle_event(kwargs)
-        ALL_ENTITIES.render(self.game.screen)
+        self.game.entity_manager.render(self.game.screen)
         kwargs['vilgax'].go_to(kwargs['player'])
         kwargs['vilgax'].attack(kwargs['player'])
 
-        if kwargs['player'].id not in ALL_ENTITIES.get_id_list():
+        if kwargs['player'].id not in self.game.entity_manager.get_id_list():
             self.play_data.update({"win": False})
             return self.END
 
@@ -234,54 +279,6 @@ class SecretOfTheOmnitrix(AdventureScene):
                 if event.key == pygame.K_p:
                     PAUSE_GAME = not PAUSE_GAME
 
-
-
-class EntityManager:
-    """This class was created for searching for collisions
-        All entities must be added to an object of EntityManager class
-        The object of this class is single, it helps to manipulate Entities easily"""
-
-    def __init__(self):
-        self.entity_list = []
-        self.id_list = []
-        self.collision_radius = 30
-        self._render = RenderEntities()
-
-    def add_entity(self, entity):
-        if self.can_add(entity):
-            self.entity_list.append(entity)
-            self.id_list.append(entity.id)
-
-    def get_list(self):
-        return self.entity_list
-
-    def get_id_list(self):
-        return self.id_list
-
-    def remove(self, entity):
-        self.id_list.remove(entity.id)
-        for i in range(len(self.entity_list)):
-            if self.entity_list[i].id == entity.id:
-                self.entity_list.pop(i)
-                break
-
-    def can_add(self, entity):
-        if entity.id in self.id_list:
-            return False
-        return True
-
-    def is_collision(self, entity):
-        for ent in self.entity_list:
-            if ent.id != entity.id:
-                if ((ent.x - entity.x) ** 2 + (ent.y - entity.y) ** 2) ** 0.5 < self.collision_radius:
-                    return True
-        return False
-
-    def render(self, screen=None, border_offset=[500, 100]):
-        self._render.render(self.entity_list, screen, border_offset)
-
-
-ALL_ENTITIES = EntityManager()
 
 class TaskManager:
     def __init__(self):
