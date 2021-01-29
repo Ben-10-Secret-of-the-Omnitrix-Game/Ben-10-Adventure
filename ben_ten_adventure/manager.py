@@ -44,11 +44,26 @@ class AdventureManager:
     """
     pass
 
+class Game:
+    DEBUG = bool
+    RESOLUTION = tuple
+    TILE_SIZE = int
+    MAP_WIDTH = int
+    MAP_HEIGHT = int
+    ACTION = int
+    
+    def __init__(self):
+        self.ga = object
+        self.screen = object
+        self.task_manager = object
+        # self.adventure = object
+        self.config = object
+        self.border_offset = int
+
 
 class SecretOfTheOmnitrix(AdventureScene):
-    def __init__(self, screen, ga):
-        self.screen = screen
-        self.ga = ga
+    def __init__(self, game):
+        self.game = game
         self.stages = [
             self.play_scene_1,
             self.play_scene_2,
@@ -76,7 +91,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         First video. 
         """
         self.handle_event(kwargs)
-        if not kwargs['intro'].tick(self.screen):
+        if not kwargs['intro'].tick(self.game.screen):
             print("Video ended")
             return self.END
         print("Running")
@@ -85,18 +100,18 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs = {}
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_1.tmx"))
 
-        npc_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
-                      self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
+        npc_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
+                      self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
         kwargs['npcs'] = [NPC(str(i + 1), npc_images,
                               x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
                               y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
                               speed=randint(1, 3)) for i in range(5)]
-        ben_images = [self.ga.ben10_1_128_128, self.ga.ben10_2_128_128,
-                      self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
+        ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
+                      self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
-        kwargs['myaxx'] = NPC('Myaxx', image=[self.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
+        kwargs['myaxx'] = NPC('Myaxx', image=[self.game.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
         kwargs['player'].set_friends(kwargs['myaxx'])
-        kwargs['vilgax'] = NPC('Vilgax', image=[self.ga.Alien_V_128_128], hp=250, x=700, y=600, speed=5)
+        kwargs['vilgax'] = NPC('Vilgax', image=[self.game.ga.Alien_V_128_128], hp=250, x=700, y=600, speed=5)
         kwargs['player'].set_friends(kwargs['myaxx'])
 
         kwargs['atom_fn_bomb'] = BaseWeapon(180, 1000, 50)
@@ -112,7 +127,7 @@ class SecretOfTheOmnitrix(AdventureScene):
 
         self.render_map(kwargs)
         self.handle_event(kwargs)
-        ALL_ENTITIES.render(self.screen)
+        ALL_ENTITIES.render(self.game.screen)
         kwargs['vilgax'].go_to(kwargs['player'])
         kwargs['vilgax'].attack(kwargs['player'])
 
@@ -139,9 +154,9 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         # self.handle_event(kwargs)
         if kwargs['win']:
-            self.screen.blit(self.ga.win, (500, 100))
+            self.game.screen.blit(self.game.ga.win, self.game.border_offset)
         else:
-            self.screen.blit(self.ga.game_over, (500, 100))
+            self.game.screen.blit(self.game.ga.game_over, self.game.border_offset)
         pygame.display.flip()
         pygame.time.wait(3000)
         sys.exit()
@@ -184,15 +199,15 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.handle_event('pause')
             font = pygame.font.Font(None, 50)
             text = font.render('To continue press P', True, (100, 255, 100))
-            self.screen.blit(text, (640, 500))
+            self.game.screen.blit(text, (640, 500))
 
     def render_map(self, kwargs):
         for layer in kwargs['map'].layers:
             for x, y, image in layer.tiles():
                 file_name = split(image[0])[-1]
                 asset_name = file_name.split('.')[0]
-                tile = Tile(x, y, (600, 100), image=getattr(self.ga, asset_name), tile_size=128)
-                tile.render_isometric_tile(self.screen)
+                tile = Tile(x, y, (600, 100), image=getattr(self.game.ga, asset_name), tile_size=128)
+                tile.render_isometric_tile(self.game.screen)
 
     def handle_event(self, kwargs):
         global PAUSE_GAME
@@ -202,10 +217,10 @@ class SecretOfTheOmnitrix(AdventureScene):
                 sys.exit()
             elif event.type == pygame.VIDEOEXPOSE:  # handles window minimising/maximising
                 # screen.fill((0, 0, 0))
-                self.screen.blit(scale(
-                    self.screen, self.screen.get_size()), (0, 0))
+                self.game.screen.blit(scale(
+                    self.game.screen, self.game.screen.get_size()), (0, 0))
                 pygame.display.update()
-                # border_offset = self.screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
+                # border_offset = self.game.screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
             elif event.type == pygame.MOUSEMOTION:
                 mouse_x_y = pygame.mouse.get_pos()
             elif event.type == pygame.KEYDOWN:

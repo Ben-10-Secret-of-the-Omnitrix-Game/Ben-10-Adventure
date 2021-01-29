@@ -17,7 +17,7 @@ import pygame_gui
 
 from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
 from .entity import Player, NPC
-from .manager import SecretOfTheOmnitrix
+from .manager import SecretOfTheOmnitrix, Game, TaskManager
 # from .ui import HD, FULL_HD, draw_main_screen
 from .weapon import BaseWeapon
 from .animation import ButtonAnimation
@@ -81,13 +81,33 @@ def start():
     # world ticking
     clock = pygame.time.Clock()
     fps = 120
+    #   Game ticking
+    task_manager = TaskManager()
 
     # ui init
     # ...
+    
 
+    # Game data class
+    game = Game()
+    game.ga = ga
+    game.screen = screen
+    game.task_manager = task_manager
+    # game.adventure
+    game.config = game_config
+    game.border_offset = border_offset
+    
+    game.DEBUG = DEBUG
+    game.RESOLUTION = RESOLUTION
+    game.TILE_SIZE = TILE_SIZE
+    game.MAP_WIDTH = MAP_WIDTH
+    game.MAP_HEIGHT = MAP_HEIGHT
+    game.ACTION = ACTION
+    
     # Adventure
-    adventure = SecretOfTheOmnitrix(screen, ga)
+    adventure = SecretOfTheOmnitrix(game)
 
+    
 
 def render_map():
     for row in range(0, MAP_WIDTH):
