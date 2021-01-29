@@ -8,12 +8,14 @@ from .utils import Movie, DEFAULT_RESOURCES_PATH, Camera
 from .scene import Scene
 from .graphics import Tile, RenderEntities
 from .entity import Player, NPC
+from .weapon import BaseWeapon
 
 from os.path import join, split
 from pygame.transform import scale
 from random import randint
 
 MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
+PAUSE_GAME = False
 
 
 class AdventureScene:
@@ -89,8 +91,12 @@ class SecretOfTheOmnitrix(AdventureScene):
                       self.ga.ben10_3_128_128, self.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
         kwargs['myaxx'] = NPC('Myaxx', image=[self.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
+        kwargs['player'].set_friends(kwargs['myaxx'])
         kwargs['vilgax'] = NPC('Vilgax', image=[self.ga.Alien_V_128_128], hp=250, x=700, y=600, speed=5)
         kwargs['player'].set_friends(kwargs['myaxx'])
+
+        kwargs['atom_fn_bomb'] = BaseWeapon(180, 1000, 50)
+        kwargs['player'].set_weapon(kwargs['atom_fn_bomb'])
 
         kwargs['camera'] = Camera()
         return kwargs
@@ -155,19 +161,26 @@ class SecretOfTheOmnitrix(AdventureScene):
         self.handle_event(kwargs)
 
     def play_current(self):
-        if not self.play_data:
-            initialization_function = self.init_funcs[self._index]
-            self.play_data = initialization_function()
-
-        stage = self.stages[self._index]
-        if stage(kwargs=self.play_data) == self.END:
-            if self._index + 1 < len(self.stages):
-                self._index += 1
+        global PAUSE_GAME
+        if not PAUSE_GAME:
+            if not self.play_data:
                 initialization_function = self.init_funcs[self._index]
-                self.play_data.update(initialization_function())
-            else:
-                # finish adventure
-                print("Finish")
+                self.play_data = initialization_function()
+
+            stage = self.stages[self._index]
+            if stage(kwargs=self.play_data) == self.END:
+                if self._index + 1 < len(self.stages):
+                    self._index += 1
+                    initialization_function = self.init_funcs[self._index]
+                    self.play_data.update(initialization_function())
+                else:
+                    # finish adventure
+                    print("Finish")
+        else:
+            self.handle_event('pause')
+            font = pygame.font.Font(None, 50)
+            text = font.render('To continue press P', True, (100, 255, 100))
+            self.screen.blit(text, (640, 500))
 
     def render_map(self, kwargs):
         for layer in kwargs['map'].layers:
@@ -178,6 +191,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                 tile.render_isometric_tile(self.screen)
 
     def handle_event(self, kwargs):
+        global PAUSE_GAME
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -191,12 +205,16 @@ class SecretOfTheOmnitrix(AdventureScene):
             elif event.type == pygame.MOUSEMOTION:
                 mouse_x_y = pygame.mouse.get_pos()
             elif event.type == pygame.KEYDOWN:
-                btns_pressed = tuple(pygame.key.get_pressed())[79:83]
-                if 'player' in kwargs:
-                    kwargs['player'].move(btns_pressed)
+                if kwargs != 'pause':
+                    btns_pressed = tuple(pygame.key.get_pressed())[79:83]
+                    if 'player' in kwargs:
+                        kwargs['player'].move(btns_pressed)
 
-                if event.key == pygame.K_SPACE:
-                    kwargs['player'].attack()
+                    if event.key == pygame.K_SPACE:
+                        kwargs['player'].attack()
+                if event.key == pygame.K_p:
+                    PAUSE_GAME = not PAUSE_GAME
+
 
 
 class EntityManager:

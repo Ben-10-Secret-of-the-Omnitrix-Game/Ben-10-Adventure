@@ -102,8 +102,7 @@ class Player(BaseEntity):
         self._render = RenderPlayer(self)
         self.hp = hp
 
-        self.friends = [self.id]
-        self.friends_ids = []
+        self.friends_ids = [self.id]
 
         self.weapon = None
         self.damage = 20
@@ -142,7 +141,6 @@ class Player(BaseEntity):
 
     def set_friends(self, *args):
         for friend in args:
-            self.friends.append(friend)
             self.friends_ids.append(friend.id)
 
     def set_weapon(self, weapon):
@@ -158,8 +156,10 @@ class Player(BaseEntity):
             damage = self.weapon.damage
             radius = self.weapon.radius
         if self.current_tick == self.attack_pause:
-            for npc in ALL_ENTITIES.get_list():
-                if npc.id not in self.friends:
+            entities = sorted(ALL_ENTITIES.get_list(),
+                              key=lambda npc: ((self.x - npc.x) ** 2 + (self.y - npc.y) ** 2) ** 0.5)
+            for npc in entities:
+                if npc.id not in self.friends_ids:
                     if ((self.x - npc.x) ** 2 + (self.y - npc.y) ** 2) ** 0.5 <= radius and npc.hp > 0:
                         npc.hp -= damage
                         npc.is_attacked()
@@ -271,13 +271,14 @@ class NPC(BaseEntity):
             print(ALL_ENTITIES.get_list())
 
     def attack(self, player):
+        from .manager import ALL_ENTITIES
         if self.weapon == None:
             damage = self.damage
             radius = 40
         else:
             damage = self.weapon.damage
             radius = self.weapon.radius
-        if self.current_tick == self.attack_pause and player.hp > 0:
+        if self.current_tick == self.attack_pause and self.id in ALL_ENTITIES.get_id_list():
             if ((self.x - player.x) ** 2 + (self.y - player.y) ** 2) ** 0.5 <= radius:
                 player.hp -= damage
                 player.is_attacked()
