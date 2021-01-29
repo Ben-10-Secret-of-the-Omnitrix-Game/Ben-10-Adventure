@@ -67,7 +67,7 @@ def init():
 
 
 def start():
-    global screen, ga, clock, fps, script, ben, adventure, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, npcs
+    global screen, ga, clock, fps, script, adventure, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, task_manager, tick_delay, frames_played, TICK_EVENT_ID
 
     if DEBUG:
         script = Loader(join("ben_ten_adventure", "graphics.py"),
@@ -83,11 +83,12 @@ def start():
     fps = 120
     #   Game ticking
     task_manager = TaskManager()
-
+    # tick_delay = fps // 20
+    TICK_EVENT_ID = pygame.USEREVENT + 10
+    pygame.time.set_timer(TICK_EVENT_ID, 50, False)
     # ui init
     # ...
     
-
     # Game data class
     game = Game()
     game.ga = ga
@@ -103,8 +104,8 @@ def start():
     game.MAP_WIDTH = MAP_WIDTH
     game.MAP_HEIGHT = MAP_HEIGHT
     game.ACTION = ACTION
+    game.TICK_EVENT_ID = TICK_EVENT_ID
     game.entity_manager = EntityManager()
-    
     # Adventure
     adventure = SecretOfTheOmnitrix(game)
 
@@ -119,25 +120,9 @@ def render_map():
 
 
 def game_loop_handler():
-    screen.fill((0, 0, 0, 0))
-
     clock.tick(fps)
-
-    # if ACTION == Activity.MAIN_SCREEN:
-    #     draw_main_screen()
-    #     screen.blit(scale(ga.main_screen, screen.get_size()), (0, 0))
-    #     manager.draw_ui(screen)
-    #     pygame.display.update()
-    #     return
-    # elif ACTION == Activity.PAUSE:
-    #     manager.draw_ui(screen)
-    #     pygame.display.update()
-    #     return
-    # elif ACTION == Activity.PLAYING:
-    #     manager.draw_ui(screen)
-    #     pass
-
-    # render_map()
+    
+    screen.fill((0, 0, 0, 0))
 
     if DEBUG:
         if script.has_changed():

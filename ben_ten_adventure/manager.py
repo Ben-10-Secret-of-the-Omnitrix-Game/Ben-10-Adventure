@@ -96,6 +96,7 @@ class Game:
     MAP_WIDTH = int
     MAP_HEIGHT = int
     ACTION = int
+    TICK_EVENT_ID = int
     
     def __init__(self):
         self.ga = object
@@ -107,7 +108,7 @@ class Game:
 
 
 class SecretOfTheOmnitrix(AdventureScene):
-    def __init__(self, game):
+    def __init__(self, game: Game):
         self.game = game
         self.stages = [
             self.play_scene_1,
@@ -139,7 +140,6 @@ class SecretOfTheOmnitrix(AdventureScene):
         if not kwargs['intro'].tick(self.game.screen):
             print("Video ended")
             return self.END
-        print("Running")
 
     def init_scene_2(self):
         kwargs = {}
@@ -278,6 +278,8 @@ class SecretOfTheOmnitrix(AdventureScene):
                         kwargs['player'].attack()
                 if event.key == pygame.K_p:
                     PAUSE_GAME = not PAUSE_GAME
+            elif event.type == self.game.TICK_EVENT_ID:
+                self.game.task_manager.tick()
 
 
 class TaskManager:
