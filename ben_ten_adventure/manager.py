@@ -14,6 +14,10 @@ from os.path import join, split
 from pygame.transform import scale
 from random import randint
 
+# Task related imports
+from .schedulers import RepeatingTask, Task
+from queue import PriorityQueue
+
 MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
 PAUSE_GAME = False
 
@@ -263,3 +267,77 @@ class EntityManager:
 
 
 ALL_ENTITIES = EntityManager()
+
+class TaskManager:
+    def __init__(self):
+        self.queue = PriorityQueue()
+        self.tasks = {}
+        
+        self.current_tick = 0
+        self.id = -1
+        
+    
+    def add_task(self, task):
+        assert isinstance(task, Task), "You're only allowed to schedule tasks inhereted from Task class"
+        if task.is_repeating:
+            if task.period <= 0:
+                task.period = 1
+        elif task.is_delayed:
+            if task.delay <= 0:
+                task.delay = 1
+        elif task.is_delayed_repeating:
+            if task.period <= 0:
+                task.period = 1
+            if task.delay <= 0:
+                task.delay = 1
+        
+        self.handle(task)
+        
+    def handle(self, task):
+        next_run = 0
+        if task.is_repeating:
+            next_run = self.current_tick + task.period 
+        elif task.is_delayed or task.is_delayed_repeating:
+            next_run = self.current_tick + task.delay
+        assert next_run != 0, "Something went wrong when scheduling next run of the Task." + str(task)
+        
+        self.id += 1
+        
+        task.id = self.id
+        self.tasks[self.id] = task
+        self.queue.put((next_run, task))
+
+    
+    def tick(self):
+        self.current_tick += 1
+        if self.queue.empty():
+            return
+        task = self.queue.get()[1]
+        
+        # delete if is canceled
+        if task.is_canceled:
+            del self.tasks[task.id]
+            task.on_cancel()
+            
+        if task.is_repeating:
+            next_run = self.current_tick + task.period
+            self.queue.put((next_run, task))
+            task.on_run(self.current_tick)
+        elif task.is_delayed:
+            task.is_canceled = True
+            task.on_run(self.current_tick)
+        elif task.is_delayed_repeating:
+            next_run = self.current_tick + task.period
+            self.queue.put((next_run, task))
+            task.on_run(self.current_tick)
+    
+    def shutdown(self):
+        if not self.queue.is_empty():
+            self.queue.join()
+        if self.tasks:
+            for task in self.tasks:
+                task.on_cancel()
+            self.tasks = []
+        self.id = -1
+            
+        
