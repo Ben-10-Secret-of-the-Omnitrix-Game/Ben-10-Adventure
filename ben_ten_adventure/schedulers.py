@@ -29,7 +29,7 @@ class RepeatingTask(Task):
         task_obj.is_canceled = True
     * I want my task to run only 600 ticks
         class MyCustomTask(RepeatingTask):
-            def __init__(self, period=20):
+            def __init__(self, period):
                 super().__init__(period)
                 self.ticks_played = 0
 
@@ -43,7 +43,7 @@ class RepeatingTask(Task):
             self.ticks_played += 1
     """
 
-    def __init__(self, period=20):
+    def __init__(self, period):
         super().__init__()
         self.period = period
         self.is_repeating = True

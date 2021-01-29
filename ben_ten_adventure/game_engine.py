@@ -80,7 +80,7 @@ def start():
 
     # world ticking
     clock = pygame.time.Clock()
-    fps = 120
+    fps = 60
     #   Game ticking
     task_manager = TaskManager()
     # tick_delay = fps // 20
@@ -121,26 +121,26 @@ def render_map():
 
 def game_loop_handler():
     clock.tick(fps)
-    
     screen.fill((0, 0, 0, 0))
 
+    # pygame.display.flip()
     if DEBUG:
         if script.has_changed():
             pygame.time.wait(500)
 
     adventure.play_current()
-
     if DEBUG:
         font = pygame.font.Font(None, 40)
         fps_stat = font.render('FPS: ' + str(round(clock.get_fps(), 1)), True, (255, 0, 0))
         screen.blit(fps_stat, (0, 0))
+        
+    pygame.display.update()
     # ben.render(screen)
     # for npc in npcs:
     #     npc.render(screen)
     #     npc.random_move()
     #     npc.attack(ben)
 
-    pygame.display.update()
 
 
 class Activity:

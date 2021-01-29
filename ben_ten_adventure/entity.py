@@ -21,17 +21,19 @@ class BaseEntity(pygame.sprite.Sprite):
 
     """
 
-    def __init__(self, x, y, id, speed=3):
+    def __init__(self, x, y, id, entity_manager=None, speed=3):
         # pygame.sprite.Sprite.__init__(self)
         super().__init__()
         """
         x and y - entity current position
         skin - image of entity. Instance of pygame.Surface
+        entity_manager: manager.EntityManager
         """
         self.x = x
         self.y = y
         self.id = id
         self.rotation = 0
+        self.entity_manager = entity_manager
         self._direction_map = {
             (1, 0, 0, 0): [{'dx': 0, 'dy': -1}, 2],
             (0, 1, 0, 0): [{'dx': 0, 'dy': 1}, 4],
@@ -43,9 +45,9 @@ class BaseEntity(pygame.sprite.Sprite):
             (1, 0, 0, 1): [{'dx': -1, 'dy': -1}, 3]
         }
         self.speed = speed
-
-        from .manager import ALL_ENTITIES
-        ALL_ENTITIES.add_entity(self)
+        
+        # TODO make passing events to entity manager. Entity should have access to manager mby
+        self.entity_manager.add_entity(self)
 
     def __str__(self):
         return f'{self.__class__.__name__} {self.id}'
@@ -86,8 +88,8 @@ class Player(BaseEntity):
 
     """
 
-    def __init__(self, name, image=None, hp=200, x=0, y=0, speed=1):
-        super().__init__(x, y, name, speed)
+    def __init__(self, name, entity_manager=None, image=None, hp=200, x=0, y=0, speed=1):
+        super().__init__(x, y, name, entity_manager, speed)
         """
         x, y - coords
         image is a list of Tiles
@@ -110,14 +112,13 @@ class Player(BaseEntity):
         self.current_tick = self.attack_pause
 
     def move(self, keys_states, speed=None):
-        from .manager import ALL_ENTITIES
         if speed is None:
             speed = self.speed
         try:
             direction = self._direction_map[keys_states]
             self.x = self.x + (direction[0]['dx'] * speed)
             self.y = self.y + (direction[0]['dy'] * speed)
-            if ALL_ENTITIES.is_collision(self):
+            if self.entity_manager.is_collision(self):
                 self.x = self.x - (direction[0]['dx'] * speed)
                 self.y = self.y - (direction[0]['dy'] * speed)
             self.rotation = direction[1] - 1
@@ -133,8 +134,7 @@ class Player(BaseEntity):
     def is_attacked(self):
         self._render.is_attacked()
         if self.hp <= 0:
-            from .manager import ALL_ENTITIES
-            ALL_ENTITIES.remove(self)
+            self.entity_manager.remove(self)
 
     def get_rect(self):
         return self.texture.get_rect()
@@ -147,7 +147,6 @@ class Player(BaseEntity):
         self.weapon = weapon
 
     def attack(self):
-        from .manager import ALL_ENTITIES
 
         if self.weapon is None:
             damage = self.damage
@@ -156,7 +155,7 @@ class Player(BaseEntity):
             damage = self.weapon.damage
             radius = self.weapon.radius
         if self.current_tick == self.attack_pause:
-            entities = sorted(ALL_ENTITIES.get_list(),
+            entities = sorted(self.entity_manager.get_list(),
                               key=lambda npc: ((self.x - npc.x) ** 2 + (self.y - npc.y) ** 2) ** 0.5)
             for npc in entities:
                 if npc.id not in self.friends_ids:
@@ -180,8 +179,8 @@ class NPC(BaseEntity):
     so be careful by creating an NPC, because NPC with the same id won't be created
     """
 
-    def __init__(self, id, image=None, hp=100, x=0, y=0, speed=1):
-        super().__init__(x, y, id, speed)
+    def __init__(self, id, entity_manager=None, image=None, hp=100, x=0, y=0, speed=1):
+        super().__init__(x, y, id, entity_manager, speed)
         self.weapon = None
         self.id = id
         self.image = image
@@ -215,7 +214,6 @@ class NPC(BaseEntity):
         self.weapon = weapon
 
     def go_to(self, player):
-        from .manager import ALL_ENTITIES
 
         rot_x, rot_y = 0, 0
 
@@ -237,7 +235,7 @@ class NPC(BaseEntity):
             else:
                 self.y += self.speed
                 rot_y = 1
-        if ALL_ENTITIES.is_collision(self):
+        if self.entity_manager.is_collision(self):
             self.x -= self.speed * rot_x
             self.y -= self.speed * rot_y
         else:
@@ -266,19 +264,18 @@ class NPC(BaseEntity):
     def is_attacked(self):
         self._render.is_attacked()
         if self.hp <= 0:
-            from .manager import ALL_ENTITIES
-            ALL_ENTITIES.remove(self)
-            print(ALL_ENTITIES.get_list())
+
+            self.entity_manager.remove(self)
+            print(self.entity_manager.get_list())
 
     def attack(self, player):
-        from .manager import ALL_ENTITIES
         if self.weapon == None:
             damage = self.damage
             radius = 40
         else:
             damage = self.weapon.damage
             radius = self.weapon.radius
-        if self.current_tick == self.attack_pause and self.id in ALL_ENTITIES.get_id_list():
+        if self.current_tick == self.attack_pause and self.id in self.entity_manager.get_id_list():
             if ((self.x - player.x) ** 2 + (self.y - player.y) ** 2) ** 0.5 <= radius:
                 player.hp -= damage
                 player.is_attacked()
@@ -291,7 +288,6 @@ class NPC(BaseEntity):
         """randomly calculating a point on the map
             and going to it"""
 
-        from .manager import ALL_ENTITIES
 
         rot_x = 0
         rot_y = 0
@@ -322,7 +318,7 @@ class NPC(BaseEntity):
                 else:
                     self.y += self.speed
                     rot_y = 1
-        if ALL_ENTITIES.is_collision(self):
+        if self.entity_manager.is_collision(self):
             self.x -= self.speed * rot_x
             self.y -= self.speed * rot_y
 

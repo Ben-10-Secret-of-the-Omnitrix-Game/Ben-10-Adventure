@@ -3,8 +3,9 @@ import cv2
 import numpy
 import pytmx
 import sys
+import logging
 
-from .utils import Movie, DEFAULT_RESOURCES_PATH, Camera
+from .utils import Config, GameAssets, Movie, DEFAULT_RESOURCES_PATH, Camera
 from .scene import Scene
 from .graphics import Tile, RenderEntities
 from .entity import Player, NPC
@@ -15,7 +16,7 @@ from pygame.transform import scale
 from random import randint
 
 # Task related imports
-from .schedulers import RepeatingTask, Task
+from .schedulers import DelayedTask, RepeatingTask, Task
 from queue import PriorityQueue
 
 MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
@@ -45,6 +46,8 @@ class EntityManager:
         return self.id_list
 
     def remove(self, entity):
+        if entity.id not in self.id_list:
+            return
         self.id_list.remove(entity.id)
         for i in range(len(self.entity_list)):
             if self.entity_list[i].id == entity.id:
@@ -99,12 +102,15 @@ class Game:
     TICK_EVENT_ID = int
     
     def __init__(self):
-        self.ga = object
-        self.screen = object
-        self.task_manager = object
+        self.ga: GameAssets
+        self.screen: pygame.Surface
+        # self.task_manager = object
+        self.task_manager: TaskManager
         # self.adventure = object
-        self.config = object
+        # self.config = object
+        self.config: Config
         self.border_offset = int
+        self.entity_manager: EntityManager
 
 
 class SecretOfTheOmnitrix(AdventureScene):
@@ -116,7 +122,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_scene_3,
             self.play_scene_4,
             self.play_scene_5]
-        self._index = 0
+        self._index = 1
         self.init_funcs = [
             self.init_scene_1,
             self.init_scene_2,
@@ -144,23 +150,58 @@ class SecretOfTheOmnitrix(AdventureScene):
     def init_scene_2(self):
         kwargs = {}
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_1.tmx"))
-
         npc_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
                       self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
-        kwargs['npcs'] = [NPC(str(i + 1), npc_images,
+        kwargs['npcs'] = [NPC(str(i + 1), image=npc_images,
                               x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
                               y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
+                              entity_manager=self.game.entity_manager,
                               speed=randint(1, 3)) for i in range(5)]
         ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
                       self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
-        kwargs['player'] = Player('Ben', ben_images, x=250, y=250, speed=15)
-        kwargs['myaxx'] = NPC('Myaxx', image=[self.game.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
+        kwargs['player'] = Player('Ben', entity_manager=self.game.entity_manager, image=ben_images, x=250, y=250, speed=15)
+        kwargs['myaxx'] = NPC('Myaxx', entity_manager=self.game.entity_manager, image=[self.game.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
         kwargs['player'].set_friends(kwargs['myaxx'])
-        kwargs['vilgax'] = NPC('Vilgax', image=[self.game.ga.Alien_V_128_128], hp=250, x=700, y=600, speed=5)
+        kwargs['vilgax'] = NPC('Vilgax', image=[self.game.ga.Alien_V_128_128], entity_manager=self.game.entity_manager, hp=250, x=700, y=600, speed=5)
+        kwargs['vilgax'].attack_pause = 40
+        kwargs['vilgax'].damage = 100
         kwargs['player'].set_friends(kwargs['myaxx'])
 
         kwargs['atom_fn_bomb'] = BaseWeapon(180, 1000, 50)
         kwargs['player'].set_weapon(kwargs['atom_fn_bomb'])
+
+        def myaxx_follow_player(custom_self, current_tick):
+            if custom_self.player.is_near(custom_self.myaxx):
+                print("WIN!!!")
+            
+        
+        def npcs_attack_player(custom_self, current_tick):
+            for npc in custom_self.npcs:
+                npc.go_to(custom_self.player)
+                npc.attack(custom_self.player)
+                npc.random_move()
+        
+        def vilgax_attack_player(custom_self, current_tick):
+            custom_self.vilgax.go_to(custom_self.player)
+            custom_self.vilgax.attack(custom_self.player)
+        
+        self.game.task_manager.schedule_repeating_task({
+            'myaxx': kwargs['myaxx'],
+            'player': kwargs['player'],
+            'on_run': myaxx_follow_player
+            }, period=15)
+        
+        self.game.task_manager.schedule_repeating_task({
+            'npcs': kwargs['npcs'],
+            'player': kwargs['player'],
+            'on_run':  npcs_attack_player
+        }, period=15)
+        
+        self.game.task_manager.schedule_repeating_task({
+            'vilgax': kwargs['vilgax'],
+            'player': kwargs['player'],
+            'on_run':  vilgax_attack_player
+        }, period=15)
 
         kwargs['camera'] = Camera()
         return kwargs
@@ -173,19 +214,19 @@ class SecretOfTheOmnitrix(AdventureScene):
         self.render_map(kwargs)
         self.handle_event(kwargs)
         self.game.entity_manager.render(self.game.screen)
-        kwargs['vilgax'].go_to(kwargs['player'])
-        kwargs['vilgax'].attack(kwargs['player'])
+        # kwargs['vilgax'].go_to(kwargs['player'])
+        # kwargs['vilgax'].attack(kwargs['player'])
 
-        if kwargs['player'].id not in self.game.entity_manager.get_id_list():
-            self.play_data.update({"win": False})
-            return self.END
+        # if kwargs['player'].id not in self.game.entity_manager.get_id_list():
+        #     self.play_data.update({"win": False})
+        #     return self.END
 
-        if kwargs['player'].is_near(kwargs['myaxx']):
-            self.play_data.update({'win': True})
-            return self.END
-        for npc in kwargs['npcs']:
-            npc.go_to(kwargs['player'])
-            npc.attack(kwargs['player'])
+        # if kwargs['player'].is_near(kwargs['myaxx']):
+        #     self.play_data.update({'win': True})
+        #     return self.END
+        # for npc in kwargs['npcs']:
+        #     npc.go_to(kwargs['player'])
+        #     npc.attack(kwargs['player'])
             # npc.random_move()
         # kwargs['camera'].update(kwargs['player'])
 
@@ -202,7 +243,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.game.screen.blit(self.game.ga.win, self.game.border_offset)
         else:
             self.game.screen.blit(self.game.ga.game_over, self.game.border_offset)
-        pygame.display.flip()
+        # pygame.display.flip()
         pygame.time.wait(3000)
         sys.exit()
 
@@ -261,7 +302,6 @@ class SecretOfTheOmnitrix(AdventureScene):
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.VIDEOEXPOSE:  # handles window minimising/maximising
-                # screen.fill((0, 0, 0))
                 self.game.screen.blit(scale(
                     self.game.screen, self.game.screen.get_size()), (0, 0))
                 pygame.display.update()
@@ -291,6 +331,34 @@ class TaskManager:
         self.id = -1
         
     
+    
+    def schedule_repeating_task(self, task_data, period=20):
+        """
+        task_data: dict with params and functions
+        period: int value in ticks (20 ticks = 1 second)
+        """
+        task_class = type("AutoCreatedRepeatingTask", (RepeatingTask, object), task_data)
+        self.add_task(task_class(period))
+        
+    def schedule_delayed_task(self, task_data, delay=20):
+        """
+        task_data: dict with params and functions
+        delay: int value in ticks (20 ticks = 1 second)
+        """
+        task_class = type("AutoCreatedDelayedTask", (RepeatingTask, object), task_data)
+        self.add_task(task_class(delay))
+        
+    def schedule_delayed_repeating_task(self, task_data: dict, delay=20, period=20):
+        """
+        task_data: dict with params and functions
+        delay: int value in ticks (20 ticks = 1 second)
+        period: int value in ticks (20 ticks = 1 second)
+        
+        check out help(schedulers.DelayedRepeatingTask) for more information
+        """
+        task_class = type("AutoCreatedDelayedRepeatingTask", (RepeatingTask, object), task_data)
+        self.add_task(task_class(delay, period))
+    
     def add_task(self, task):
         assert isinstance(task, Task), "You're only allowed to schedule tasks inhereted from Task class"
         if task.is_repeating:
@@ -319,30 +387,34 @@ class TaskManager:
         
         task.id = self.id
         self.tasks[self.id] = task
-        self.queue.put((next_run, task))
+        # TODO replace id(task) with priority of Tasks
+        self.queue.put((next_run, id(task), task))
 
     
     def tick(self):
         self.current_tick += 1
         if self.queue.empty():
             return
-        task = self.queue.get()[1]
+        next_run, obj_id, task = self.queue.get()
         
-        # delete if is canceled
+        # delete if task is canceled
         if task.is_canceled:
             del self.tasks[task.id]
             task.on_cancel()
+            return
             
         if task.is_repeating:
             next_run = self.current_tick + task.period
-            self.queue.put((next_run, task))
+            # TODO replace id(task) with priority of Tasks
+            self.queue.put((next_run, id(task), task))
             task.on_run(self.current_tick)
         elif task.is_delayed:
             task.is_canceled = True
             task.on_run(self.current_tick)
         elif task.is_delayed_repeating:
             next_run = self.current_tick + task.period
-            self.queue.put((next_run, task))
+            # TODO replace id(task) with priority of Tasks
+            self.queue.put((next_run, id(task), task))
             task.on_run(self.current_tick)
     
     def shutdown(self):
