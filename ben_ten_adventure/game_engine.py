@@ -120,7 +120,6 @@ def render_map():
 
 
 def game_loop_handler():
-    clock.tick(fps)
     screen.fill((0, 0, 0, 0))
 
     # pygame.display.flip()
@@ -135,12 +134,7 @@ def game_loop_handler():
         screen.blit(fps_stat, (0, 0))
         
     pygame.display.update()
-    # ben.render(screen)
-    # for npc in npcs:
-    #     npc.render(screen)
-    #     npc.random_move()
-    #     npc.attack(ben)
-
+    clock.tick(fps)
 
 
 class Activity:

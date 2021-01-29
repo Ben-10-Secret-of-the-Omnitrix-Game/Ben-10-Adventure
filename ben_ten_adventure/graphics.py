@@ -74,6 +74,7 @@ class RenderPlayer:
                         self.player_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
             text = font.render('Health: ' + str(self.player.hp), True, (100, 255, 100))
             screen.blit(text, (1200, 200))
+            pygame.display.update((1200, 200, text.get_rect()[2], text.get_rect()[3]))
 
     def is_attacked(self):
         duration = 0
