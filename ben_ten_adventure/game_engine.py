@@ -130,6 +130,10 @@ def game_loop_handler():
 
     adventure.play_current()
 
+    if DEBUG:
+        font = pygame.font.Font(None, 40)
+        fps_stat = font.render('FPS: ' + str(round(clock.get_fps(), 1)), True, (255, 0, 0))
+        screen.blit(fps_stat, (0, 0))
     # ben.render(screen)
     # for npc in npcs:
     #     npc.render(screen)
