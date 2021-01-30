@@ -20,7 +20,7 @@ from . import game_engine
 
 def main():
     coloredlogs.install(level='DEBUG')
-    # script = Loader(join("ben_ten_adventure", "game_engine.py"), "ben_ten_adventure.game_engine", 1)
+    script = Loader(join("ben_ten_adventure", "game_engine.py"), "ben_ten_adventure.game_engine", 1)
 
     game_engine.init()
     game_engine.start() # and script.start() is the same

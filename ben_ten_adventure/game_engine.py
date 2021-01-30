@@ -14,6 +14,7 @@ import logging
 import pygame
 import sys
 import pygame_gui
+from . import graphics
 
 from .sql_saver import SQLData
 from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
@@ -75,15 +76,16 @@ def init():
     # Centralize map
     x_pad = TILE_SIZE  # prevent from float values
     y_pad = MAP_HEIGHT * TILE_SIZE  # prevent from float values
-    border_offset = (300, 100)
+    border_offset = (500, 100)
 
 
 def start():
     global screen, ga, clock, fps, script, adventure, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, task_manager, tick_delay, frames_played, TICK_EVENT_ID
 
     if DEBUG:
-        script = Loader(join("ben_ten_adventure", "graphics.py"),
-                        "ben_ten_adventure.graphics", 1)
+        script = graphics
+        # script = Loader(join("ben_ten_adventure", "graphics.py"),
+        #                 "ben_ten_adventure.graphics", 1)
 
     # .utils.py
 
@@ -132,11 +134,12 @@ def render_map():
 
 
 def game_loop_handler():
-    screen.fill((0, 0, 0, 255))
+    screen.fill((0, 0, 0, 0))
+
     # pygame.display.flip()
-    if DEBUG:
-        if script.has_changed():
-            pygame.time.wait(500)
+    # if DEBUG:
+    #     if script.has_changed():
+    #         pygame.time.wait(500)
 
     adventure.play_current()
     if DEBUG:

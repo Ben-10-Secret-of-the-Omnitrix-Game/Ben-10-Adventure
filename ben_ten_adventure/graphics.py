@@ -132,3 +132,10 @@ class RenderEntities:
         entities = sorted(entities, key=lambda x: x.x + x.y)
         for ent in entities:
             ent.render(screen, border_offset)
+
+class Camera:
+    def __init__(self, map_field):
+        self.map = map_field
+    
+    def render_focus(self):
+        pass
