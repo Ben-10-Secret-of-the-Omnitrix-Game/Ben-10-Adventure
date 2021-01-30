@@ -19,6 +19,9 @@ from random import randint
 from .schedulers import DelayedTask, RepeatingTask, Task
 from queue import PriorityQueue
 
+MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
+PAUSE_GAME = False
+
 
 class EntityManager:
     """This class was created for searching for collisions
@@ -112,8 +115,6 @@ class Game:
 
 class SecretOfTheOmnitrix(AdventureScene):
     def __init__(self, game: Game):
-        from .game_engine import Activity
-        self.activity = Activity()
         self.game = game
         self.stages = [
             self.play_scene_1,
@@ -121,7 +122,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_scene_3,
             self.play_scene_4,
             self.play_scene_5]
-        self._index = 0
+        self._index = 1
         self.init_funcs = [
             self.init_scene_1,
             self.init_scene_2,
@@ -150,11 +151,11 @@ class SecretOfTheOmnitrix(AdventureScene):
     def init_scene_2(self):
         kwargs = {}
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_1.tmx"))
-        self.game.MAP_WIDTH, self.game.MAP_HEIGHT = kwargs['map'].width, kwargs['map'].height
         npc_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
                       self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
         kwargs['npcs'] = [NPC(str(i + 1), image=npc_images,
-                              x=randint(0, self.game.MAP_WIDTH * self.game.TILE_SIZE),
+                              x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
+                              y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
                               entity_manager=self.game.entity_manager,
                               speed=randint(1, 3)) for i in range(5)]
         ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
@@ -174,18 +175,22 @@ class SecretOfTheOmnitrix(AdventureScene):
             if custom_self.player.is_near(custom_self.myaxx):
                 self.game.sql_data.scenes_res[0] = 'Win'
                 # self.game.sql_data.save()
-                print("WIN!!!")
+                self.play_data.update({"win": True})
+                print("WIN")
             
         
         def npcs_attack_player(custom_self, current_tick):
             for npc in custom_self.npcs:
                 npc.go_to(custom_self.player)
                 npc.attack(custom_self.player)
-                # npc.random_move()
+                npc.random_move()
         
         def vilgax_attack_player(custom_self, current_tick):
             custom_self.vilgax.go_to(custom_self.player)
             custom_self.vilgax.attack(custom_self.player)
+            if kwargs['player'].id not in self.game.entity_manager.get_id_list():
+                self.play_data.update({"win": False})
+                # return self.END
         
         self.game.task_manager.schedule_repeating_task({
             'myaxx': kwargs['myaxx'],
@@ -204,6 +209,10 @@ class SecretOfTheOmnitrix(AdventureScene):
             'player': kwargs['player'],
             'on_run':  vilgax_attack_player
         }, period=15)
+        # self.game.task_manager.schedule_repeating_task({
+        #     "kwargs": kwargs,
+        #     "on_run": lambda custom_self, current_tick: self.render_map(custom_self.kwargs)
+        # }, period=1)
 
         kwargs['camera'] = Camera()
 
@@ -218,10 +227,18 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         Fight between Ben 10 and prisoners. Save Myaxx
         """
-
-        self.render_map(kwargs)
         self.handle_event(kwargs)
+        if 'win' in self.play_data:
+            return self.END
+        
+        self.old_render_map()
+        start_time = pygame.time.get_ticks()
+        # self.render_map(kwargs)
         self.game.entity_manager.render(self.game.screen)
+        time_since_enter = pygame.time.get_ticks() - start_time
+        message = 'Milliseconds since enter: ' + str(time_since_enter)
+        logging.info(message)
+        
         # kwargs['vilgax'].go_to(kwargs['player'])
         # kwargs['vilgax'].attack(kwargs['player'])
 
@@ -248,7 +265,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         # self.handle_event(kwargs)
         # pygame.display.flip()
-        pygame.time.wait(3000)
+        pygame.time.wait(5000)
         sys.exit()
 
     def init_scene_4(self):
@@ -270,7 +287,8 @@ class SecretOfTheOmnitrix(AdventureScene):
         self.handle_event(kwargs)
 
     def play_current(self):
-        if self.game.ACTION != self.activity.PAUSE:
+        global PAUSE_GAME
+        if not PAUSE_GAME:
             if not self.play_data:
                 initialization_function = self.init_funcs[self._index]
                 self.play_data = initialization_function()
@@ -285,7 +303,6 @@ class SecretOfTheOmnitrix(AdventureScene):
                     # finish adventure
                     print("Finish")
         else:
-            pygame.mixer.music.pause()
             self.handle_event('pause')
             font = pygame.font.Font(None, 50)
             text = font.render('To continue press P', True, (100, 255, 100))
@@ -296,13 +313,23 @@ class SecretOfTheOmnitrix(AdventureScene):
             for x, y, image in layer.tiles():
                 file_name = split(image[0])[-1]
                 asset_name = file_name.split('.')[0]
-                tile_size = self.game.TILE_SIZE
-                border_offset = (abs(self.game.RESOLUTION[0] - tile_size * self.game.MAP_WIDTH) // 2 - tile_size // 2,
-                                 -self.game.MAP_HEIGHT * tile_size // 2 + self.game.RESOLUTION[1])
-                tile = Tile(x, y, border_offset, image=getattr(self.game.ga, asset_name), tile_size=tile_size)
+                tile = Tile(x, y, (600, 100), image=getattr(self.game.ga, asset_name), tile_size=128)
+                tile.render_isometric_tile(self.game.screen)
+                self.dirty_rects.append((tile.iso_x, tile.iso_y, *tile.texture.get_rect()[2:]))
+    
+    def old_render_map(self):
+        for row in range(0, 5):
+            for col in range(0, 5):
+                # tile = Tile(row, col, border_offset=self.game.border_offset,
+                #                 image=scale(self.game.ga.wall_5_marine, (256, 256)), tile_size=256)
+                tile = Tile(row, col, border_offset=self.game.border_offset,
+                                image=self.game.ga.wall_5_marine, tile_size=128)
+                # tile = Tile(row, col, border_offset=self.game.border_offset,
+                #                 image=scale(self.game.ga.wall_5_marine, (64, 64)), tile_size=64)
                 tile.render_isometric_tile(self.game.screen)
 
     def handle_event(self, kwargs):
+        global PAUSE_GAME
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -310,7 +337,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             elif event.type == pygame.VIDEOEXPOSE:  # handles window minimising/maximising
                 self.game.screen.blit(scale(
                     self.game.screen, self.game.screen.get_size()), (0, 0))
-                pygame.display.update()
+                pygame.display.flip()
                 # border_offset = self.game.screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
             elif event.type == pygame.MOUSEMOTION:
                 mouse_x_y = pygame.mouse.get_pos()
@@ -323,10 +350,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                     if event.key == pygame.K_SPACE:
                         kwargs['player'].attack()
                 if event.key == pygame.K_p:
-                    if self.game.ACTION == self.activity.PAUSE:
-                        self.game.ACTION = self.activity.PLAYING
-                    elif self._index != 0:
-                        self.game.ACTION = self.activity.PAUSE
+                    PAUSE_GAME = not PAUSE_GAME
             elif event.type == self.game.TICK_EVENT_ID:
                 self.game.task_manager.tick()
 

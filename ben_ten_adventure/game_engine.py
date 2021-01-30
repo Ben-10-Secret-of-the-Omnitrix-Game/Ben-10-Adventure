@@ -75,7 +75,7 @@ def init():
     # Centralize map
     x_pad = TILE_SIZE  # prevent from float values
     y_pad = MAP_HEIGHT * TILE_SIZE  # prevent from float values
-    border_offset = (500, 100)
+    border_offset = (300, 100)
 
 
 def start():
@@ -132,8 +132,7 @@ def render_map():
 
 
 def game_loop_handler():
-    screen.fill((0, 0, 0, 0))
-
+    screen.fill((0, 0, 0, 255))
     # pygame.display.flip()
     if DEBUG:
         if script.has_changed():
