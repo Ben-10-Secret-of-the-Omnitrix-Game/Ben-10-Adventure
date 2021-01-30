@@ -27,6 +27,16 @@ from pprint import pprint
 HD = (1280, 720)
 FULL_HD = (1920, 1080)
 
+class Activity:
+    """
+    Has states:
+    PLAYING -   means we need to render player, tiles ...
+    UI      -   means we need to render only ui elementes. Currenly user is in "user interface"
+    """
+    MAIN_SCREEN = 0
+    PLAYING = 1
+    PAUSE = 2
+
 
 def init():
     global screen, DEBUG, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, ACTION, border_offset, game_config, RESOLUTION
@@ -80,12 +90,12 @@ def start():
 
     # world ticking
     clock = pygame.time.Clock()
-    fps = 60
+    fps = 120
     #   Game ticking
     task_manager = TaskManager()
     # tick_delay = fps // 20
     TICK_EVENT_ID = pygame.USEREVENT + 10
-    pygame.time.set_timer(TICK_EVENT_ID, 50, False)
+    pygame.time.set_timer(TICK_EVENT_ID, 500, False)
     # ui init
     # ...
     
@@ -131,18 +141,7 @@ def game_loop_handler():
     if DEBUG:
         font = pygame.font.Font(None, 40)
         fps_stat = font.render('FPS: ' + str(round(clock.get_fps(), 1)), True, (255, 0, 0))
-        screen.blit(fps_stat, (0, 0))
+        screen.blit(fps_stat, (500, 100))
         
     pygame.display.update()
     clock.tick(fps)
-
-
-class Activity:
-    """
-    Has states:
-    PLAYING -   means we need to render player, tiles ...
-    UI      -   means we need to render only ui elementes. Currenly user is in "user interface"
-    """
-    MAIN_SCREEN = 0
-    PLAYING = 1
-    PAUSE = 2

@@ -20,7 +20,6 @@ from .schedulers import DelayedTask, RepeatingTask, Task
 from queue import PriorityQueue
 
 MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
-PAUSE_GAME = False
 
 
 class EntityManager:
@@ -115,6 +114,8 @@ class Game:
 
 class SecretOfTheOmnitrix(AdventureScene):
     def __init__(self, game: Game):
+        from .game_engine import Activity
+        self.activity = Activity()
         self.game = game
         self.stages = [
             self.play_scene_1,
@@ -122,7 +123,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_scene_3,
             self.play_scene_4,
             self.play_scene_5]
-        self._index = 1
+        self._index = 0
         self.init_funcs = [
             self.init_scene_1,
             self.init_scene_2,
@@ -132,6 +133,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.init_scene_5]
 
         self.play_data = {}
+        self.game.ACTION = self.activity.PLAYING
 
     def init_scene_1(self):
         kwargs = {}
@@ -179,7 +181,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             for npc in custom_self.npcs:
                 npc.go_to(custom_self.player)
                 npc.attack(custom_self.player)
-                npc.random_move()
+                # npc.random_move()
         
         def vilgax_attack_player(custom_self, current_tick):
             custom_self.vilgax.go_to(custom_self.player)
@@ -266,8 +268,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         self.handle_event(kwargs)
 
     def play_current(self):
-        global PAUSE_GAME
-        if not PAUSE_GAME:
+        if self.game.ACTION != self.activity.PAUSE:
             if not self.play_data:
                 initialization_function = self.init_funcs[self._index]
                 self.play_data = initialization_function()
@@ -282,6 +283,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                     # finish adventure
                     print("Finish")
         else:
+            pygame.mixer.music.pause()
             self.handle_event('pause')
             font = pygame.font.Font(None, 50)
             text = font.render('To continue press P', True, (100, 255, 100))
@@ -296,7 +298,6 @@ class SecretOfTheOmnitrix(AdventureScene):
                 tile.render_isometric_tile(self.game.screen)
 
     def handle_event(self, kwargs):
-        global PAUSE_GAME
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -317,7 +318,10 @@ class SecretOfTheOmnitrix(AdventureScene):
                     if event.key == pygame.K_SPACE:
                         kwargs['player'].attack()
                 if event.key == pygame.K_p:
-                    PAUSE_GAME = not PAUSE_GAME
+                    if self.game.ACTION == self.activity.PAUSE:
+                        self.game.ACTION = self.activity.PLAYING
+                    elif self._index != 0:
+                        self.game.ACTION = self.activity.PAUSE
             elif event.type == self.game.TICK_EVENT_ID:
                 self.game.task_manager.tick()
 
