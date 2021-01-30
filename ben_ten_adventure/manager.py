@@ -172,6 +172,8 @@ class SecretOfTheOmnitrix(AdventureScene):
 
         def myaxx_follow_player(custom_self, current_tick):
             if custom_self.player.is_near(custom_self.myaxx):
+                self.game.sql_data.scenes_res[0] = 'Win'
+                # self.game.sql_data.save()
                 print("WIN!!!")
             
         
@@ -204,6 +206,12 @@ class SecretOfTheOmnitrix(AdventureScene):
         }, period=15)
 
         kwargs['camera'] = Camera()
+
+        self.game.sql_data.player = 'Ben'
+        self.game.sql_data.add_npc_count(len(self.game.entity_manager.get_list()) - 1)
+        self.game.sql_data.friends_count(len(kwargs['player'].friends_ids))
+        self.game.sql_data.main_enemy = 'Vilgaxx'
+
         return kwargs
 
     def play_scene_2(self, kwargs):
@@ -239,10 +247,6 @@ class SecretOfTheOmnitrix(AdventureScene):
         Flying to Azmuth's planet
         """
         # self.handle_event(kwargs)
-        if kwargs['win']:
-            self.game.screen.blit(self.game.ga.win, self.game.border_offset)
-        else:
-            self.game.screen.blit(self.game.ga.game_over, self.game.border_offset)
         # pygame.display.flip()
         pygame.time.wait(3000)
         sys.exit()
