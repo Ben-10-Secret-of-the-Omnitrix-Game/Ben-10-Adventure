@@ -19,8 +19,6 @@ from random import randint
 from .schedulers import DelayedTask, RepeatingTask, Task
 from queue import PriorityQueue
 
-MAP_WIDTH, MAP_HEIGHT, TILE_SIZE = 10, 10, 128
-
 
 class EntityManager:
     """This class was created for searching for collisions
@@ -152,11 +150,11 @@ class SecretOfTheOmnitrix(AdventureScene):
     def init_scene_2(self):
         kwargs = {}
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_1.tmx"))
+        self.game.MAP_WIDTH, self.game.MAP_HEIGHT = kwargs['map'].width, kwargs['map'].height
         npc_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
                       self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
         kwargs['npcs'] = [NPC(str(i + 1), image=npc_images,
-                              x=randint(0, MAP_WIDTH * TILE_SIZE // 2),
-                              y=randint(0, MAP_HEIGHT * TILE_SIZE // 2),
+                              x=randint(0, self.game.MAP_WIDTH * self.game.TILE_SIZE),
                               entity_manager=self.game.entity_manager,
                               speed=randint(1, 3)) for i in range(5)]
         ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
@@ -294,7 +292,10 @@ class SecretOfTheOmnitrix(AdventureScene):
             for x, y, image in layer.tiles():
                 file_name = split(image[0])[-1]
                 asset_name = file_name.split('.')[0]
-                tile = Tile(x, y, (600, 100), image=getattr(self.game.ga, asset_name), tile_size=128)
+                tile_size = self.game.TILE_SIZE
+                border_offset = (abs(self.game.RESOLUTION[0] - tile_size * self.game.MAP_WIDTH) // 2 - tile_size // 2,
+                                 -self.game.MAP_HEIGHT * tile_size // 2 + self.game.RESOLUTION[1])
+                tile = Tile(x, y, border_offset, image=getattr(self.game.ga, asset_name), tile_size=tile_size)
                 tile.render_isometric_tile(self.game.screen)
 
     def handle_event(self, kwargs):

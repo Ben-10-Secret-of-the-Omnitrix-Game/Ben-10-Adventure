@@ -15,6 +15,7 @@ import pygame
 import sys
 import pygame_gui
 
+from .sql_saver import SQLData
 from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
 from .entity import Player, NPC
 from .manager import EntityManager, SecretOfTheOmnitrix, Game, TaskManager
@@ -57,7 +58,8 @@ def init():
         game_config.load()
     # few global constants
     DEBUG = game_config.data['debug']
-    RESOLUTION = tuple(game_config.data['resolution'])
+    # RESOLUTION = tuple(game_config.data['resolution'])
+    RESOLUTION = (1280, 720)
     TILE_SIZE = game_config.data['tile_size']
     MAP_WIDTH, MAP_HEIGHT = game_config.data['map_size']
     # VIDEOS = game_config.data['videos']
@@ -95,7 +97,7 @@ def start():
     task_manager = TaskManager()
     # tick_delay = fps // 20
     TICK_EVENT_ID = pygame.USEREVENT + 10
-    pygame.time.set_timer(TICK_EVENT_ID, 500, False)
+    pygame.time.set_timer(TICK_EVENT_ID, 50, False)
     # ui init
     # ...
     
@@ -116,10 +118,10 @@ def start():
     game.ACTION = ACTION
     game.TICK_EVENT_ID = TICK_EVENT_ID
     game.entity_manager = EntityManager()
+    game.sql_data = SQLData()
     # Adventure
     adventure = SecretOfTheOmnitrix(game)
 
-    
 
 def render_map():
     for row in range(0, MAP_WIDTH):
@@ -140,7 +142,9 @@ def game_loop_handler():
     adventure.play_current()
     if DEBUG:
         font = pygame.font.Font(None, 40)
-        fps_stat = font.render('FPS: ' + str(round(clock.get_fps(), 1)), True, (255, 0, 0))
+        fps_value = str(round(clock.get_fps(), 1))
+        fps_stat = font.render('FPS: ' + fps_value, True, (255, 0, 0))
+        adventure.game.sql_data.add_fps(float(fps_value))
         screen.blit(fps_stat, (500, 100))
         
     pygame.display.update()
