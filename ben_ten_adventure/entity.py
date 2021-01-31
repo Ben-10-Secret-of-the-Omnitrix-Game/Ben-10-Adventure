@@ -293,7 +293,6 @@ class NPC(BaseEntity):
         if self.hp <= 0:
 
             self.entity_manager.remove(self)
-            print(self.entity_manager.get_list())
 
     def attack(self, player):
         if self.weapon == None:
