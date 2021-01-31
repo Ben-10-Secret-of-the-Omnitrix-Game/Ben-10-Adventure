@@ -72,8 +72,8 @@ class RenderPlayer:
             iso_x, iso_y = self.player.cartesian_to_isometric(self.player.x, self.player.y)
             screen.blit(self.player.texture,
                         self.player_place(border_offset[0] + iso_x, border_offset[1] + iso_y))
-            text = font.render('Health: ' + str(self.player.hp), True, (100, 255, 100))
-            screen.blit(text, (1200, 200))
+            text = font.render('Health: ' + str(max(0, self.player.hp)), True, (100, 255, 100))
+            screen.blit(text, (1000, 100))
 
     def is_attacked(self):
         duration = 0

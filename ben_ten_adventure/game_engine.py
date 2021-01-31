@@ -147,7 +147,7 @@ def game_loop_handler():
         fps_value = str(round(clock.get_fps(), 1))
         fps_stat = font.render('FPS: ' + fps_value, True, (255, 0, 0))
         adventure.game.sql_data.add_fps(float(fps_value))
-        screen.blit(fps_stat, (500, 100))
+        screen.blit(fps_stat, (100, 100))
         
     pygame.display.update()
     clock.tick(fps)

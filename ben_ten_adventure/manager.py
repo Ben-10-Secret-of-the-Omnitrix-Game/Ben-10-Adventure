@@ -57,11 +57,12 @@ class EntityManager:
         return True
 
     def is_collision(self, entity):
+        col_count = 0
         for ent in self.entity_list:
             if ent.id != entity.id:
                 if ((ent.x - entity.x) ** 2 + (ent.y - entity.y) ** 2) ** 0.5 < self.collision_radius:
-                    return True
-        return False
+                    col_count += 1
+        return col_count
 
     def render(self, screen=None, border_offset=[500, 100]):
         self._render.render(self.entity_list, screen, border_offset)
@@ -156,7 +157,7 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs['npcs'] = [NPC(str(i + 1), image=npc_images,
                               x=randint(0, self.game.MAP_WIDTH * self.game.TILE_SIZE),
                               entity_manager=self.game.entity_manager,
-                              speed=randint(1, 3)) for i in range(5)]
+                              speed=randint(1, 3)) for i in range(15)]
         ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
                       self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', entity_manager=self.game.entity_manager, image=ben_images, x=250, y=250, speed=15)
@@ -172,8 +173,6 @@ class SecretOfTheOmnitrix(AdventureScene):
 
         def myaxx_follow_player(custom_self, current_tick):
             if custom_self.player.is_near(custom_self.myaxx):
-                self.game.sql_data.scenes_res[0] = 'Win'
-                # self.game.sql_data.save()
                 self.play_data.update({'win': True})
                 
             
@@ -222,7 +221,10 @@ class SecretOfTheOmnitrix(AdventureScene):
         Fight between Ben 10 and prisoners. Save Myaxx
         """
         if 'win' in kwargs:
+            self.game.sql_data.scenes_res[0] = 'Win'
             return self.END
+        # elif kwargs['player'].hp <= 0:
+        #     return self.END
         self.render_map(kwargs)
         self.handle_event(kwargs)
         self.game.entity_manager.render(self.game.screen)

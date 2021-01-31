@@ -1,5 +1,5 @@
 import pygame
-from random import randint
+from random import randint, choice
 from .graphics import RenderPlayer, RenderNPC
 from .weapon import BaseWeapon
 
@@ -47,7 +47,8 @@ class BaseEntity(pygame.sprite.Sprite):
         self.speed = speed
         
         # TODO make passing events to entity manager. Entity should have access to manager mby
-        self.entity_manager.add_entity(self)
+        if not self.entity_manager.is_collision(self):
+            self.entity_manager.add_entity(self)
 
     def __str__(self):
         return f'{self.__class__.__name__} {self.id}'
@@ -216,6 +217,7 @@ class NPC(BaseEntity):
     def go_to(self, player):
 
         rot_x, rot_y = 0, 0
+        x, y = self.x, self.y
 
         if self.speed > abs(self.x - player.x):
             self.x = player.x
@@ -235,9 +237,34 @@ class NPC(BaseEntity):
             else:
                 self.y += self.speed
                 rot_y = 1
-        if self.entity_manager.is_collision(self):
-            self.x -= self.speed * rot_x
-            self.y -= self.speed * rot_y
+        if self.entity_manager.is_collision(self) > 1:
+            self.x, self.y = x, y
+            flag = True
+            for rot_x in choice([[-1, 0, 1], [1, 0, -1]]):
+                if not flag:
+                    break
+                for rot_y in choice([[-1, 0, 1], [1, 0, -1]]):
+                    self.x += self.speed * rot_x
+                    self.y += self.speed * rot_y
+                    if not self.entity_manager.is_collision(self):
+                        flag = False
+                        break
+                    else:
+                        self.x, self.y = x, y
+        elif self.entity_manager.is_collision(self) == 1:
+            self.x, self.y = x, y
+            flag = True
+            for rot_x in [-1, 0, 1]:
+                if not flag:
+                    break
+                for rot_y in [-1, 0, 1]:
+                    self.x += self.speed * rot_x
+                    self.y += self.speed * rot_y
+                    if not self.entity_manager.is_collision(self):
+                        flag = False
+                        break
+                    else:
+                        self.x, self.y = x, y
         else:
             """changing texture rotation"""
 
