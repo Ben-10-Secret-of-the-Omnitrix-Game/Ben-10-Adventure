@@ -64,6 +64,13 @@ class EntityManager:
                     col_count += 1
         return col_count
 
+    def is_collision_coord(self, x, y):
+        col_count = 0
+        for ent in self.entity_list:
+            if ((ent.x - x) ** 2 + (ent.y - y) ** 2) ** 0.5 < self.collision_radius:
+                    col_count += 1
+        return col_count
+
     def render(self, screen=None, border_offset=[500, 100]):
         self._render.render(self.entity_list, screen, border_offset)
 

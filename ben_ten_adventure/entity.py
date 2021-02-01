@@ -215,7 +215,6 @@ class NPC(BaseEntity):
         self.weapon = weapon
 
     def go_to(self, player):
-
         rot_x, rot_y = 0, 0
         x, y = self.x, self.y
 
@@ -372,3 +371,60 @@ class NPC(BaseEntity):
 
             if self.image and len(self.image) >= self.rotation + 1:
                 self.texture = self.image[self.rotation]
+
+    def find_path(self, x, y):
+        # you'd better not use it, it's too long
+        width, height = max(self.x, x) + abs(self.x - x), max(self.y, y) + abs(self.y - y)
+        map = [[-1] * width for _ in range(height)]
+        distance = 0
+        map[self.x][self.y] = distance
+        flag = False  #to simulate natural moving
+        path = []
+        while map[x][y] == -1:
+            for line in range(height):
+                for col in range(self.width):
+                    if map[line][col] == distance:
+                        for i in range(max(0, line - self.speed), min(self.height, line + self.speed + 1)):
+                            for j in range(max(0, col - self.speed), min(self.width, col + self.speed + 1)):
+                                if map[i][j] == -1 and not self.entity_manager.is_collision_coord(i, j):
+                                    map[i][j] = distance + 1
+            distance += 1
+        path.append((x, y))
+        while (x, y) != (self.x, self.y):
+            x_range = range(max(0, x - self.speed), min(height, x + self.speed + 1))
+            y_range = range(max(0, y - self.speed), min(width, y + self.speed + 1))
+            if self.x in x_range and self.y in y_range:
+                x, y = self.x, self.y
+                path.append((x, y))
+                break
+            elif self.x in x_range:
+                flag = False
+                i = self.x
+                for j in y_range:
+                    if map[i][j] == map[x][y] - 1:
+                        x, y = i, j
+                        flag = True
+                        path.append((i, j))
+            elif self.y in y_range:
+                j = self.y
+                flag = False
+                for i in x_range:
+                    if map[i][j] == map[x][y] - 1:
+                        x, y = i, j
+                        flag = True
+                        path.append((i, j))
+            if not flag:
+                for i in x_range:
+                    for j in y_range:
+                        if map[i][j] == map[x][y] - 1:
+                            x, y = i, j
+                            path.append((i, j))
+                            if (x, y) == (self.x, self.y):
+                                break
+                    if (x, y) == (self.x, self.y):
+                        break
+        path.append((self.x, self.y))
+        path = path[::-1][1:]
+        # print(self.x, self.y, path)
+        return path
+
