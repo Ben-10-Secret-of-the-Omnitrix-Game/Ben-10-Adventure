@@ -147,36 +147,57 @@
         "size_y": 128
     },
     {
-        "name": "ben10_1_128_128",
+        "name": "Myaxx_128_128",
         "offset_x": 194,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_2_128_128",
+        "name": "ben10_1_128_128",
         "offset_x": 322,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_3_128_128",
+        "name": "ben10_2_128_128",
         "offset_x": 450,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_4_128_128",
+        "name": "ben10_3_128_128",
         "offset_x": 578,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "wall_5_marine",
+        "name": "ben10_4_128_128",
         "offset_x": 706,
+        "offset_y": 338,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "volann1_128_128",
+        "offset_x": 834,
+        "offset_y": 338,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "volann2_128_128",
+        "offset_x": 962,
+        "offset_y": 338,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "wall_5_marine",
+        "offset_x": 1090,
         "offset_y": 338,
         "size_x": 128,
         "size_y": 128
@@ -190,35 +211,35 @@
     },
     {
         "name": "concrete368a",
-        "offset_x": 834,
+        "offset_x": 1218,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "dirt",
-        "offset_x": 1090,
+        "offset_x": 1474,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "rock",
-        "offset_x": 1346,
+        "offset_x": 1730,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "snow",
-        "offset_x": 1602,
+        "offset_x": 1986,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "wall_5_256_128",
-        "offset_x": 1858,
+        "offset_x": 2242,
         "offset_y": 338,
         "size_x": 256,
         "size_y": 128
@@ -273,22 +294,29 @@
         "size_y": 256
     },
     {
-        "name": "background",
+        "name": "Alien_V",
         "offset_x": 0,
+        "offset_y": 1216,
+        "size_x": 448,
+        "size_y": 557
+    },
+    {
+        "name": "background",
+        "offset_x": 448,
         "offset_y": 1216,
         "size_x": 500,
         "size_y": 500
     },
     {
         "name": "main_screen",
-        "offset_x": 500,
+        "offset_x": 948,
         "offset_y": 1216,
         "size_x": 640,
         "size_y": 480
     },
     {
         "name": "win",
-        "offset_x": 1140,
+        "offset_x": 1588,
         "offset_y": 1216,
         "size_x": 852,
         "size_y": 480
@@ -296,7 +324,7 @@
     {
         "name": "game_over",
         "offset_x": 0,
-        "offset_y": 1716,
+        "offset_y": 1773,
         "size_x": 800,
         "size_y": 533
     }

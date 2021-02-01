@@ -51,7 +51,7 @@ class BaseEntity(pygame.sprite.Sprite):
             self.entity_manager.add_entity(self)
 
     def __str__(self):
-        return f'{self.__class__.__name__} {self.id}'
+        return f'{self.__class__.__name__} {self.entity_manager.get_list}'
 
     def __repr__(self):
         return self.__str__()
@@ -373,7 +373,7 @@ class NPC(BaseEntity):
                 self.texture = self.image[self.rotation]
 
     def find_path(self, x, y):
-        # you'd better not use it, it's too long
+        # you'd better not use it, it's too long  and still not correct
         width, height = max(self.x, x) + abs(self.x - x), max(self.y, y) + abs(self.y - y)
         map = [[-1] * width for _ in range(height)]
         distance = 0

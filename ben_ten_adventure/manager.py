@@ -35,6 +35,13 @@ class EntityManager:
         if self.can_add(entity):
             self.entity_list.append(entity)
             self.id_list.append(entity.id)
+        else:
+            self.id_list.remove(entity.id)
+            for i in range(len(self.entity_list)):
+                if self.entity_list[i].id == entity.id:
+                    self.entity_list.pop(i)
+                    break
+            self.add_entity(entity)
 
     def get_list(self):
         return self.entity_list
@@ -73,6 +80,10 @@ class EntityManager:
 
     def render(self, screen=None, border_offset=[500, 100]):
         self._render.render(self.entity_list, screen, border_offset)
+
+    def clear(self):
+        self.entity_list = []
+        self.id_list = []
 
 
 class AdventureScene:
@@ -159,42 +170,60 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs = {}
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_1.tmx"))
         self.game.MAP_WIDTH, self.game.MAP_HEIGHT = kwargs['map'].width, kwargs['map'].height
-        npc_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
-                      self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
-        kwargs['npcs'] = [NPC(str(i + 1), image=npc_images,
-                              x=randint(0, self.game.MAP_WIDTH * self.game.TILE_SIZE),
-                              entity_manager=self.game.entity_manager,
-                              speed=randint(1, 3)) for i in range(15)]
+
+        kwargs['myaxx'] = NPC('Myaxx', entity_manager=self.game.entity_manager, image=[self.game.ga.Myaxx_128_128], hp=50, x=600, y=500, speed=5)
+        kwargs['npcs_count'] = 24
+        kwargs['npc_images'] = [self.game.ga.volann1_128_128, self.game.ga.volann1_128_128,
+                      self.game.ga.volann2_128_128, self.game.ga.volann2_128_128]
+        kwargs['npcs'] = []
+        kwargs['npcs_random'] = []
+        for i in range(0, kwargs['npcs_count'], 2):
+            kwargs['npcs'] += [NPC(str(i), image=kwargs['npc_images'],
+                                  x=randint(kwargs['myaxx'].x - 300, kwargs['myaxx'].x + 300),
+                                  y=randint(kwargs['myaxx'].y - 300, kwargs['myaxx'].y + 300),
+                                  entity_manager=self.game.entity_manager,
+                                  speed=randint(2, 5))]
+            kwargs['npcs_random'] += [NPC(str(i + 1), image=kwargs['npc_images'],
+                                  x=randint(0, self.game.MAP_WIDTH * self.game.TILE_SIZE),
+                                  y=randint(0, self.game.MAP_HEIGHT * self.game.TILE_SIZE),
+                                  entity_manager=self.game.entity_manager,
+                                  speed=randint(1, 3))]
         ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
                       self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
         kwargs['player'] = Player('Ben', entity_manager=self.game.entity_manager, image=ben_images, x=250, y=250, speed=15)
-        kwargs['myaxx'] = NPC('Myaxx', entity_manager=self.game.entity_manager, image=[self.game.ga.Myaxx_ov_render], hp=50, x=600, y=500, speed=5)
         kwargs['player'].set_friends(kwargs['myaxx'])
-        kwargs['vilgax'] = NPC('Vilgax', image=[self.game.ga.Alien_V_128_128], entity_manager=self.game.entity_manager, hp=250, x=700, y=600, speed=5)
-        kwargs['vilgax'].attack_pause = 40
-        kwargs['vilgax'].damage = 100
         kwargs['player'].set_friends(kwargs['myaxx'])
 
-        kwargs['atom_fn_bomb'] = BaseWeapon(180, 1000, 50)
-        kwargs['player'].set_weapon(kwargs['atom_fn_bomb'])
+        kwargs['blaster'] = BaseWeapon(50, 100, 20)
+        kwargs['player'].set_weapon(kwargs['blaster'])
 
         def myaxx_follow_player(custom_self, current_tick):
             if custom_self.player.is_near(custom_self.myaxx):
                 self.play_data.update({'win': True})
-                
-            
-        
+            elif custom_self.player.hp <= 0:
+                self.play_data.update({'win': False})
+            if custom_self.player.id not in self.game.entity_manager.id_list:
+                custom_self.is_canceled = True
+                return
+
         def npcs_attack_player(custom_self, current_tick):
             for npc in custom_self.npcs:
                 npc.go_to(custom_self.player)
                 npc.attack(custom_self.player)
                 # npc.random_move()
-        
-        def vilgax_attack_player(custom_self, current_tick):
-            custom_self.vilgax.go_to(custom_self.player)
-            custom_self.vilgax.attack(custom_self.player)
             if custom_self.player.id not in self.game.entity_manager.id_list:
-                self.play_data.update({'win': False})
+                custom_self.is_canceled = True
+                return
+
+        def npcs_random_move(custom_self, current_tick):
+            for npc in custom_self.npcs:
+                npc.random_move()
+        
+        # def vilgax_attack_player(custom_self, current_tick):
+        #     custom_self.vilgax.go_to(custom_self.player)
+        #     custom_self.vilgax.attack(custom_self.player)
+        #     if custom_self.player.id not in self.game.entity_manager.id_list:
+        #         self.play_data.update({'win': False})
         
         self.game.task_manager.schedule_repeating_task({
             'myaxx': kwargs['myaxx'],
@@ -207,19 +236,23 @@ class SecretOfTheOmnitrix(AdventureScene):
             'player': kwargs['player'],
             'on_run':  npcs_attack_player
         }, period=15)
-        
+
         self.game.task_manager.schedule_repeating_task({
-            'vilgax': kwargs['vilgax'],
-            'player': kwargs['player'],
-            'on_run':  vilgax_attack_player
+            'npcs': kwargs['npcs_random'],
+            'on_run': npcs_random_move
         }, period=15)
+        # self.game.task_manager.schedule_repeating_task({
+        #     'vilgax': kwargs['vilgax'],
+        #     'player': kwargs['player'],
+        #     'on_run':  vilgax_attack_player
+        # }, period=15)
 
         kwargs['camera'] = Camera()
 
         self.game.sql_data.player = 'Ben'
         self.game.sql_data.add_npc_count(len(self.game.entity_manager.get_list()) - 1)
         self.game.sql_data.friends_count(len(kwargs['player'].friends_ids))
-        self.game.sql_data.main_enemy = 'Vilgaxx'
+        # self.game.sql_data.main_enemy = 'Vilgaxx'
 
         return kwargs
 
@@ -228,13 +261,28 @@ class SecretOfTheOmnitrix(AdventureScene):
         Fight between Ben 10 and prisoners. Save Myaxx
         """
         if 'win' in kwargs:
-            self.game.sql_data.scenes_res[0] = 'Win'
+            if kwargs['win']:
+                self.game.sql_data.scenes_res[0] = 'Win'
+            else:
+                self.game.sql_data.scenes_res[0] = 'Game Over'
             return self.END
-        # elif kwargs['player'].hp <= 0:
-        #     return self.END
+
         self.render_map(kwargs)
         self.handle_event(kwargs)
         self.game.entity_manager.render(self.game.screen)
+        while len(self.game.entity_manager.get_id_list()) < 20:
+            kwargs['npcs_count'] += 2
+            kwargs['npcs'] += [NPC(str(kwargs['npcs_count']), image=kwargs['npc_images'],
+                                  x=randint(0, self.game.MAP_WIDTH * self.game.TILE_SIZE),
+                                  y=randint(0, self.game.MAP_HEIGHT * self.game.TILE_SIZE),
+                                  entity_manager=self.game.entity_manager,
+                                  speed=randint(1, 3))]
+            kwargs['npcs_random'] += [NPC(str(kwargs['npcs_count'] - 1), image=kwargs['npc_images'],
+                                         x=randint(0, self.game.MAP_WIDTH * self.game.TILE_SIZE),
+                                         y=randint(0, self.game.MAP_HEIGHT * self.game.TILE_SIZE),
+                                         entity_manager=self.game.entity_manager,
+                                         speed=randint(1, 3))]
+
         # kwargs['vilgax'].go_to(kwargs['player'])
         # kwargs['vilgax'].attack(kwargs['player'])
 
@@ -290,7 +338,13 @@ class SecretOfTheOmnitrix(AdventureScene):
 
             stage = self.stages[self._index]
             if stage(kwargs=self.play_data) == self.END:
-                if self._index + 1 < len(self.stages):
+                if 'win' in self.play_data and not self.play_data['win']:
+                    self._index = 1
+                    self.game.entity_manager.clear()
+                    initialization_function = self.init_funcs[self._index]
+                    self.play_data = initialization_function()
+
+                elif self._index + 1 < len(self.stages):
                     self._index += 1
                     initialization_function = self.init_funcs[self._index]
                     self.play_data.update(initialization_function())
@@ -311,7 +365,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                 asset_name = file_name.split('.')[0]
                 tile_size = self.game.TILE_SIZE
                 border_offset = (abs(self.game.RESOLUTION[0] - tile_size * self.game.MAP_WIDTH) // 2 - tile_size // 2,
-                                 -self.game.MAP_HEIGHT * tile_size // 2 + self.game.RESOLUTION[1])
+                                 -self.game.MAP_HEIGHT // 2 * tile_size // 2 + self.game.RESOLUTION[1] // 2)
                 tile = Tile(x, y, border_offset, image=getattr(self.game.ga, asset_name), tile_size=tile_size)
                 tile.render_isometric_tile(self.game.screen)
 
@@ -445,7 +499,6 @@ class TaskManager:
         if self.tasks:
             for task in self.tasks:
                 task.on_cancel()
+                task.is_canceled = True
             self.tasks = []
         self.id = -1
-            
-        
