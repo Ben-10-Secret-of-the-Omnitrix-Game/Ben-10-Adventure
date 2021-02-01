@@ -252,36 +252,43 @@
         "size_y": 182
     },
     {
-        "name": "brickpavers2",
+        "name": "Prisoner_soto",
         "offset_x": 0,
+        "offset_y": 704,
+        "size_x": 147,
+        "size_y": 300
+    },
+    {
+        "name": "brickpavers2",
+        "offset_x": 147,
         "offset_y": 704,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "cretebrick970",
-        "offset_x": 512,
+        "offset_x": 659,
         "offset_y": 704,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "dirtsand2",
-        "offset_x": 1024,
+        "offset_x": 1171,
         "offset_y": 704,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "stone",
-        "offset_x": 1536,
+        "offset_x": 1683,
         "offset_y": 704,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "tilable-IMG_0044-grey",
-        "offset_x": 2048,
+        "offset_x": 2195,
         "offset_y": 704,
         "size_x": 512,
         "size_y": 256
@@ -289,42 +296,35 @@
     {
         "name": "tileable-S7002876-grey",
         "offset_x": 0,
-        "offset_y": 960,
+        "offset_y": 1004,
         "size_x": 512,
         "size_y": 256
     },
     {
-        "name": "Alien_V",
-        "offset_x": 0,
-        "offset_y": 1216,
-        "size_x": 448,
-        "size_y": 557
-    },
-    {
         "name": "background",
-        "offset_x": 448,
-        "offset_y": 1216,
+        "offset_x": 0,
+        "offset_y": 1260,
         "size_x": 500,
         "size_y": 500
     },
     {
         "name": "main_screen",
-        "offset_x": 948,
-        "offset_y": 1216,
+        "offset_x": 500,
+        "offset_y": 1260,
         "size_x": 640,
         "size_y": 480
     },
     {
         "name": "win",
-        "offset_x": 1588,
-        "offset_y": 1216,
+        "offset_x": 1140,
+        "offset_y": 1260,
         "size_x": 852,
         "size_y": 480
     },
     {
         "name": "game_over",
         "offset_x": 0,
-        "offset_y": 1773,
+        "offset_y": 1760,
         "size_x": 800,
         "size_y": 533
     }
