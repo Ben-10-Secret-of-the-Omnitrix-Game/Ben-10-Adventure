@@ -330,7 +330,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.game.start = False
             self.game.screen.fill((0, 0, 0))
             text = ["You're in a right way! You've saved Myaxx",
-                    "You've got to fight Vilgax, or he will kill destroy your ship",
+                    "You've got to fight Vilgax, or he will destroy your ship",
                     'Find Azimuth and save Omnitrix than,',
                     'To fight with Vilgax you need to kill 10 of his drones',
                     '(tap SPACE to play)',
