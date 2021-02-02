@@ -150,7 +150,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_scene_5,
             self.play_scene_6,
             self.play_scene_7]
-        self._index = 0
+        self._index = 6
         self.init_funcs = [
             self.init_scene_1,
             self.init_scene_2,
@@ -402,6 +402,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                     custom_self.is_canceled = True
                 elif custom_self.vilgax.hp <= 0:
                     self.play_data['win'] = True
+                    custom_self.is_canceled = True
 
         self.game.task_manager.schedule_repeating_task({
             'npcs': kwargs['npcs'],
@@ -649,18 +650,19 @@ class SecretOfTheOmnitrix(AdventureScene):
                     text = ["You win!",
                             "Introduction:",
                             "Earth is in danger",
-                            "Luckly you've got a chance to choose what really mean to you",
-                            "What will you choose - a life of your loved one or to save entire humanity from extinction?",
-                            'tap L for loved one OR O for humanity']
+                            "Luckly you've got a chance to choose what really means to you",
+                            "What will you choose - a life of your loved one",
+                            "or to save entire humanity from extinction?",
+                            'tap L for loved one OR H for humanity']
                     font = pygame.font.Font(None, 40)
-                    self.game.screen.blit(self.game.ga.Omnitrix, (300, 300))
-                    self.game.screen.blit(self.game.ga.Azimuth2_128_128, (900, 200))
+                    self.game.screen.blit(self.game.ga.Omnitrix, (200, 450))
+                    self.game.screen.blit(self.game.ga.Azimuth2_128_128, (1000, 200))
                     for i in text:
                         phrase = font.render(i, True, (255, 100, 100))
                         if text.index(i) == len(text) - 1:
                             font = pygame.font.SysFont('Calibri', 45, italic=True)
                             phrase = font.render(i, True, (100, 255, 100))
-                        self.game.screen.blit(phrase, (100, (text.index(i) + 2) * 50))
+                        self.game.screen.blit(phrase, (100, (text.index(i) + 1) * 50))
                     pygame.display.flip()
 
                     self.handle_event('end')
@@ -697,11 +699,11 @@ class SecretOfTheOmnitrix(AdventureScene):
                         font = pygame.font.SysFont('Calibri', 30)
                         for i in text:
                             phrase = font.render(i, True, (100, 100, 255))
-                            self.game.screen.blit(phrase, (650, 400 + (text.index(i)) * 50))
+                            self.game.screen.blit(phrase, (550, 450 + (text.index(i)) * 50))
                         pygame.display.flip()
                         pygame.time.wait(8000)
                         sys.exit()
-                    elif event.key == pygame.K_o:
+                    elif event.key == pygame.K_h:
                         text = ["Then...",
                                 "You're a very strong and cold-blooded person,",
                                 "You're born to be a hero",
@@ -709,7 +711,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                         font = pygame.font.SysFont('Calibri', 30)
                         for i in text:
                             phrase = font.render(i, True, (100, 100, 255))
-                            self.game.screen.blit(phrase, (650, 400 + (text.index(i)) * 50))
+                            self.game.screen.blit(phrase, (550, 450 + (text.index(i)) * 50))
                         pygame.display.flip()
                         pygame.time.wait(8000)
                         sys.exit()
