@@ -57,6 +57,7 @@ class BaseEntity(pygame.sprite.Sprite):
     def __repr__(self):
         return self.__str__()
 
+
     def _move(self, keys_states, speed=None):
         if speed is None:
             speed = self.speed
@@ -215,6 +216,7 @@ class NPC(BaseEntity):
 
     def set_weapon(self, weapon):
         self.weapon = weapon
+        
 
     def go_to(self, player):
         if not player.is_near(self, self.entity_manager.collision_radius):
@@ -429,6 +431,5 @@ class NPC(BaseEntity):
                         break
         path.append((self.x, self.y))
         path = path[::-1][1:]
-        # print(self.x, self.y, path)
         return path
 

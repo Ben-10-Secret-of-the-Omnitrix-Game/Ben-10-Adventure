@@ -8,7 +8,6 @@ import numpy
 
 from os.path import join, exists
 from os import mkdir
-from pprint import pprint
 
 DEFAULT_RESOURCES_PATH = join("resources")
 DEFAULT_GAMEDATA_PATH = join("game_data")

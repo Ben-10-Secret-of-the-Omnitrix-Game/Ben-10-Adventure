@@ -82,7 +82,8 @@ class EntityManager:
 
     def render(self, screen=None, border_offset=[500, 100]):
         self._render.render(self.entity_list, screen, border_offset)
-
+    
+    
     def clear(self):
         self.entity_list = []
         self.id_list = []
@@ -173,7 +174,6 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         self.handle_event(kwargs)
         if not kwargs['intro'].tick(self.game.screen):
-            print("Video ended")
             self.game.screen.fill((0, 0, 0))
             text = ["Ben's Omnitrix is broken. You can't use your power",
                     "You've got to find Azimuth and prevent the Universe from detonation",
@@ -326,7 +326,6 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         self.handle_event(kwargs)
         if not kwargs['from_prison'].tick(self.game.screen):
-            print("Video ended")
             self.game.start = False
             self.game.screen.fill((0, 0, 0))
             text = ["You're in a right way! You've saved Myaxx",
@@ -468,7 +467,6 @@ class SecretOfTheOmnitrix(AdventureScene):
         """
         self.handle_event(kwargs)
         if not kwargs['flying'].tick(self.game.screen):
-            print("Video ended")
             self.game.start = False
             self.game.screen.fill((0, 0, 0))
             text = ["Vilgax has gone away, you are on the Zenon now",
@@ -628,16 +626,11 @@ class SecretOfTheOmnitrix(AdventureScene):
     def play_current(self):
         if self.game.ACTION != self.activity.PAUSE:
             if not self.play_data:
-                print(self._index)
                 initialization_function = self.init_funcs[self._index]
                 self.play_data = initialization_function()
 
             stage = self.stages[self._index]
-            print(self.play_data)
-            if 'win' in self.play_data:
-                print(self._index)
             if stage(kwargs=self.play_data) == self.END:
-                # print('win' in self.play_data)
                 if 'win' in self.play_data and not self.play_data['win']:
                     self._index = 1
                     self.game.entity_manager.clear()
@@ -658,7 +651,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                             "Earth is in danger",
                             "Luckly you've got a chance to choose what really mean to you",
                             "What will you choose - a life of your loved one or to save entire humanity from extinction?",
-                            'tap L or O for Life or Omnitrix']
+                            'tap L for loved one OR O for humanity']
                     font = pygame.font.Font(None, 40)
                     self.game.screen.blit(self.game.ga.Omnitrix, (300, 300))
                     self.game.screen.blit(self.game.ga.Azimuth2_128_128, (900, 200))

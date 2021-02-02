@@ -24,7 +24,6 @@ from .manager import EntityManager, SecretOfTheOmnitrix, Game, TaskManager
 from .weapon import BaseWeapon
 from .animation import ButtonAnimation
 
-from pprint import pprint
 
 HD = (1280, 720)
 FULL_HD = (1920, 1080)

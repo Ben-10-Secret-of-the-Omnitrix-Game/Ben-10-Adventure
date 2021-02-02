@@ -7,7 +7,6 @@ from sys import argv
 from os import walk
 from os.path import join
 from PIL import Image
-from pprint import pprint
 
 
 class PackNode(object):
