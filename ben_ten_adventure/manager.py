@@ -176,7 +176,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             print("Video ended")
             self.game.screen.fill((0, 0, 0))
             text = ["Ben's Omnitrix is broken. You can't use your power",
-                    "You've got to find Azimuth and save prevent the Universe from detonation",
+                    "You've got to find Azimuth and prevent the Universe from detonation",
                     'Use:',
                     'SPACE to shoot',
                     'P for pause',
@@ -329,9 +329,9 @@ class SecretOfTheOmnitrix(AdventureScene):
             print("Video ended")
             self.game.start = False
             self.game.screen.fill((0, 0, 0))
-            text = ["Great! You've saved Myaxx",
+            text = ["You're in a right way! You've saved Myaxx",
                     "You've got to fight Vilgax, or he will kill destroy your ship",
-                    'Find Azimuth and save Omnitrix then',
+                    'Find Azimuth and save Omnitrix than,',
                     'To fight with Vilgax you need to kill 10 of his drones',
                     '(tap SPACE to play)',
                     '-> scene 2 - fight with Vilgax']
@@ -654,7 +654,10 @@ class SecretOfTheOmnitrix(AdventureScene):
                     self.game.end = False
                     self.game.screen.fill((0, 0, 0))
                     text = ["You win!",
-                            "What will you choose - a life of your friend or a relative or the Omnitrix?",
+                            "Introduction:",
+                            "Earth is in danger",
+                            "Luckly you've got a chance to choose what really mean to you",
+                            "What will you choose - a life of your loved one or to save entire humanity from extinction?",
                             'tap L or O for Life or Omnitrix']
                     font = pygame.font.Font(None, 40)
                     self.game.screen.blit(self.game.ga.Omnitrix, (300, 300))
@@ -696,8 +699,8 @@ class SecretOfTheOmnitrix(AdventureScene):
                     if event.key == pygame.K_l:
                         text = ["Then...",
                                 "You're very a kind and honest person,",
-                                "you had better be a human",
-                                'and live on Earth with your family']
+                                "Share your love and tenderness with others on Earth!"
+                                ]
                         font = pygame.font.SysFont('Calibri', 30)
                         for i in text:
                             phrase = font.render(i, True, (100, 100, 255))
@@ -708,8 +711,8 @@ class SecretOfTheOmnitrix(AdventureScene):
                     elif event.key == pygame.K_o:
                         text = ["Then...",
                                 "You're a very strong and cold-blooded person,",
-                                "you need to be a hero",
-                                'Omnitrix is yours']
+                                "You're born to be a hero",
+                                'You are worthy to own Omnitrix!']
                         font = pygame.font.SysFont('Calibri', 30)
                         for i in text:
                             phrase = font.render(i, True, (100, 100, 255))

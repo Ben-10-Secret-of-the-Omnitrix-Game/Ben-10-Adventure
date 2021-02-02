@@ -31,7 +31,7 @@ class Movie:
 
     def tick(self, screen):
         if not self.start_audio:
-            mixer.music.set_volume(0.01)
+            mixer.music.set_volume(0.1)
             mixer.music.play()
             self.start_audio = True
         retval, frame = self.video.read()
