@@ -15,28 +15,6 @@ import sys
 import pygame_gui
 from . import graphics
 
-<<<<<<< HEAD
-from .utils import GameAssets, init_resource_dirs
-from . import graphics
-
-from hotreload.reloader import Loader
-
-from os.path import join
-from os import environ
-
-# import ctypes
-
-# environ['SDL_VIDEO_CENTERED'] = '1'
-# user32 = ctypes.windll.user32
-# screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
-
-# if screensize[0] > 1920:
-#     win_size = (1920, 1080)
-# elif screensize[0] > 1280:
-#     win_size = (1280, 720)
-# else:
-#     win_size = (720, 480)
-=======
 from .sql_saver import SQLData
 from .utils import Config, DEFAULT_GAMEDATA_PATH, GameAssets, init_resource_dirs
 from .entity import Player, NPC
@@ -58,7 +36,6 @@ class Activity:
     MAIN_SCREEN = 0
     PLAYING = 1
     PAUSE = 2
->>>>>>> origin/main
 
 DEBUG = False
 
@@ -95,22 +72,7 @@ def init():
     flags = pygame.NOFRAME | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.RESIZABLE
     screen = pygame.display.set_mode(RESOLUTION, flags=flags)
 
-<<<<<<< HEAD
-    screen = pygame.display.set_mode((1280, 720), flags=pygame.RESIZABLE)
-    MAP_WIDTH = 5
-    MAP_HEIGHT = 5
-    TILE_SIZE = (32, 32)
-    # TODO replace with more approximate offset
-    border_offset = screen.get_width() / 2 + TILE_SIZE[0] * MAP_WIDTH
 
-
-def start():
-    global ga, clock, fps, script
-    if DEBUG:
-        script = Loader(join("ben_ten_adventure", "graphics.py"), "ben_ten_adventure.graphics", 1)
-    else:
-        script = graphics
-=======
     # Centralize map
     x_pad = TILE_SIZE  # prevent from float values
     y_pad = MAP_HEIGHT * TILE_SIZE  # prevent from float values
@@ -125,7 +87,6 @@ def start():
         # script = Loader(join("ben_ten_adventure", "graphics.py"),
         #                 "ben_ten_adventure.graphics", 1)
 
->>>>>>> origin/main
     # .utils.py
 
     init_resource_dirs()
@@ -191,18 +152,8 @@ def game_loop_handler():
         
     pygame.display.update()
     clock.tick(fps)
-<<<<<<< HEAD
-    if DEBUG:
-        if script.has_changed():
-            pygame.time.wait(500)
-    for row in range(0, MAP_WIDTH):
-        for col in range(0, MAP_HEIGHT):
-            tile = script.Tile(row, col, border_offset=border_offset, image=ga.snow, tile_size=TILE_SIZE)
-            tile.render_isometric_tile(screen)
     # 
     # TODO replace with update
     pygame.display.flip()
     # Carefull! border_offset need to convert to isometrix coordinates first! 
     # pygame.display.update((border_offset, border_offset / 2, border_offset, border_offset / 2))
-=======
->>>>>>> origin/main
