@@ -130,6 +130,7 @@ class Game:
         self.config: Config
         self.border_offset = int
         self.entity_manager: EntityManager
+        self.start = False
 
 
 class SecretOfTheOmnitrix(AdventureScene):
@@ -166,7 +167,27 @@ class SecretOfTheOmnitrix(AdventureScene):
         self.handle_event(kwargs)
         if not kwargs['intro'].tick(self.game.screen):
             print("Video ended")
-            return self.END
+            self.game.screen.fill((0, 0, 0))
+            text = ["Ben's Omnitrix is broken. You can't use your power",
+                    "You've got to find Azimuth and save prevent the Universe from detonation",
+                    'Use:',
+                    'SPACE to shoot',
+                    'P for pause',
+                    'arrows to move',
+                    '(tap SPACE to play)',
+                    '-> scene 1 - save Myaxx from prison']
+            font = pygame.font.Font(None, 40)
+            for i in text:
+                phrase = font.render(i, True, (255, 100, 100))
+                if text.index(i) == len(text) - 1:
+                    font = pygame.font.SysFont('Calibri', 45, italic=True)
+                    phrase = font.render(i, True, (100, 255, 100))
+                self.game.screen.blit(phrase, (100, (text.index(i) + 2) * 50))
+            pygame.display.flip()
+
+            self.handle_event('start')
+            if self.game.start:
+                return self.END
 
     def init_scene_2(self):
         kwargs = {}
@@ -302,7 +323,7 @@ class SecretOfTheOmnitrix(AdventureScene):
 
     def init_scene_3(self):
         kwargs = {}
-        kwargs['flying'] = Movie(join(DEFAULT_RESOURCES_PATH, "videos", "flying2.mp4"))
+        kwargs['from_prison'] = Movie(join(DEFAULT_RESOURCES_PATH, "videos", "vilgax_ready.mp4"))
         return kwargs
 
     def play_scene_3(self, kwargs):
@@ -310,9 +331,28 @@ class SecretOfTheOmnitrix(AdventureScene):
         Flying to Azmuth's planet
         """
         self.handle_event(kwargs)
-        if not kwargs['flying'].tick(self.game.screen):
+        if not kwargs['from_prison'].tick(self.game.screen):
             print("Video ended")
-            return self.END
+            self.game.start = False
+            self.game.screen.fill((0, 0, 0))
+            text = ["Great! You've saved Myaxx",
+                    "You've got to fight Vilgax, or he will kill destroy your ship",
+                    'Find Azimuth and save Omnitrix then',
+                    'To fight with Vilgax you need to kill 10 of his drones',
+                    '(tap SPACE to play)',
+                    '-> scene 2 - fight with Vilgax']
+            font = pygame.font.Font(None, 40)
+            for i in text:
+                phrase = font.render(i, True, (255, 100, 100))
+                if text.index(i) == len(text) - 1:
+                    font = pygame.font.SysFont('Calibri', 45, italic=True)
+                    phrase = font.render(i, True, (100, 255, 100))
+                self.game.screen.blit(phrase, (100, (text.index(i) + 2) * 50))
+            pygame.display.flip()
+
+            self.handle_event('start')
+            if self.game.start:
+                return self.END
 
     def init_scene_4(self):
         kwargs = {}
@@ -332,8 +372,8 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs['npcs'] = []
         for i in range(0, kwargs['npcs_count']):
             kwargs['npcs'] += [NPC(str(i), image=kwargs['npc_images'],
-                                   x=randint(0, self.game.MAP_WIDTH * self.game.TILE_SIZE),
-                                   y=randint(0, self.game.MAP_HEIGHT * self.game.TILE_SIZE),
+                                   x=randint(kwargs['vilgax'].x - 500, kwargs['vilgax'].x + 500),
+                                   y=randint(kwargs['vilgax'].y - 500, kwargs['vilgax'].y + 500),
                                    entity_manager=self.game.entity_manager,
                                    speed=randint(1, 3))]
 
@@ -428,10 +468,9 @@ class SecretOfTheOmnitrix(AdventureScene):
         font = pygame.font.Font(None, 40)
         fps_value = str(self.game.entity_manager.kills)
 
+        self.game.entity_manager.render(self.game.screen)
         fps_stat = font.render('KILLS: ' + fps_value, True, (0, 0, 255))
         self.game.screen.blit(fps_stat, (1000, 200))
-
-        self.game.entity_manager.render(self.game.screen)
 
         if self.game.entity_manager.kills >= 10:
             kwargs['vilgax'].unattackable = False
@@ -449,14 +488,17 @@ class SecretOfTheOmnitrix(AdventureScene):
 
     def init_scene_5(self):
         kwargs = {}
-        kwargs['flying'] = Movie(join(DEFAULT_RESOURCES_PATH, "videos", "intro.mp4"))
+        kwargs['flying'] = Movie(join(DEFAULT_RESOURCES_PATH, "videos", "flying2.mp4"))
         return kwargs
 
     def play_scene_5(self, kwargs):
         """
-        Urge Azmuth to keep omnitrix in Ben's hand.  
+        flight to Zenon
         """
         self.handle_event(kwargs)
+        if not kwargs['flying'].tick(self.game.screen):
+            print("Video ended")
+            return self.END
 
     def play_current(self):
         if self.game.ACTION != self.activity.PAUSE:
@@ -500,35 +542,39 @@ class SecretOfTheOmnitrix(AdventureScene):
 
     def handle_event(self, kwargs):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.VIDEOEXPOSE:  # handles window minimising/maximising
-                self.game.screen.blit(scale(
-                    self.game.screen, self.game.screen.get_size()), (0, 0))
-                pygame.display.update()
-                # border_offset = self.game.screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
-            elif event.type == pygame.MOUSEMOTION:
-                mouse_x_y = pygame.mouse.get_pos()
-            elif event.type == pygame.KEYDOWN:
-                if kwargs != 'pause':
-                    btns_pressed = tuple(pygame.key.get_pressed())[79:83]
-                    if kwargs and 'player' in kwargs:
-                        kwargs['player'].move(btns_pressed)
+            if kwargs == 'start':
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.game.start = True
+            else:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.VIDEOEXPOSE:  # handles window minimising/maximising
+                    self.game.screen.blit(scale(
+                        self.game.screen, self.game.screen.get_size()), (0, 0))
+                    pygame.display.update()
+                    # border_offset = self.game.screen.get_width() - TILE_SIZE[0] * MAP_WIDTH
+                elif event.type == pygame.MOUSEMOTION:
+                    mouse_x_y = pygame.mouse.get_pos()
+                elif event.type == pygame.KEYDOWN:
+                    if kwargs != 'pause':
+                        btns_pressed = tuple(pygame.key.get_pressed())[79:83]
+                        if kwargs and 'player' in kwargs:
+                            kwargs['player'].move(btns_pressed)
 
-                    if event.key == pygame.K_SPACE:
-                        try:
-                            kwargs['player'].attack()
-                        except KeyError:
-                            pass
-                if event.key == pygame.K_p:
-                    if self.game.ACTION == self.activity.PAUSE:
-                        self.game.ACTION = self.activity.PLAYING
-                    elif self._index not in [0, 2]:
-                        self.game.ACTION = self.activity.PAUSE
-            elif event.type == self.game.TICK_EVENT_ID:
-                if self.game.ACTION != self.activity.PAUSE:
-                    self.game.task_manager.tick()
+                        if event.key == pygame.K_SPACE:
+                            try:
+                                kwargs['player'].attack()
+                            except KeyError:
+                                pass
+                    if event.key == pygame.K_p:
+                        if self.game.ACTION == self.activity.PAUSE:
+                            self.game.ACTION = self.activity.PLAYING
+                        elif self._index not in [0, 2, 4]:
+                            self.game.ACTION = self.activity.PAUSE
+                elif event.type == self.game.TICK_EVENT_ID:
+                    if self.game.ACTION != self.activity.PAUSE:
+                        self.game.task_manager.tick()
 
 
 class TaskManager:
