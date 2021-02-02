@@ -77,8 +77,22 @@
         "size_y": 45
     },
     {
-        "name": "space",
+        "name": "grass",
         "offset_x": 0,
+        "offset_y": 144,
+        "size_x": 128,
+        "size_y": 64
+    },
+    {
+        "name": "sand",
+        "offset_x": 128,
+        "offset_y": 144,
+        "size_x": 128,
+        "size_y": 64
+    },
+    {
+        "name": "space",
+        "offset_x": 256,
         "offset_y": 144,
         "size_x": 128,
         "size_y": 64
@@ -141,7 +155,7 @@
     },
     {
         "name": "start_adventure_button_x2",
-        "offset_x": 128,
+        "offset_x": 384,
         "offset_y": 144,
         "size_x": 272,
         "size_y": 50
@@ -154,85 +168,127 @@
         "size_y": 128
     },
     {
-        "name": "Drone1_128_128",
+        "name": "Azimuth1_128_128",
         "offset_x": 194,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "Drone2_128_128",
+        "name": "Azimuth2_128_128",
         "offset_x": 322,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "Myaxx_128_128",
+        "name": "Azimuth_Bio1_128_128",
         "offset_x": 450,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "Vilgax1_128_128",
+        "name": "Azimuth_Bio2_128_128",
         "offset_x": 578,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "Vilgax2_128_128",
+        "name": "Drone1_128_128",
         "offset_x": 706,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_1_128_128",
+        "name": "Drone2_128_128",
         "offset_x": 834,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_2_128_128",
+        "name": "Myaxx_128_128",
         "offset_x": 962,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_3_128_128",
+        "name": "Vilgax1_128_128",
         "offset_x": 1090,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "ben10_4_128_128",
+        "name": "Vilgax2_128_128",
         "offset_x": 1218,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "volann1_128_128",
+        "name": "ben10_1_128_128",
         "offset_x": 1346,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "volann2_128_128",
+        "name": "ben10_2_128_128",
         "offset_x": 1474,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
-        "name": "wall_5_marine",
+        "name": "ben10_3_128_128",
         "offset_x": 1602,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "ben10_4_128_128",
+        "offset_x": 1730,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "sixsix1_128_128",
+        "offset_x": 1858,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "sixsix2_128_128",
+        "offset_x": 1986,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "volann1_128_128",
+        "offset_x": 2114,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "volann2_128_128",
+        "offset_x": 2242,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "wall_5_marine",
+        "offset_x": 2370,
         "offset_y": 402,
         "size_x": 128,
         "size_y": 128
@@ -246,35 +302,35 @@
     },
     {
         "name": "concrete368a",
-        "offset_x": 1730,
-        "offset_y": 402,
-        "size_x": 256,
-        "size_y": 128
-    },
-    {
-        "name": "dirt",
-        "offset_x": 1986,
-        "offset_y": 402,
-        "size_x": 256,
-        "size_y": 128
-    },
-    {
-        "name": "rock",
-        "offset_x": 2242,
-        "offset_y": 402,
-        "size_x": 256,
-        "size_y": 128
-    },
-    {
-        "name": "snow",
         "offset_x": 2498,
         "offset_y": 402,
         "size_x": 256,
         "size_y": 128
     },
     {
-        "name": "wall_5_256_128",
+        "name": "dirt",
         "offset_x": 0,
+        "offset_y": 586,
+        "size_x": 256,
+        "size_y": 128
+    },
+    {
+        "name": "rock",
+        "offset_x": 256,
+        "offset_y": 586,
+        "size_x": 256,
+        "size_y": 128
+    },
+    {
+        "name": "snow",
+        "offset_x": 512,
+        "offset_y": 586,
+        "size_x": 256,
+        "size_y": 128
+    },
+    {
+        "name": "wall_5_256_128",
+        "offset_x": 768,
         "offset_y": 586,
         "size_x": 256,
         "size_y": 128
@@ -294,6 +350,13 @@
         "size_y": 300
     },
     {
+        "name": "Omnitrix",
+        "offset_x": 147,
+        "offset_y": 896,
+        "size_x": 310,
+        "size_y": 252
+    },
+    {
         "name": "Vilgax-OV",
         "offset_x": 0,
         "offset_y": 1196,
@@ -302,78 +365,78 @@
     },
     {
         "name": "Drone",
-        "offset_x": 147,
-        "offset_y": 896,
+        "offset_x": 225,
+        "offset_y": 1196,
         "size_x": 300,
         "size_y": 300
     },
     {
         "name": "brickpavers2",
-        "offset_x": 447,
-        "offset_y": 896,
+        "offset_x": 525,
+        "offset_y": 1196,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "cretebrick970",
-        "offset_x": 959,
-        "offset_y": 896,
+        "offset_x": 1037,
+        "offset_y": 1196,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "dirtsand2",
-        "offset_x": 1471,
-        "offset_y": 896,
+        "offset_x": 1549,
+        "offset_y": 1196,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "stone",
-        "offset_x": 1983,
-        "offset_y": 896,
+        "offset_x": 2061,
+        "offset_y": 1196,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "tilable-IMG_0044-grey",
-        "offset_x": 225,
-        "offset_y": 1196,
+        "offset_x": 0,
+        "offset_y": 1547,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "tileable-S7002876-grey",
-        "offset_x": 737,
-        "offset_y": 1196,
+        "offset_x": 512,
+        "offset_y": 1547,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "background",
         "offset_x": 0,
-        "offset_y": 1547,
+        "offset_y": 1803,
         "size_x": 500,
         "size_y": 500
     },
     {
         "name": "main_screen",
         "offset_x": 500,
-        "offset_y": 1547,
+        "offset_y": 1803,
         "size_x": 640,
         "size_y": 480
     },
     {
         "name": "win",
         "offset_x": 1140,
-        "offset_y": 1547,
+        "offset_y": 1803,
         "size_x": 852,
         "size_y": 480
     },
     {
         "name": "game_over",
         "offset_x": 0,
-        "offset_y": 2047,
+        "offset_y": 2303,
         "size_x": 800,
         "size_y": 533
     }

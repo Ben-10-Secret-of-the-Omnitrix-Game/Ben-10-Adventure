@@ -300,7 +300,7 @@ class NPC(BaseEntity):
     def attack(self, player):
         if self.weapon == None:
             damage = self.damage
-            radius = 40
+            radius = 50
         else:
             damage = self.weapon.damage
             radius = self.weapon.radius
