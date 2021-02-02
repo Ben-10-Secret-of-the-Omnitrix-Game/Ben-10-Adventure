@@ -1,0 +1,12 @@
+{
+    "debug": true,
+    "resolution": [
+        1920,
+        1080
+    ],
+    "tile_size": 128,
+    "map_size": [
+        10,
+        10
+    ]
+}

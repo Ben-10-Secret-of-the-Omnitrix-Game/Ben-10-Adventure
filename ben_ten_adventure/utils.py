@@ -2,12 +2,12 @@ import logging
 import json
 
 import pygame
-    
+from pygame import mixer
+import cv2
+import numpy
 
 from os.path import join, exists
 from os import mkdir
-from pprint import pprint
-
 
 DEFAULT_RESOURCES_PATH = join("resources")
 DEFAULT_GAMEDATA_PATH = join("game_data")
@@ -18,6 +18,50 @@ def init_resource_dirs():
         mkdir(DEFAULT_RESOURCES_PATH)
     if not exists(DEFAULT_GAMEDATA_PATH):
         mkdir(DEFAULT_GAMEDATA_PATH)
+
+
+class Movie:
+
+    def __init__(self, file_path):
+        self.video = cv2.VideoCapture(file_path)
+        self.start_audio = False
+        mixer.init()
+        mixer.music.load(file_path[:-1] + '3')
+
+    def tick(self, screen):
+        if not self.start_audio:
+            mixer.music.set_volume(0.4)
+            mixer.music.play()
+            self.start_audio = True
+        retval, frame = self.video.read()
+        if not retval:
+            return False
+        # Rotate it, because for some reason it otherwise appears flipped.
+        # frame = numpy.rot90(frame)
+        frame = numpy.rot90(numpy.fliplr(frame))
+        # The video uses BGR colors and PyGame needs RGB
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Create a PyGame surface
+        surf = pygame.surfarray.make_surface(frame)
+        # Show the PyGame surface!
+        screen.blit(surf, ((1280 - surf.get_size()[0]) // 2, (720 - surf.get_size()[1]) // 2))
+        pygame.display.update((100, 100, 200, 200))
+        pygame.time.Clock().tick(16)
+        return True
+
+
+class Camera:
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - target.rect.width // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - target.rect.height // 2)
 
 
 class RawData:
@@ -62,7 +106,7 @@ class Config:
 class GameAssets:
     def __init__(self):
         self.config = Config(join(DEFAULT_RESOURCES_PATH,
-                                 "manifest.json"), Config.JSON)
+                                  "manifest.json"), Config.JSON)
         self._load_resources()
 
     def _load_resources(self):
@@ -71,10 +115,11 @@ class GameAssets:
                 f"Tried to load {join(DEFAULT_GAMEDATA_PATH, 'manifest.json')} but it's empty.\
                 If you already have images, run scripts/combine_images_into_single.py")
             return
-        image = pygame.image.load(join(DEFAULT_RESOURCES_PATH, "_compiled.png"))
+        image = pygame.image.load(
+            join(DEFAULT_RESOURCES_PATH, "_compiled.png"))
         # we don't need to convert, becuase scripts/combine_images_into_single.py already done it.
         # TODO add check for alpha if someone made fake manifest.json
-        
+
         for image_data in self.config.data:
             name, offset_x, offset_y, size_x, size_y = image_data.values()
             logging.info(f"Loading {name} with size {size_x}, {size_y}")
