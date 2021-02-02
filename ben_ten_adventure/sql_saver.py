@@ -33,7 +33,7 @@ class SQLData:
 class SQLSaver:
     def __init__(self, file_path):
         from .utils import DEFAULT_RESOURCES_PATH
-        self.connection = sqlite3.connect(join(DEFAULT_RESOURCES_PATH, file_path))
+        self.connection = sqlite3.connect(join(DEFAULT_RESOURCES_PATH, "sql_tables", file_path))
 
     def save(self, sqldata):
         cur = self.connection.cursor()
