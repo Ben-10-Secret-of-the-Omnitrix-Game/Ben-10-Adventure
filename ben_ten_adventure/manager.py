@@ -150,7 +150,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             self.play_scene_5,
             self.play_scene_6,
             self.play_scene_7]
-        self._index = 6
+        self._index = 0
         self.init_funcs = [
             self.init_scene_1,
             self.init_scene_2,
