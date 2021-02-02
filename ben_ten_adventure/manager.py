@@ -201,6 +201,13 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_1.tmx"))
         self.game.MAP_WIDTH, self.game.MAP_HEIGHT = kwargs['map'].width, kwargs['map'].height
 
+        ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
+                      self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
+
+        kwargs['player'] = Player('Ben', entity_manager=self.game.entity_manager, image=ben_images, x=250, y=250,
+                                  speed=15)
+        kwargs['player'].set_friends(kwargs['myaxx'])
+
         kwargs['myaxx'] = NPC('Myaxx', entity_manager=self.game.entity_manager, image=[self.game.ga.Myaxx_128_128],
                               hp=50, x=600, y=500, speed=5)
         kwargs['npcs_count'] = 24
@@ -219,11 +226,6 @@ class SecretOfTheOmnitrix(AdventureScene):
                                           y=randint(0, self.game.MAP_HEIGHT * self.game.TILE_SIZE),
                                           entity_manager=self.game.entity_manager,
                                           speed=randint(1, 3))]
-        ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
-                      self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
-        kwargs['player'] = Player('Ben', entity_manager=self.game.entity_manager, image=ben_images, x=250, y=250,
-                                  speed=15)
-        kwargs['player'].set_friends(kwargs['myaxx'])
 
         kwargs['blaster'] = BaseWeapon(50, 100, 20)
         kwargs['player'].set_weapon(kwargs['blaster'])
@@ -353,6 +355,14 @@ class SecretOfTheOmnitrix(AdventureScene):
         kwargs['map'] = pytmx.TiledMap(join(DEFAULT_RESOURCES_PATH, "maps", "scene_2.tmx"))
         self.game.MAP_WIDTH, self.game.MAP_HEIGHT = kwargs['map'].width, kwargs['map'].height
 
+        ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
+                      self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
+        kwargs['player'] = Player('Ben', entity_manager=self.game.entity_manager, image=ben_images, x=250, y=250,
+                                  speed=15)
+
+        kwargs['blaster'] = BaseWeapon(50, 120, 20)
+        kwargs['player'].set_weapon(kwargs['blaster'])
+
         kwargs['vilgax'] = NPC('Vilgax', entity_manager=self.game.entity_manager,
                                image=[self.game.ga.Vilgax1_128_128, self.game.ga.Vilgax1_128_128,
                                       self.game.ga.Vilgax2_128_128, self.game.ga.Vilgax2_128_128],
@@ -371,13 +381,6 @@ class SecretOfTheOmnitrix(AdventureScene):
                                    entity_manager=self.game.entity_manager,
                                    speed=randint(1, 3))]
 
-        ben_images = [self.game.ga.ben10_1_128_128, self.game.ga.ben10_2_128_128,
-                      self.game.ga.ben10_3_128_128, self.game.ga.ben10_4_128_128]
-        kwargs['player'] = Player('Ben', entity_manager=self.game.entity_manager, image=ben_images, x=250, y=250,
-                                  speed=15)
-
-        kwargs['blaster'] = BaseWeapon(50, 120, 20)
-        kwargs['player'].set_weapon(kwargs['blaster'])
 
         kwargs['base_enitity'] = BaseEntity(1000, 1000, 'Base', entity_manager=self.game.entity_manager)
 
@@ -403,6 +406,7 @@ class SecretOfTheOmnitrix(AdventureScene):
                     custom_self.is_canceled = True
                 elif custom_self.vilgax.hp <= 0:
                     self.play_data['win'] = True
+                    custom_self.is_canceled = True
 
         self.game.task_manager.schedule_repeating_task({
             'npcs': kwargs['npcs'],
@@ -517,10 +521,11 @@ class SecretOfTheOmnitrix(AdventureScene):
                 custom_self.azimuth.unattackable = True
             if custom_self.azimuth.unattackable and not custom_self.azimuth.is_near(custom_self.player):
                 custom_self.azimuth.go_to(custom_self.player)
-            elif not custom_self.azimuth.unattackable and not custom_self.azimuth.is_near(custom_self.player):
+            elif not custom_self.azimuth.unattackable:
                 custom_self.azimuth.random_move()
-            elif custom_self.azimuth.unattackable and custom_self.azimuth.is_near(custom_self.player):
+            elif custom_self.azimuth.unattackable:
                 self.play_data['win'] = True
+                print('az')
                 custom_self.is_canceled = True
 
         self.game.task_manager.schedule_repeating_task({
@@ -612,6 +617,7 @@ class SecretOfTheOmnitrix(AdventureScene):
             'on_run': npcs_attack_player
         }, period=15)
 
+        self.game.sql_saver.add_npc_count(kwargs['npcs_count'])
         self.play_data = kwargs
         return kwargs
 
@@ -628,16 +634,11 @@ class SecretOfTheOmnitrix(AdventureScene):
     def play_current(self):
         if self.game.ACTION != self.activity.PAUSE:
             if not self.play_data:
-                print(self._index)
                 initialization_function = self.init_funcs[self._index]
                 self.play_data = initialization_function()
 
             stage = self.stages[self._index]
-            print(self.play_data)
-            if 'win' in self.play_data:
-                print(self._index)
             if stage(kwargs=self.play_data) == self.END:
-                # print('win' in self.play_data)
                 if 'win' in self.play_data and not self.play_data['win']:
                     self._index = 1
                     self.game.entity_manager.clear()
