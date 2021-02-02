@@ -8,7 +8,6 @@ from random import randint
 from pygame import event
 from pygame.mixer import pause
 from pygame.transform import scale
-from hotreload.reloader import Loader
 
 import logging
 import pygame

@@ -5,12 +5,24 @@ import pygame
 from pygame import mixer
 import cv2
 import numpy
+import sys
+import os
 
 from os.path import join, exists
 from os import mkdir
 
-DEFAULT_RESOURCES_PATH = join("resources")
-DEFAULT_GAMEDATA_PATH = join("game_data")
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+DEFAULT_RESOURCES_PATH = resource_path(join("resources"))
+DEFAULT_GAMEDATA_PATH = resource_path(join("game_data"))
 
 
 def init_resource_dirs():
