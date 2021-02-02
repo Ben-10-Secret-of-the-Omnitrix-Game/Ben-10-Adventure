@@ -77,44 +77,51 @@
         "size_y": 45
     },
     {
-        "name": "wall_2",
+        "name": "space",
         "offset_x": 0,
         "offset_y": 144,
+        "size_x": 128,
+        "size_y": 64
+    },
+    {
+        "name": "wall_2",
+        "offset_x": 0,
+        "offset_y": 208,
         "size_x": 96,
         "size_y": 96
     },
     {
         "name": "wall_3",
         "offset_x": 96,
-        "offset_y": 144,
+        "offset_y": 208,
         "size_x": 96,
         "size_y": 96
     },
     {
         "name": "wall_4_272",
         "offset_x": 192,
-        "offset_y": 144,
+        "offset_y": 208,
         "size_x": 96,
         "size_y": 96
     },
     {
         "name": "wall_4_48",
         "offset_x": 288,
-        "offset_y": 144,
+        "offset_y": 208,
         "size_x": 96,
         "size_y": 96
     },
     {
         "name": "wall_4_48_pixel_ratio",
         "offset_x": 384,
-        "offset_y": 144,
+        "offset_y": 208,
         "size_x": 96,
         "size_y": 96
     },
     {
         "name": "block",
         "offset_x": 0,
-        "offset_y": 240,
+        "offset_y": 304,
         "size_x": 103,
         "size_y": 98
     },
@@ -128,13 +135,13 @@
     {
         "name": "Myaxx_ov_render",
         "offset_x": 0,
-        "offset_y": 338,
+        "offset_y": 402,
         "size_x": 66,
         "size_y": 184
     },
     {
         "name": "start_adventure_button_x2",
-        "offset_x": 480,
+        "offset_x": 128,
         "offset_y": 144,
         "size_x": 272,
         "size_y": 50
@@ -142,189 +149,231 @@
     {
         "name": "Alien_V_128_128",
         "offset_x": 66,
-        "offset_y": 338,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "Drone1_128_128",
+        "offset_x": 194,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "Drone2_128_128",
+        "offset_x": 322,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "Myaxx_128_128",
-        "offset_x": 194,
-        "offset_y": 338,
+        "offset_x": 450,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "Vilgax1_128_128",
+        "offset_x": 578,
+        "offset_y": 402,
+        "size_x": 128,
+        "size_y": 128
+    },
+    {
+        "name": "Vilgax2_128_128",
+        "offset_x": 706,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "ben10_1_128_128",
-        "offset_x": 322,
-        "offset_y": 338,
+        "offset_x": 834,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "ben10_2_128_128",
-        "offset_x": 450,
-        "offset_y": 338,
+        "offset_x": 962,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "ben10_3_128_128",
-        "offset_x": 578,
-        "offset_y": 338,
+        "offset_x": 1090,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "ben10_4_128_128",
-        "offset_x": 706,
-        "offset_y": 338,
+        "offset_x": 1218,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "volann1_128_128",
-        "offset_x": 834,
-        "offset_y": 338,
+        "offset_x": 1346,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "volann2_128_128",
-        "offset_x": 962,
-        "offset_y": 338,
+        "offset_x": 1474,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "wall_5_marine",
-        "offset_x": 1090,
-        "offset_y": 338,
+        "offset_x": 1602,
+        "offset_y": 402,
         "size_x": 128,
         "size_y": 128
     },
     {
         "name": "omnitrix_secret_btn_simple",
-        "offset_x": 103,
-        "offset_y": 240,
+        "offset_x": 480,
+        "offset_y": 208,
         "size_x": 300,
         "size_y": 65
     },
     {
         "name": "concrete368a",
-        "offset_x": 1218,
-        "offset_y": 338,
+        "offset_x": 1730,
+        "offset_y": 402,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "dirt",
-        "offset_x": 1474,
-        "offset_y": 338,
+        "offset_x": 1986,
+        "offset_y": 402,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "rock",
-        "offset_x": 1730,
-        "offset_y": 338,
+        "offset_x": 2242,
+        "offset_y": 402,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "snow",
-        "offset_x": 1986,
-        "offset_y": 338,
+        "offset_x": 2498,
+        "offset_y": 402,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "wall_5_256_128",
-        "offset_x": 2242,
-        "offset_y": 338,
+        "offset_x": 0,
+        "offset_y": 586,
         "size_x": 256,
         "size_y": 128
     },
     {
         "name": "B10_VT4C_BN_04",
         "offset_x": 0,
-        "offset_y": 522,
+        "offset_y": 714,
         "size_x": 185,
         "size_y": 182
     },
     {
         "name": "Prisoner_soto",
         "offset_x": 0,
-        "offset_y": 704,
+        "offset_y": 896,
         "size_x": 147,
         "size_y": 300
     },
     {
-        "name": "brickpavers2",
+        "name": "Vilgax-OV",
+        "offset_x": 0,
+        "offset_y": 1196,
+        "size_x": 225,
+        "size_y": 351
+    },
+    {
+        "name": "Drone",
         "offset_x": 147,
-        "offset_y": 704,
+        "offset_y": 896,
+        "size_x": 300,
+        "size_y": 300
+    },
+    {
+        "name": "brickpavers2",
+        "offset_x": 447,
+        "offset_y": 896,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "cretebrick970",
-        "offset_x": 659,
-        "offset_y": 704,
+        "offset_x": 959,
+        "offset_y": 896,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "dirtsand2",
-        "offset_x": 1171,
-        "offset_y": 704,
+        "offset_x": 1471,
+        "offset_y": 896,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "stone",
-        "offset_x": 1683,
-        "offset_y": 704,
+        "offset_x": 1983,
+        "offset_y": 896,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "tilable-IMG_0044-grey",
-        "offset_x": 2195,
-        "offset_y": 704,
+        "offset_x": 225,
+        "offset_y": 1196,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "tileable-S7002876-grey",
-        "offset_x": 0,
-        "offset_y": 1004,
+        "offset_x": 737,
+        "offset_y": 1196,
         "size_x": 512,
         "size_y": 256
     },
     {
         "name": "background",
         "offset_x": 0,
-        "offset_y": 1260,
+        "offset_y": 1547,
         "size_x": 500,
         "size_y": 500
     },
     {
         "name": "main_screen",
         "offset_x": 500,
-        "offset_y": 1260,
+        "offset_y": 1547,
         "size_x": 640,
         "size_y": 480
     },
     {
         "name": "win",
         "offset_x": 1140,
-        "offset_y": 1260,
+        "offset_y": 1547,
         "size_x": 852,
         "size_y": 480
     },
     {
         "name": "game_over",
         "offset_x": 0,
-        "offset_y": 1760,
+        "offset_y": 2047,
         "size_x": 800,
         "size_y": 533
     }

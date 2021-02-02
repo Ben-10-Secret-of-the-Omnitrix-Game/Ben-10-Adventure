@@ -131,7 +131,8 @@ class RenderEntities:
     def render(self, entities, screen=None, border_offset=[500, 100]):
         entities = sorted(entities, key=lambda x: x.x + x.y)
         for ent in entities:
-            ent.render(screen, border_offset)
+            if ent.image:
+                ent.render(screen, border_offset)
 
 class Camera:
     def __init__(self, map_field):

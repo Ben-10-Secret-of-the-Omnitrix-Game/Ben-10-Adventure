@@ -27,7 +27,7 @@ class Movie:
         self.video = cv2.VideoCapture(file_path)
         self.start_audio = False
         mixer.init()
-        mixer.music.load(join(DEFAULT_RESOURCES_PATH, "videos", "ben_10_test2.mp3"))
+        mixer.music.load(file_path[:-1] + '3')
 
     def tick(self, screen):
         if not self.start_audio:
@@ -45,7 +45,7 @@ class Movie:
         # Create a PyGame surface
         surf = pygame.surfarray.make_surface(frame)
         # Show the PyGame surface!
-        screen.blit(surf, (0, 0))
+        screen.blit(surf, ((1280 - surf.get_size()[0]) // 2, (720 - surf.get_size()[1]) // 2))
         pygame.display.update((100, 100, 200, 200))
         pygame.time.Clock().tick(16)
         return True

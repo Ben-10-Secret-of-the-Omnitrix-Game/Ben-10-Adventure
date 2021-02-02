@@ -32,6 +32,7 @@ class BaseEntity(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.id = id
+        self.image = None
         self.rotation = 0
         self.entity_manager = entity_manager
         self._direction_map = {
@@ -75,9 +76,8 @@ class BaseEntity(pygame.sprite.Sprite):
     def render(self):
         pass
 
-    def is_near(self, entity):
-        radius = 50
-        return ((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2) ** 0.5 < radius
+    def is_near(self, entity, radius=50):
+        return ((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2) ** 0.5 <= radius
 
 
 class Player(BaseEntity):
@@ -202,6 +202,8 @@ class NPC(BaseEntity):
         self.dest_x = 0
         self.dest_y = 0
 
+        self.unattackable = False
+
     def render(self, screen=None, border_offset=[500, 100]):
         if self.current_tick < self.attack_pause:
             self.current_tick += 1
@@ -215,83 +217,85 @@ class NPC(BaseEntity):
         self.weapon = weapon
 
     def go_to(self, player):
-        rot_x, rot_y = 0, 0
-        x, y = self.x, self.y
+        if not player.is_near(self, self.entity_manager.collision_radius):
+            rot_x, rot_y = 0, 0
+            x, y = self.x, self.y
 
-        if self.speed > abs(self.x - player.x):
-            self.x = player.x
-        elif self.x != player.x:
-            if self.x > player.x:
-                self.x -= self.speed
-                rot_x = -1
-            else:
-                self.x += self.speed
-                rot_x = 1
-        if self.speed > abs(self.y - player.y):
-            self.y = player.y
-        elif self.y != player.y:
-            if self.y > player.y:
-                self.y -= self.speed
-                rot_y = -1
-            else:
-                self.y += self.speed
-                rot_y = 1
-        if self.entity_manager.is_collision(self) > 1:
-            self.x, self.y = x, y
-            flag = True
-            for rot_x in choice([[-1, 0, 1], [1, 0, -1]]):
-                if not flag:
-                    break
-                for rot_y in choice([[-1, 0, 1], [1, 0, -1]]):
-                    self.x += self.speed * rot_x
-                    self.y += self.speed * rot_y
-                    if not self.entity_manager.is_collision(self):
-                        flag = False
+            if self.speed > abs(self.x - player.x):
+                self.x = player.x
+            elif self.x != player.x:
+                if self.x > player.x:
+                    self.x -= self.speed
+                    rot_x = -1
+                else:
+                    self.x += self.speed
+                    rot_x = 1
+            if self.speed > abs(self.y - player.y):
+                self.y = player.y
+            elif self.y != player.y:
+                if self.y > player.y:
+                    self.y -= self.speed
+                    rot_y = -1
+                else:
+                    self.y += self.speed
+                    rot_y = 1
+            if self.entity_manager.is_collision(self) > 1:
+                self.x, self.y = x, y
+                flag = True
+                for rot_x in choice([[-1, 0, 1], [1, 0, -1]]):
+                    if not flag:
                         break
-                    else:
-                        self.x, self.y = x, y
-        elif self.entity_manager.is_collision(self) == 1:
-            self.x, self.y = x, y
-            flag = True
-            for rot_x in [-1, 0, 1]:
-                if not flag:
-                    break
-                for rot_y in [-1, 0, 1]:
-                    self.x += self.speed * rot_x
-                    self.y += self.speed * rot_y
-                    if not self.entity_manager.is_collision(self):
-                        flag = False
+                    for rot_y in choice([[-1, 0, 1], [1, 0, -1]]):
+                        self.x += self.speed * rot_x
+                        self.y += self.speed * rot_y
+                        if not self.entity_manager.is_collision(self):
+                            flag = False
+                            break
+                        else:
+                            self.x, self.y = x, y
+            elif self.entity_manager.is_collision(self) == 1:
+                self.x, self.y = x, y
+                flag = True
+                for rot_x in [-1, 0, 1]:
+                    if not flag:
                         break
-                    else:
-                        self.x, self.y = x, y
-        else:
-            """changing texture rotation"""
-
-            if rot_x == rot_y == 1:
-                self.rotation = 0
-            elif rot_x == rot_y == -1:
-                self.rotation = 2
-            elif rot_x == 1 and rot_y == -1:
-                self.rotation = 1
-            elif rot_x == -1 and rot_y == 1:
-                self.rotation = 3
-            elif rot_x == -1 and rot_y == 0:
-                self.rotation = 2
-            elif rot_x == 1 and rot_y == 0:
-                self.rotation = 0
-            elif rot_y == 1 and rot_x == 0:
-                self.rotation = 3
+                    for rot_y in [-1, 0, 1]:
+                        self.x += self.speed * rot_x
+                        self.y += self.speed * rot_y
+                        if not self.entity_manager.is_collision(self):
+                            flag = False
+                            break
+                        else:
+                            self.x, self.y = x, y
             else:
-                self.rotation = 1
+                """changing texture rotation"""
 
-            if self.image and len(self.image) >= self.rotation + 1:
-                self.texture = self.image[self.rotation]
+                if rot_x == rot_y == 1:
+                    self.rotation = 0
+                elif rot_x == rot_y == -1:
+                    self.rotation = 2
+                elif rot_x == 1 and rot_y == -1:
+                    self.rotation = 1
+                elif rot_x == -1 and rot_y == 1:
+                    self.rotation = 3
+                elif rot_x == -1 and rot_y == 0:
+                    self.rotation = 2
+                elif rot_x == 1 and rot_y == 0:
+                    self.rotation = 0
+                elif rot_y == 1 and rot_x == 0:
+                    self.rotation = 3
+                else:
+                    self.rotation = 1
+
+                if self.image and len(self.image) >= self.rotation + 1:
+                    self.texture = self.image[self.rotation]
 
     def is_attacked(self):
-        self._render.is_attacked()
-        if self.hp <= 0:
+        if not self.unattackable:
+            self._render.is_attacked()
+            if self.hp <= 0:
 
-            self.entity_manager.remove(self)
+                self.entity_manager.remove(self)
 
     def attack(self, player):
         if self.weapon == None:

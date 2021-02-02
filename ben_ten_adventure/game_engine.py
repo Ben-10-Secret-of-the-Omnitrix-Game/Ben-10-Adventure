@@ -129,7 +129,7 @@ def render_map():
     for row in range(0, MAP_WIDTH):
         for col in range(0, MAP_HEIGHT):
             tile = script.Tile(row, col, border_offset=border_offset,
-                               image=ga.wall_5_marine, tile_size=TILE_SIZE)
+                               image=ga.space, tile_size=TILE_SIZE)
             tile.render_isometric_tile(screen)
 
 
@@ -147,7 +147,8 @@ def game_loop_handler():
         fps_value = str(round(clock.get_fps(), 1))
         fps_stat = font.render('FPS: ' + fps_value, True, (255, 0, 0))
         adventure.game.sql_data.add_fps(float(fps_value))
-        screen.blit(fps_stat, (100, 100))
+        if adventure._index not in [0, 2]:
+            screen.blit(fps_stat, (100, 100))
         
     pygame.display.update()
     clock.tick(fps)
